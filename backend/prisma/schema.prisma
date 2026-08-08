@@ -1,0 +1,65 @@
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum UserRole {
+  ADMIN
+  TEACHER
+  STUDENT
+}
+
+enum UserStatus {
+  ACTIVE
+  SUSPENDED
+}
+
+model User {
+  id           String     @id @default(cuid())
+  name         String
+  email        String     @unique
+  passwordHash String
+  role         UserRole
+  status       UserStatus @default(ACTIVE)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  studentProfile StudentProfile?
+  teacherProfile TeacherProfile?
+
+  @@index([role])
+}
+
+model StudentProfile {
+  id             String  @id @default(cuid())
+  userId         String  @unique
+  registerNumber String  @unique
+  batch          String?
+  semester       Int?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model TeacherProfile {
+  id         String  @id @default(cuid())
+  userId     String  @unique
+  employeeId String? @unique
+  department String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model StudentRegistry {
+  id             String    @id @default(cuid())
+  registerNumber String    @unique
+  name           String
+  batch          String?
+  isActive       Boolean   @default(true)
+  claimedAt      DateTime?
+
+  createdAt DateTime @default(now())
+}
