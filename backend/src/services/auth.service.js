@@ -4,17 +4,21 @@ import jwt from "jsonwebtoken";
 import prisma from "../lib/prisma.js";
 import { env } from "../config/env.js";
 
-const SALT_ROUNDS = 12;
-
 export async function loginUser(email, password) {
+    const normalizedEmail = email.trim().toLowerCase();
+
     const user = await prisma.user.findUnique({
         where: {
-            email,
+            email: normalizedEmail,
         },
     });
 
     if (!user) {
         throw new Error("Invalid email or password");
+    }
+
+    if (user.status !== "ACTIVE") {
+        throw new Error("Your account is not active");
     }
 
     const passwordMatches = await bcrypt.compare(
@@ -39,6 +43,7 @@ export async function loginUser(email, password) {
 
     return {
         token,
+
         user: {
             id: user.id,
             name: user.name,

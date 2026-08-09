@@ -31,7 +31,7 @@ function AdminLogin() {
                     response.data.token
                 )
 
-                navigate("admin/dashboard")
+                navigate("/admin/dashboard")
             }
 
         } catch (error) {

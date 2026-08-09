@@ -3,17 +3,24 @@ import { z } from "zod";
 import { loginUser } from "../services/auth.service.js";
 
 const loginSchema = z.object({
-    email: z.string().email(),
-    password: z.string().min(1),
+    email: z
+        .string()
+        .trim()
+        .email("Please provide a valid email"),
+
+    password: z
+        .string()
+        .min(1, "Password is required"),
 });
 
 export async function login(req, res, next) {
     try {
-        const validatedData = loginSchema.parse(req.body);
+        const data = loginSchema.parse(req.body);
 
-        const { email, password } = validatedData;
-
-        const result = await loginUser(email, password);
+        const result = await loginUser(
+            data.email,
+            data.password
+        );
 
         res.cookie("accessToken", result.token, {
             httpOnly: true,
@@ -22,7 +29,7 @@ export async function login(req, res, next) {
             maxAge: 24 * 60 * 60 * 1000,
         });
 
-        res.status(200).json({
+        return res.status(200).json({
             success: true,
             message: "Login successful",
             user: result.user,
