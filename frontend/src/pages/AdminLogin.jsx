@@ -36,7 +36,7 @@ function AdminLogin() {
 
         } catch (error) {
 
-            console.error('Login failed:', error)
+            console.error('Login failed: ', error)
 
             alert(
                 error.response?.data?.message || "Login failed"
@@ -52,7 +52,7 @@ function AdminLogin() {
                     <h1 className='text-3xl text-blue-700 font-bolder underline'>Admin Portal</h1>
                     <h3 className='opacity-60'>B.Voc SD Space</h3>
                 </div>
-                <div>
+                <div className='bg-[#3F3F41]'>
                     <form onSubmit={handleSubmit} className='flex flex-col items-center justify-center'>
                         <input type="email" placeholder="Email" name="email" required className="p-2 w-80 mb-5 border border-gray-300 rounded" value={email} onChange={(e) => setEmail(e.target.value)} />
                         <div className="flex items-center w-80 border border-gray-300 rounded mb-5 overflow-hidden divide-x-1">
