@@ -7,11 +7,14 @@ function ContextProvider(props) {
 
     const backendUrl = import.meta.env.VITE_BACKEND_URL;
     const [token, setToken] = useState('')
+    const [isDark, setIsDark] = useState(false);
 
     const value = {
         backendUrl,
         token,
-        setToken
+        setToken,
+        isDark,
+        setIsDark
     }
 
     return (
