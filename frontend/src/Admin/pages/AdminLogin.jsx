@@ -2,14 +2,14 @@ import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Eye, EyeOff, ArrowRight } from 'lucide-react';
-import { Context } from '../Context/Context';
+import { Context } from '../../Context/Context';
 
 function AdminLogin() {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false)
-    const { backendUrl, setToken } = useContext(Context)
+    const { backendUrl, setToken, setUser } = useContext(Context)
     const navigate = useNavigate()
 
     async function handleSubmit(e) {
@@ -30,6 +30,8 @@ function AdminLogin() {
                     'token',
                     response.data.token
                 )
+
+                setUser(response.data.user);
 
                 navigate("/admin/dashboard")
             }

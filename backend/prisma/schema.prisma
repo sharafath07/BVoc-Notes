@@ -30,6 +30,7 @@ model User {
 
   studentProfile StudentProfile?
   teacherProfile TeacherProfile?
+  resources      Resource[]
 
   @@index([role])
 }
@@ -62,4 +63,62 @@ model StudentRegistry {
   claimedAt      DateTime?
 
   createdAt DateTime @default(now())
+}
+
+enum ResourceType {
+  NOTES
+  PYQ
+  QUESTION_BANK
+  LAB
+  ASSIGNMENT
+  STUDY_MATERIAL
+}
+
+model Semester {
+  id       String    @id @default(cuid())
+  number   Int       @unique
+  subjects Subject[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Subject {
+  id         String @id @default(cuid())
+  name       String
+  semesterId String
+
+  semester Semester @relation(fields: [semesterId], references: [id], onDelete: Cascade)
+
+  resources Resource[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([name, semesterId])
+  @@index([semesterId])
+}
+
+model Resource {
+  id          String  @id @default(cuid())
+  title       String
+  description String?
+
+  subjectId String
+  subject   Subject @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+
+  type ResourceType
+
+  fileName String
+  fileUrl  String
+
+  uploadedById String
+  uploadedBy   User   @relation(fields: [uploadedById], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([subjectId])
+  @@index([type])
+  @@index([uploadedById])
 }

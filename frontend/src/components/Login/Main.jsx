@@ -14,7 +14,7 @@ function Main() {
     const [showPassword, setShowPassword] = useState(false)
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
-    const { backendUrl, setToken } = useContext(Context);
+    const { backendUrl, setToken, setUser, user } = useContext(Context);
     const navigate = useNavigate()
 
 
@@ -37,7 +37,15 @@ function Main() {
                     response.data.token
                 )
 
-                navigate("/")
+                setUser(response.data.user);
+
+                if (user.role = "ADMIN") {
+                    navigate("/admin/dashboard")
+
+                } else {
+                    navigate("/")
+                }
+
             }
         } catch (error) {
 
