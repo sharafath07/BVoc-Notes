@@ -8,7 +8,7 @@ import {
 
 import { registerStudentController } from "../controllers/student-registration.controller.js";
 
-import { authenticate } from "../middleware/authenticate.js";
+import { authenticate } from "../middleware/auth.middleware.js";
 
 const router = Router();
 

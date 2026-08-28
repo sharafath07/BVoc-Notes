@@ -1,14 +1,11 @@
-import React, { useContext, } from 'react'
-import { Context } from '../Context/Context.jsx'
+import React, { useContext } from 'react'
+import { Context } from '../../Context/Context'
 import { Moon, Sun } from 'lucide-react'
 import { NavLink, Link, useNavigate } from 'react-router-dom'
-import axios from 'axios';
 
 
-
-
-function Navbar() {
-    const { token, isDark, setIsDark, setToken, backendUrl } = useContext(Context);
+function AdminNavbar() {
+    const { token, setToken, isDark, setIsDark, backendUrl } = useContext(Context);
     const navigate = useNavigate();
 
     function handleSignInAndOut() {
@@ -45,11 +42,10 @@ function Navbar() {
                     </Link>
                 </div>
                 <div className='flex flex-row items-center gap-3 font-jetbrains'>
-                    <NavLink to='/' className="nav-link">Home</NavLink>
-                    <NavLink to='/about' className="nav-link">About</NavLink>
-                    <NavLink to='/faculty' className="nav-link">Faculty</NavLink>
-                    {token ? <NavLink to='/resources' className="nav-link">Resources</NavLink> : null}
-                    <NavLink to='/contact' className="nav-link">Contact</NavLink>
+                    <NavLink to='/admin/dashboard' className="nav-link">Dashboard</NavLink>
+                    <NavLink to='/admin/dashboard/students' className="nav-link">Students</NavLink>
+                    <NavLink to='/admin/dashboard/faculties' className="nav-link">Faculties</NavLink>
+                    <NavLink to='/admin/dashboard/resources' className="nav-link">Resources</NavLink>
                 </div>
 
                 <div className='flex flex-row items-center gap-3'>
@@ -64,4 +60,4 @@ function Navbar() {
     )
 }
 
-export default Navbar
+export default AdminNavbar
