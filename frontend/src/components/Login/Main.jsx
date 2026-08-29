@@ -26,6 +26,9 @@ function Main() {
                 {
                     email,
                     password
+                },
+                {
+                    withCredentials: true,
                 }
             )
 
@@ -68,6 +71,9 @@ function Main() {
                     email,
                     password,
                     registerNumber
+                },
+                {
+                    withCredentials: true,
                 }
             )
 

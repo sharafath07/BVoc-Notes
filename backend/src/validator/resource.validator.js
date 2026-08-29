@@ -17,7 +17,8 @@ export const createResourceSchema = z.object({
         "QUESTION_BANK",
         "LAB",
         "ASSIGNMENT",
-        "STUDY_MATERIAL",
+        "SYLLABUS",
+        "STUDY_MATERIAL"
     ]),
 
     fileName: z.string().trim().min(1, "File name is required"),

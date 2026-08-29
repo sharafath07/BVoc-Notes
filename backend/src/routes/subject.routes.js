@@ -1,11 +1,7 @@
 import express from "express";
 
 import {
-    getSemestersController,
-} from "../controllers/semester.controller.js";
-
-import {
-    getSubjectsBySemesterController,
+    getAllSubjectsController,
 } from "../controllers/subject.controller.js";
 
 import { authenticate } from "../middleware/auth.middleware.js";
@@ -13,18 +9,10 @@ import { authenticate } from "../middleware/auth.middleware.js";
 const router = express.Router();
 
 
+// GET all subjects
 router.get(
     "/",
     authenticate,
-    getSemestersController
+    getAllSubjectsController
 );
-
-
-router.get(
-    "/:semesterId/subjects",
-    authenticate,
-    getSubjectsBySemesterController
-);
-
-
 export default router;

@@ -1,33 +1,66 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link, Plus } from "lucide-react";
 import { Context } from '../../Context/Context'
+import api from "../../api/axios";
 
 function AdminAddResource() {
-    const { backendUrl } = useContext(Context);
-    // const
-
+    const { backendUrl, semesters, subjects, user, setResources, resources } = useContext(Context);
 
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [semester, setSemester] = useState('');
+    const [semesterId, setSemesterId] = useState('');
+    const [subjectList, setSubjectList] = useState([]);
     const [subject, setSubject] = useState('');
     const [type, setType] = useState('');
     const [fileUrl, setFileUrl] = useState('');
 
+    useEffect(() => {
+        for (let index = 0; index < semesters.length; index++) {
+            const element = semesters[index];
+            if (semester === element.id) {
+                setSemesterId(element.id)
+            }
+        }
+    }, [semester])
 
-    const handleSubmit = (e) => {
+    useEffect(() => {
+        const filteredSubjects = subjects?.filter(
+            (object) => semesterId === object.semesterId
+        );
+        setSubjectList(filteredSubjects)
+    }, [semesterId, subjects])
+
+    async function handleSubmit(e) {
         e.preventDefault();
 
         const resourceData = {
             title,
             description,
-            subject,
-            semester,
+            subjectId: subject,
             type,
+            fileName: title,
             fileUrl,
+            uploadedById: user.id
         };
+        try {
+            const response = await api.post(
+                `${backendUrl}/api/resources/`,
+                resourceData
+            )
 
-        console.log(resourceData);
+            if (response.data.success) {
+                setResources(...resources, resourceData)
+                console.log(response.data.success);
+
+            }
+        } catch (error) {
+            console.error("Creation of Resource failed:", error)
+
+            alert(
+                error.response?.data?.message || "Creation of Resource Failed"
+            )
+        }
     };
 
     return (
@@ -99,12 +132,11 @@ function AdminAddResource() {
                                 className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 outline-none focus:border-black"
                             >
                                 <option value="">Select semester</option>
-                                <option value="1">Semester 1</option>
-                                <option value="2">Semester 2</option>
-                                <option value="3">Semester 3</option>
-                                <option value="4">Semester 4</option>
-                                <option value="5">Semester 5</option>
-                                <option value="6">Semester 6</option>
+                                {semesters?.map((item) => (
+                                    <option key={item.id} value={item.id}>
+                                        Semester {item.number}
+                                    </option>
+                                ))}
                             </select>
                         </div>
 
@@ -122,12 +154,12 @@ function AdminAddResource() {
                                 className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 outline-none focus:border-black"
                             >
                                 <option value="">Select subject</option>
-                                <option value="programming">Programming</option>
-                                <option value="database">Database</option>
-                                <option value="web-development">Web Development</option>
-                                <option value="networking">Networking</option>
-                                <option value="design">Design</option>
-                                <option value="general">General</option>
+
+                                {subjectList?.map((item) => (
+                                    <option key={item.id} value={item.id}>
+                                        {item.name}
+                                    </option>
+                                ))}
                             </select>
                         </div>
 
@@ -141,14 +173,14 @@ function AdminAddResource() {
                         <select
                             name="type"
                             required
-                            value={subject}
-                            onChange={(e) => setSubject(e.target.value)}
+                            value={type}
+                            onChange={(e) => setType(e.target.value)}
                             className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 outline-none focus:border-black"
                         >
                             <option value="">Select type</option>
-                            <option value="programming">Syllabus</option>
-                            <option value="database">Previous Year Question</option>
-                            <option value="web-development">Notes</option>
+                            <option value="SYLLABUS">Syllabus</option>
+                            <option value="PYQ">Previous Year Question</option>
+                            <option value="NOTES">Notes</option>
                         </select>
                     </div>
 
@@ -165,7 +197,7 @@ function AdminAddResource() {
                                 name="url"
                                 value={fileUrl}
                                 onChange={(e) => setFileUrl(e.target.value)}
-                                placeholder="https://..."
+                                placeholder="https://drive.google.com/..."
                                 className="w-full px-2 py-3"
                             />
                         </div>

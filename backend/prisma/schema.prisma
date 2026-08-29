@@ -68,6 +68,7 @@ model StudentRegistry {
 enum ResourceType {
   NOTES
   PYQ
+  SYLLABUS
   QUESTION_BANK
   LAB
   ASSIGNMENT
