@@ -30,13 +30,9 @@ function ContextProvider(props) {
     }
 
     useEffect(() => {
-        if (user.role == "ADMIN") {
-            getSemesters()
-            getSubjects()
-            getResources()
-            // getStudents()
-            // getUsers()
-        }
+        getSemesters()
+        getSubjects()
+        getResources()
     }, [user])
 
     async function getSubjects() {
