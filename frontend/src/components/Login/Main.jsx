@@ -42,7 +42,7 @@ function Main() {
 
                 setUser(response.data.user);
 
-                if (user.role = "ADMIN") {
+                if (user.role === "ADMIN") {
                     navigate("/admin/dashboard")
 
                 } else {
