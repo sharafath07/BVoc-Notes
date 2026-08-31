@@ -5,7 +5,7 @@ export const Context = createContext()
 
 function ContextProvider(props) {
 
-    const backendUrl = import.meta.env.VITE_BACKEND_URL;
+    const backendUrl = import.meta.env.BACKEND_URL;
     const [token, setToken] = useState('')
     const [isDark, setIsDark] = useState(false);
     const [user, setUser] = useState('');
