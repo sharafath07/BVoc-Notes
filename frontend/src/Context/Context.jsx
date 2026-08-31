@@ -30,9 +30,11 @@ function ContextProvider(props) {
     }
 
     useEffect(() => {
-        getSemesters()
-        getSubjects()
-        getResources()
+        if (user) {
+            getSemesters()
+            getSubjects()
+            getResources()
+        }
     }, [user])
 
     async function getSubjects() {
