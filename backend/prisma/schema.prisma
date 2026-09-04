@@ -6,6 +6,79 @@ datasource db {
   provider = "postgresql"
 }
 
+model User {
+  id             String          @id @default(cuid())
+  name           String
+  email          String          @unique
+  passwordHash   String
+  role           UserRole
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  status         UserStatus      @default(ACTIVE)
+  resources      Resource[]
+  studentProfile StudentProfile?
+  teacherProfile TeacherProfile?
+
+  @@index([role])
+}
+
+model StudentProfile {
+  id             String  @id @default(cuid())
+  userId         String  @unique
+  registerNumber String  @unique
+  batch          String?
+  semester       Int?
+  user           User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model TeacherProfile {
+  id         String  @id @default(cuid())
+  userId     String  @unique
+  employeeId String? @unique
+  department String?
+  user       User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Semester {
+  id        String    @id @default(cuid())
+  number    Int       @unique
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  subjects  Subject[]
+}
+
+model Subject {
+  id         String     @id @default(cuid())
+  name       String
+  semesterId String
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  resources  Resource[]
+  semester   Semester   @relation(fields: [semesterId], references: [id], onDelete: Cascade)
+
+  @@unique([name, semesterId])
+  @@index([semesterId])
+}
+
+model Resource {
+  id           String       @id @default(cuid())
+  title        String
+  description  String?
+  subjectId    String
+  type         ResourceType
+  fileName     String
+  fileUrl      String
+  uploadedById String
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  subject      Subject      @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  uploadedBy   User         @relation(fields: [uploadedById], references: [id])
+
+  @@index([subjectId])
+  @@index([type])
+  @@index([uploadedById])
+}
+
 enum UserRole {
   ADMIN
   TEACHER
@@ -17,109 +90,12 @@ enum UserStatus {
   SUSPENDED
 }
 
-model User {
-  id           String     @id @default(cuid())
-  name         String
-  email        String     @unique
-  passwordHash String
-  role         UserRole
-  status       UserStatus @default(ACTIVE)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  studentProfile StudentProfile?
-  teacherProfile TeacherProfile?
-  resources      Resource[]
-
-  @@index([role])
-}
-
-model StudentProfile {
-  id             String  @id @default(cuid())
-  userId         String  @unique
-  registerNumber String  @unique
-  batch          String?
-  semester       Int?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
-model TeacherProfile {
-  id         String  @id @default(cuid())
-  userId     String  @unique
-  employeeId String? @unique
-  department String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
-model StudentRegistry {
-  id             String    @id @default(cuid())
-  registerNumber String    @unique
-  name           String
-  batch          String?
-  isActive       Boolean   @default(true)
-  claimedAt      DateTime?
-
-  createdAt DateTime @default(now())
-}
-
 enum ResourceType {
   NOTES
   PYQ
-  SYLLABUS
   QUESTION_BANK
   LAB
   ASSIGNMENT
   STUDY_MATERIAL
-}
-
-model Semester {
-  id       String    @id @default(cuid())
-  number   Int       @unique
-  subjects Subject[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model Subject {
-  id         String @id @default(cuid())
-  name       String
-  semesterId String
-
-  semester Semester @relation(fields: [semesterId], references: [id], onDelete: Cascade)
-
-  resources Resource[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@unique([name, semesterId])
-  @@index([semesterId])
-}
-
-model Resource {
-  id          String  @id @default(cuid())
-  title       String
-  description String?
-
-  subjectId String
-  subject   Subject @relation(fields: [subjectId], references: [id], onDelete: Cascade)
-
-  type ResourceType
-
-  fileName String
-  fileUrl  String
-
-  uploadedById String
-  uploadedBy   User   @relation(fields: [uploadedById], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([subjectId])
-  @@index([type])
-  @@index([uploadedById])
+  SYLLABUS
 }

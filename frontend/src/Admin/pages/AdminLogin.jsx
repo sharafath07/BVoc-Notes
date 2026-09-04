@@ -1,8 +1,8 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { Eye, EyeOff, ArrowRight } from 'lucide-react';
 import { Context } from '../../Context/Context';
+import api from '../../api/axios';
 
 function AdminLogin() {
 
@@ -15,14 +15,11 @@ function AdminLogin() {
     async function handleSubmit(e) {
         e.preventDefault()
         try {
-            const response = await axios.post(
+            const response = await api.post(
                 `${backendUrl}/api/auth/login`,
                 {
                     email,
                     password
-                },
-                {
-                    withCredentials: true,
                 }
             )
 
@@ -33,7 +30,6 @@ function AdminLogin() {
                     'token',
                     response.data.token
                 )
-
                 setUser(response.data.user);
 
                 navigate("/admin/dashboard")

@@ -2,10 +2,11 @@ import React, { useContext } from 'react'
 import { Context } from '../../Context/Context'
 import { Moon, Sun } from 'lucide-react'
 import { NavLink, Link, useNavigate } from 'react-router-dom'
+import api from '../../api/axios';
 
 
 function AdminNavbar() {
-    const { token, setToken, isDark, setIsDark, backendUrl } = useContext(Context);
+    const { token, setToken, isDark, setIsDark, backendUrl, setUser } = useContext(Context);
     const navigate = useNavigate();
 
     function handleSignInAndOut() {
@@ -18,11 +19,12 @@ function AdminNavbar() {
 
     async function handleSignOut() {
         try {
-            const response = await axios.post(`${backendUrl}/api/auth/logout`, {})
+            const response = await api.post(`${backendUrl}/api/auth/logout`, {})
 
             if (response.data.success) {
                 localStorage.removeItem("token");
                 setToken('');
+                setUser('')
             }
         } catch (error) {
             console.error("Logout failed:", error)

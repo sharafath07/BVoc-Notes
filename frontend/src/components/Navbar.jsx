@@ -10,6 +10,7 @@ function Navbar() {
         isDark,
         setIsDark,
         setToken,
+        setUser,
         backendUrl
     } = useContext(Context)
 
@@ -33,6 +34,7 @@ function Navbar() {
             if (response.data.success) {
                 localStorage.removeItem("token")
                 setToken('')
+                setUser("")
                 navigate('/')
             }
         } catch (error) {

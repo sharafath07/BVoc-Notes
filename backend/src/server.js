@@ -8,6 +8,7 @@ import authRoutes from "./routes/auth.routes.js";
 import resourceRoutes from './routes/resource.routes.js'
 import semesterRoutes from './routes/semester.routes.js'
 import subjectRoutes from './routes/subject.routes.js'
+import userRoutes from './routes/user.routes.js'
 
 const app = express();
 
@@ -35,6 +36,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/resources", resourceRoutes);
 app.use("/api/semesters", semesterRoutes);
 app.use("/api/subjects", subjectRoutes);
+app.use("/api/users", userRoutes)
 
 app.listen(env.PORT, () => {
     console.log(`API running on http://localhost:${env.PORT}`);

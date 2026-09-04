@@ -2,9 +2,10 @@ import React, { useContext, useEffect, useState } from "react";
 import { Link, Plus } from "lucide-react";
 import { Context } from '../../Context/Context'
 import api from "../../api/axios";
+import { Link as LinkTo } from 'react-router-dom'
 
 function AdminAddResource() {
-    const { backendUrl, semesters, subjects, user, setResources, resources } = useContext(Context);
+    const { backendUrl, semesters, subjects, setResources, resources } = useContext(Context);
 
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
@@ -31,6 +32,15 @@ function AdminAddResource() {
         setSubjectList(filteredSubjects)
     }, [semesterId, subjects])
 
+    function clearFrom() {
+        setTitle("")
+        setDescription("")
+        setFileUrl("")
+        setSemester("")
+        setSubject("")
+        setType("")
+    }
+
     async function handleSubmit(e) {
         e.preventDefault();
 
@@ -40,8 +50,7 @@ function AdminAddResource() {
             subjectId: subject,
             type,
             fileName: title,
-            fileUrl,
-            uploadedById: user.id
+            fileUrl
         };
         try {
             const response = await api.post(
@@ -50,9 +59,8 @@ function AdminAddResource() {
             )
 
             if (response.data.success) {
-                setResources(...resources, resourceData)
-                console.log(response.data.success);
-
+                setResources(...resources, resourceData);
+                clearFrom();
             }
         } catch (error) {
             console.error("Creation of Resource failed:", error)
@@ -207,12 +215,13 @@ function AdminAddResource() {
                     {/* Actions */}
                     <div className="flex justify-end gap-3 border-t border-gray-200 pt-6">
 
-                        <button
+                        <LinkTo
                             type="button"
+                            to={'/admin/dashboard/resources'}
                             className="rounded-lg border border-gray-300 px-5 py-2.5 font-medium hover:bg-gray-50"
                         >
                             Cancel
-                        </button>
+                        </LinkTo>
 
                         <button
                             type="submit"

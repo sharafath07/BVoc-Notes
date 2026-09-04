@@ -1,9 +1,9 @@
 import React, { useContext, useState } from 'react';
 import { Context } from '../../Context/Context.jsx'
 import './Login.css';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Eye, EyeOff } from 'lucide-react';
+import api from '../../api/axios.js';
 
 
 function Main() {
@@ -14,21 +14,27 @@ function Main() {
     const [showPassword, setShowPassword] = useState(false)
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    const [semester, setSemester] = useState('');
+    const [batch, setBatch] = useState('');
     const { backendUrl, setToken, setUser, user } = useContext(Context);
     const navigate = useNavigate()
+
+    const semesters = Array.from({ length: 8 }, (_, index) => index + 1);
+
+    const batches = Array.from(
+        { length: new Date().getFullYear() - 2025 + 1 },
+        (_, index) => 2025 + index
+    );
 
 
     async function handleSignIn(e) {
         e.preventDefault();
         try {
-            const response = await axios.post(
+            const response = await api.post(
                 `${backendUrl}/api/auth/login`,
                 {
                     email,
                     password
-                },
-                {
-                    withCredentials: true,
                 }
             )
 
@@ -42,13 +48,11 @@ function Main() {
 
                 setUser(response.data.user);
 
-                if (user.role === "ADMIN") {
-                    navigate("/admin/dashboard")
-
+                if (response.data.user.role === "ADMIN") {
+                    navigate("/admin/dashboard");
                 } else {
-                    navigate("/")
+                    navigate("/");
                 }
-
             }
         } catch (error) {
 
@@ -64,16 +68,15 @@ function Main() {
     async function handleSignUp(e) {
         e.preventDefault();
         try {
-            const response = await axios.post(
+            const response = await api.post(
                 `${backendUrl}/api/auth/register/student`,
                 {
                     name,
                     email,
                     password,
-                    registerNumber
-                },
-                {
-                    withCredentials: true,
+                    registerNumber,
+                    semester: Number(semester),
+                    batch: String(batch)
                 }
             )
 
@@ -109,6 +112,39 @@ function Main() {
                         <span className='login-span'>or use your email for registration</span>
                         <input className='login-input' type="text" placeholder="Register Number" value={registerNumber} onChange={(e) => setRegisterNumber(e.target.value)} required />
                         <input className='login-input' type="text" placeholder="Full Name" value={name} onChange={(e) => setName(e.target.value)} required />
+                        <select
+                            className="login-input"
+                            value={semester}
+                            onChange={(e) => setSemester(e.target.value)}
+                            required
+                        >
+                            <option value="" disabled>
+                                Select Semester
+                            </option>
+
+                            {semesters.map((semester) => (
+                                <option key={semester} value={semester}>
+                                    Semester {semester}
+                                </option>
+                            ))}
+                        </select>
+
+                        <select
+                            className="login-input"
+                            value={batch}
+                            onChange={(e) => setBatch(e.target.value)}
+                            required
+                        >
+                            <option value="" disabled>
+                                Select Batch
+                            </option>
+
+                            {batches.map((batch) => (
+                                <option key={batch} value={batch}>
+                                    {batch}
+                                </option>
+                            ))}
+                        </select>
                         <input className='login-input' type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
                         <div className='flex items-center bg-[#eee] w-[100%] my-[5px]'>
                             <input type={`${showPassword ? "text" : "password"}`} className='login-input password' placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />

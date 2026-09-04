@@ -26,14 +26,16 @@ export async function createResource(data, userId) {
 
 export async function getResources({ subjectId, type }) {
     return prisma.resource.findMany({
-        where: {
-            ...(subjectId && { subjectId }),
-            ...(type && { type }),
-        },
         include: {
             subject: {
                 include: {
                     semester: true,
+                },
+            },
+            uploadedBy: {
+                select: {
+                    id: true,
+                    name: true,
                 },
             },
         },
@@ -69,12 +71,47 @@ export async function updateResource(id, data) {
         throw new Error("Resource not found");
     }
 
-    return prisma.resource.update({
+    // Check subject if subjectId is being changed
+    if (data.subjectId) {
+        const subject = await prisma.subject.findUnique({
+            where: {
+                id: data.subjectId,
+            },
+        });
+
+        if (!subject) {
+            throw new Error("Subject not found");
+        }
+    }
+
+    const updatedResource = await prisma.resource.update({
         where: {
             id,
         },
-        data,
+        data: {
+            title: data.title,
+            description: data.description,
+            subjectId: data.subjectId,
+            type: data.type,
+            fileName: data.fileName,
+            fileUrl: data.fileUrl,
+        },
+        include: {
+            subject: {
+                include: {
+                    semester: true,
+                },
+            },
+            uploadedBy: {
+                select: {
+                    id: true,
+                    name: true,
+                },
+            },
+        },
     });
+
+    return updatedResource;
 }
 
 export async function deleteResource(id) {

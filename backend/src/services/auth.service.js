@@ -11,6 +11,9 @@ export async function loginUser(email, password) {
         where: {
             email: normalizedEmail,
         },
+        include: {
+            studentProfile: true,
+        },
     });
 
     if (!user) {
