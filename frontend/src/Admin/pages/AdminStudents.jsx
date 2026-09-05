@@ -39,13 +39,13 @@ function AdminStudents() {
 
             const matchesSemester =
                 !semester ||
-                student.studentProfile?.semester === semester;
+                student.studentProfile?.semester === Number(semester);
 
-            const matchesBatch = !batch || student.studentProfile?.semester === batch;
+            const matchesBatch = !batch || student.studentProfile?.batch === batch;
 
             return matchesName && matchesSemester && matchesBatch;
         });
-    }, [students, search, semester]);
+    }, [students, search, semester, batch]);
 
     async function handleDelete(student) {
         const confirmed = window.confirm(
@@ -198,7 +198,7 @@ function AdminStudents() {
                             {semesters.map((item) => (
                                 <option
                                     key={item.id}
-                                    value={item.id}
+                                    value={item.number}
                                 >
                                     Semester {item.number}
                                 </option>
