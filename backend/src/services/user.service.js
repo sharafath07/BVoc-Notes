@@ -12,7 +12,8 @@ export async function getAllUsers() {
             studentProfile: {
                 select: {
                     registerNumber: true,
-                    semester: true
+                    semester: true,
+                    batch: true,
                 },
             },
         },

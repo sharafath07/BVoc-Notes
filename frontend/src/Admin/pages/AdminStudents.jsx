@@ -24,6 +24,12 @@ function AdminStudents() {
 
     const [search, setSearch] = useState("");
     const [semester, setSemester] = useState("");
+    const [batch, setBatch] = useState("");
+
+    const batches = Array.from(
+        { length: new Date().getFullYear() - 2025 + 1 },
+        (_, index) => 2025 + index
+    );
 
     const filteredStudents = useMemo(() => {
         return students.filter((student) => {
@@ -35,7 +41,9 @@ function AdminStudents() {
                 !semester ||
                 student.studentProfile?.semester === semester;
 
-            return matchesName && matchesSemester;
+            const matchesBatch = !batch || student.studentProfile?.semester === batch;
+
+            return matchesName && matchesSemester && matchesBatch;
         });
     }, [students, search, semester]);
 
@@ -147,6 +155,31 @@ function AdminStudents() {
                             />
                         </div>
 
+                        {/* Batch */}
+                        <select
+                            value={batch}
+                            onChange={(e) =>
+                                setBatch(e.target.value)
+                            }
+                            className={`w-full rounded-xl border px-3 py-3 text-sm outline-none transition sm:px-4 sm:text-base ${isDark
+                                ? "border-gray-700 bg-gray-800 text-white focus:border-white"
+                                : "border-gray-300 bg-white text-gray-900 focus:border-black"
+                                }`}
+                        >
+                            <option value="">
+                                All Batches
+                            </option>
+
+                            {batchs.map((item) => (
+                                <option
+                                    key={item}
+                                    value={item}
+                                >
+                                    {item}
+                                </option>
+                            ))}
+                        </select>
+
                         {/* Semester */}
                         <select
                             value={semester}
@@ -219,6 +252,10 @@ function AdminStudents() {
 
                                     <th className="whitespace-nowrap px-4 py-3 text-xs font-semibold sm:px-6 sm:py-4 sm:text-sm">
                                         Name
+                                    </th>
+
+                                    <th className="whitespace-nowrap px-4 py-3 text-xs font-semibold sm:px-6 sm:py-4 sm:text-sm">
+                                        Batch
                                     </th>
 
                                     <th className="whitespace-nowrap px-4 py-3 text-xs font-semibold sm:px-6 sm:py-4 sm:text-sm">
@@ -301,6 +338,20 @@ function AdminStudents() {
                                                     <span className="block max-w-[160px] truncate sm:max-w-none">
                                                         {student.name}
                                                     </span>
+                                                </td>
+
+                                                {/* Batch */}
+                                                <td
+                                                    className={`whitespace-nowrap px-4 py-4 text-sm sm:px-6 ${isDark
+                                                        ? "text-gray-400"
+                                                        : "text-gray-600"
+                                                        }`}
+                                                >
+                                                    {student
+                                                        .studentProfile
+                                                        ?.batch
+                                                        ? `${student.studentProfile.batch}`
+                                                        : "N/A"}
                                                 </td>
 
                                                 {/* Semester */}
