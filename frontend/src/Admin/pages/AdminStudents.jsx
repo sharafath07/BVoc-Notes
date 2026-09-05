@@ -170,7 +170,7 @@ function AdminStudents() {
                                 All Batches
                             </option>
 
-                            {batchs.map((item) => (
+                            {batches.map((item) => (
                                 <option
                                     key={item}
                                     value={item}
