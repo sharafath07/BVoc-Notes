@@ -15,30 +15,40 @@ function About() {
     return (
         <section
             id="about"
-            className={`px-6 py-24 font-roboto transition-colors duration-300 ${isDark
+            className={`w-full px-4 py-20 font-roboto transition-colors duration-300 sm:px-6 sm:py-24 md:px-8 lg:px-10 ${isDark
                 ? "bg-gray-950 text-white"
                 : "bg-white text-gray-900"
                 }`}
         >
-            <div className={`mx-auto max-w-7xl`}>
+            <div className="mx-auto w-full max-w-7xl">
 
-                <div className={`mb-16 max-w-3xl`}>
+                {/* =========================
+                    HEADER
+                ========================= */}
+
+                <div className="mb-12 max-w-3xl sm:mb-16">
                     <p
-                        className={`mb-3 text-sm font-semibold uppercase tracking-[0.2em] ${isDark ? "text-gray-400" : "text-gray-500"
+                        className={`mb-2 text-xs font-semibold uppercase tracking-[0.15em] sm:mb-3 sm:text-sm sm:tracking-[0.2em] ${isDark
+                            ? "text-gray-400"
+                            : "text-gray-500"
                             }`}
                     >
                         About Us
                     </p>
 
                     <h2
-                        className={`text-4xl font-bold tracking-tight md:text-5xl ${isDark ? "text-white" : "text-gray-900"
+                        className={`text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl ${isDark
+                            ? "text-white"
+                            : "text-gray-900"
                             }`}
                     >
                         B.Voc Software Development
                     </h2>
 
                     <p
-                        className={`mt-5 text-lg leading-8 ${isDark ? "text-gray-300" : "text-gray-600"
+                        className={`mt-4 text-base leading-7 sm:mt-5 sm:text-lg sm:leading-8 ${isDark
+                            ? "text-gray-300"
+                            : "text-gray-600"
                             }`}
                     >
                         A career-focused undergraduate programme designed to
@@ -48,35 +58,48 @@ function About() {
                     </p>
                 </div>
 
-                <div className={`grid items-center gap-12 lg:grid-cols-2`}>
 
-                    <div className={`overflow-hidden rounded-3xl`}>
+                {/* =========================
+                    FAROOK COLLEGE
+                ========================= */}
+
+                <div className="grid items-center gap-8 sm:gap-10 md:gap-12 lg:grid-cols-2">
+
+                    {/* Image */}
+                    <div className="w-full overflow-hidden rounded-2xl sm:rounded-3xl">
                         <img
                             src={image}
                             alt="Farook College"
-                            className={`h-full min-h-[350px] w-full object-cover transition duration-500 hover:scale-105`}
+                            className="h-[280px] w-full object-cover transition duration-500 hover:scale-105 sm:h-[350px] md:h-[420px] lg:h-[500px]"
                         />
                     </div>
 
-                    <div>
+
+                    {/* Text */}
+                    <div className="w-full">
+
                         <div
-                            className={`mb-5 flex h-12 w-12 items-center justify-center rounded-xl ${isDark
+                            className={`mb-4 flex h-11 w-11 items-center justify-center rounded-xl sm:mb-5 sm:h-12 sm:w-12 ${isDark
                                 ? "bg-white text-black"
                                 : "bg-gray-900 text-white"
                                 }`}
                         >
-                            <Building2 size={24} />
+                            <Building2 size={22} />
                         </div>
 
                         <h3
-                            className={`text-3xl font-bold ${isDark ? "text-white" : "text-gray-900"
+                            className={`text-2xl font-bold sm:text-3xl ${isDark
+                                ? "text-white"
+                                : "text-gray-900"
                                 }`}
                         >
                             About Farook College
                         </h3>
 
                         <p
-                            className={`mt-5 leading-7 ${isDark ? "text-gray-300" : "text-gray-600"
+                            className={`mt-4 text-sm leading-7 sm:mt-5 sm:text-base ${isDark
+                                ? "text-gray-300"
+                                : "text-gray-600"
                                 }`}
                         >
                             Farook College, founded with the vision of
@@ -86,7 +109,9 @@ function About() {
                         </p>
 
                         <p
-                            className={`mt-4 leading-7 ${isDark ? "text-gray-300" : "text-gray-600"
+                            className={`mt-4 text-sm leading-7 sm:text-base ${isDark
+                                ? "text-gray-300"
+                                : "text-gray-600"
                                 }`}
                         >
                             The college is committed to providing quality
@@ -97,7 +122,9 @@ function About() {
                         </p>
 
                         <p
-                            className={`mt-4 leading-7 ${isDark ? "text-gray-300" : "text-gray-600"
+                            className={`mt-4 text-sm leading-7 sm:text-base ${isDark
+                                ? "text-gray-300"
+                                : "text-gray-600"
                                 }`}
                         >
                             Farook College became autonomous in 2015 and
@@ -108,46 +135,54 @@ function About() {
                     </div>
                 </div>
 
+
+                {/* =========================
+                    B.VOC SECTION
+                ========================= */}
+
                 <div
-                    className={`mt-24 rounded-3xl p-8 transition-colors duration-300 md:p-12 ${isDark
+                    className={`mt-16 rounded-2xl p-5 transition-colors duration-300 sm:mt-20 sm:rounded-3xl sm:p-8 md:mt-24 md:p-12 ${isDark
                         ? "bg-gray-900"
                         : "bg-gray-100"
                         }`}
                 >
-                    <div className={`grid gap-10 lg:grid-cols-2`}>
+                    <div className="grid gap-10 lg:grid-cols-2">
 
+                        {/* Description */}
                         <div>
                             <div
-                                className={`mb-5 flex h-12 w-12 items-center justify-center rounded-xl ${isDark
+                                className={`mb-4 flex h-11 w-11 items-center justify-center rounded-xl sm:mb-5 sm:h-12 sm:w-12 ${isDark
                                     ? "bg-white text-black"
                                     : "bg-black text-white"
                                     }`}
                             >
-                                <GraduationCap size={24} />
+                                <GraduationCap size={22} />
                             </div>
 
                             <h3
-                                className={`text-3xl font-bold ${isDark ? "text-white" : "text-gray-900"
+                                className={`text-2xl font-bold sm:text-3xl ${isDark
+                                    ? "text-white"
+                                    : "text-gray-900"
                                     }`}
                             >
                                 B.Voc in Software Development
                             </h3>
 
                             <p
-                                className={`mt-5 leading-7 ${isDark
+                                className={`mt-4 text-sm leading-7 sm:mt-5 sm:text-base ${isDark
                                     ? "text-gray-300"
                                     : "text-gray-600"
                                     }`}
                             >
-                                The Department of Vocational Studies (Software
-                                Development) offers the Bachelor of Vocation
-                                in Software Development, a four-year
+                                The Department of Vocational Studies
+                                (Software Development) offers the Bachelor of
+                                Vocation in Software Development, a four-year
                                 undergraduate programme focused on both
                                 theoretical knowledge and practical training.
                             </p>
 
                             <p
-                                className={`mt-4 leading-7 ${isDark
+                                className={`mt-4 text-sm leading-7 sm:text-base ${isDark
                                     ? "text-gray-300"
                                     : "text-gray-600"
                                     }`}
@@ -161,17 +196,20 @@ function About() {
                             </p>
                         </div>
 
-                        <div className={`grid gap-4 sm:grid-cols-2`}>
 
+                        {/* Feature Cards */}
+                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+
+                            {/* Software Development */}
                             <div
-                                className={`rounded-2xl p-6 shadow-sm transition-colors duration-300 ${isDark
+                                className={`rounded-2xl p-5 shadow-sm transition-colors duration-300 sm:p-6 ${isDark
                                     ? "bg-gray-800"
                                     : "bg-white"
                                     }`}
                             >
                                 <Code2
-                                    size={25}
-                                    className={`mb-4 ${isDark
+                                    size={24}
+                                    className={`mb-3 sm:mb-4 ${isDark
                                         ? "text-white"
                                         : "text-gray-900"
                                         }`}
@@ -198,15 +236,17 @@ function About() {
                                 </p>
                             </div>
 
+
+                            {/* Practical Learning */}
                             <div
-                                className={`rounded-2xl p-6 shadow-sm transition-colors duration-300 ${isDark
+                                className={`rounded-2xl p-5 shadow-sm transition-colors duration-300 sm:p-6 ${isDark
                                     ? "bg-gray-800"
                                     : "bg-white"
                                     }`}
                             >
                                 <Rocket
-                                    size={25}
-                                    className={`mb-4 ${isDark
+                                    size={24}
+                                    className={`mb-3 sm:mb-4 ${isDark
                                         ? "text-white"
                                         : "text-gray-900"
                                         }`}
@@ -232,15 +272,17 @@ function About() {
                                 </p>
                             </div>
 
+
+                            {/* Career Focused */}
                             <div
-                                className={`rounded-2xl p-6 shadow-sm transition-colors duration-300 ${isDark
+                                className={`rounded-2xl p-5 shadow-sm transition-colors duration-300 sm:p-6 ${isDark
                                     ? "bg-gray-800"
                                     : "bg-white"
                                     }`}
                             >
                                 <Target
-                                    size={25}
-                                    className={`mb-4 ${isDark
+                                    size={24}
+                                    className={`mb-3 sm:mb-4 ${isDark
                                         ? "text-white"
                                         : "text-gray-900"
                                         }`}
@@ -267,15 +309,17 @@ function About() {
                                 </p>
                             </div>
 
+
+                            {/* Skill Development */}
                             <div
-                                className={`rounded-2xl p-6 shadow-sm transition-colors duration-300 ${isDark
+                                className={`rounded-2xl p-5 shadow-sm transition-colors duration-300 sm:p-6 ${isDark
                                     ? "bg-gray-800"
                                     : "bg-white"
                                     }`}
                             >
                                 <GraduationCap
-                                    size={25}
-                                    className={`mb-4 ${isDark
+                                    size={24}
+                                    className={`mb-3 sm:mb-4 ${isDark
                                         ? "text-white"
                                         : "text-gray-900"
                                         }`}
@@ -306,16 +350,22 @@ function About() {
                     </div>
                 </div>
 
-                <div className={`mt-24 grid gap-6 md:grid-cols-2`}>
 
+                {/* =========================
+                    VISION & MISSION
+                ========================= */}
+
+                <div className="mt-16 grid gap-5 sm:mt-20 sm:gap-6 md:grid-cols-2 lg:mt-24">
+
+                    {/* Vision */}
                     <div
-                        className={`rounded-3xl border p-8 transition-colors duration-300 md:p-10 ${isDark
+                        className={`rounded-2xl border p-6 transition-colors duration-300 sm:rounded-3xl sm:p-8 md:p-10 ${isDark
                             ? "border-gray-800 bg-gray-900"
                             : "border-gray-200 bg-white"
                             }`}
                     >
                         <span
-                            className={`text-sm font-semibold uppercase tracking-widest ${isDark
+                            className={`text-xs font-semibold uppercase tracking-widest sm:text-sm ${isDark
                                 ? "text-gray-500"
                                 : "text-gray-400"
                                 }`}
@@ -324,7 +374,7 @@ function About() {
                         </span>
 
                         <h3
-                            className={`mt-4 text-2xl font-bold ${isDark
+                            className={`mt-3 text-xl font-bold sm:mt-4 sm:text-2xl ${isDark
                                 ? "text-white"
                                 : "text-gray-900"
                                 }`}
@@ -333,7 +383,7 @@ function About() {
                         </h3>
 
                         <p
-                            className={`mt-4 leading-7 ${isDark
+                            className={`mt-3 text-sm leading-7 sm:mt-4 sm:text-base ${isDark
                                 ? "text-gray-300"
                                 : "text-gray-600"
                                 }`}
@@ -344,14 +394,16 @@ function About() {
                         </p>
                     </div>
 
+
+                    {/* Mission */}
                     <div
-                        className={`rounded-3xl p-8 transition-colors duration-300 md:p-10 ${isDark
+                        className={`rounded-2xl p-6 transition-colors duration-300 sm:rounded-3xl sm:p-8 md:p-10 ${isDark
                             ? "bg-white text-gray-900"
                             : "bg-black text-white"
                             }`}
                     >
                         <span
-                            className={`text-sm font-semibold uppercase tracking-widest ${isDark
+                            className={`text-xs font-semibold uppercase tracking-widest sm:text-sm ${isDark
                                 ? "text-gray-500"
                                 : "text-gray-400"
                                 }`}
@@ -359,14 +411,12 @@ function About() {
                             Our Mission
                         </span>
 
-                        <h3
-                            className={`mt-4 text-2xl font-bold`}
-                        >
+                        <h3 className="mt-3 text-xl font-bold sm:mt-4 sm:text-2xl">
                             Education with purpose
                         </h3>
 
                         <p
-                            className={`mt-4 leading-7 ${isDark
+                            className={`mt-3 text-sm leading-7 sm:mt-4 sm:text-base ${isDark
                                 ? "text-gray-600"
                                 : "text-gray-300"
                                 }`}

@@ -1,4 +1,11 @@
-import React, { useContext, useMemo, useState } from "react";
+// Resource.jsx
+
+import React, {
+    useContext,
+    useMemo,
+    useState,
+} from "react";
+
 import { Context } from "../Context/Context";
 
 import SemesterBox from "../components/Resources/SemesterBox";
@@ -35,7 +42,11 @@ function Resource() {
                 resource.subjectId === selectedSubject.id &&
                 resource.type === selectedType
         );
-    }, [selectedSubject, selectedType, resources]);
+    }, [
+        selectedSubject,
+        selectedType,
+        resources,
+    ]);
 
     const handleSemesterSelect = (semester) => {
         setSelectedSemester(semester);
@@ -69,17 +80,17 @@ function Resource() {
 
     return (
         <section
-            className={`min-h-screen px-6 py-24 font-roboto transition-colors duration-300 ${isDark
+            className={`min-h-screen w-full px-4 py-20 font-roboto transition-colors duration-300 sm:px-6 sm:py-24 md:px-8 lg:px-10 ${isDark
                 ? "bg-gray-950 text-white"
                 : "bg-gray-50 text-gray-900"
                 }`}
         >
-            <div className="mx-auto max-w-7xl">
+            <div className="mx-auto w-full max-w-7xl">
 
                 {/* Header */}
-                <div className="mb-12">
+                <div className="mb-8 sm:mb-12">
                     <p
-                        className={`mb-3 text-sm font-semibold uppercase tracking-[0.2em] ${isDark
+                        className={`mb-2 text-xs font-semibold uppercase tracking-[0.15em] sm:mb-3 sm:text-sm sm:tracking-[0.2em] ${isDark
                             ? "text-gray-500"
                             : "text-gray-400"
                             }`}
@@ -87,25 +98,33 @@ function Resource() {
                         Learning Materials
                     </p>
 
-                    <h1 className="text-4xl font-bold md:text-5xl">
+                    <h1 className="text-3xl font-bold sm:text-4xl md:text-5xl">
                         Resources
                     </h1>
 
                     <p
-                        className={`mt-4 max-w-2xl leading-7 ${isDark
+                        className={`mt-3 max-w-2xl text-sm leading-6 sm:mt-4 sm:text-base sm:leading-7 ${isDark
                             ? "text-gray-400"
                             : "text-gray-600"
                             }`}
                     >
-                        Select your semester, subject, and resource type
-                        to find the study materials you need.
+                        Select your semester, subject, and resource
+                        type to find the study materials you need.
                     </p>
                 </div>
 
                 {/* Breadcrumb */}
-                <div className="mb-8 flex flex-wrap gap-2 text-sm">
-
-                    <button onClick={resetAll}>
+                <div
+                    className={`mb-7 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs sm:mb-8 sm:text-sm ${isDark
+                        ? "text-gray-400"
+                        : "text-gray-500"
+                        }`}
+                >
+                    <button
+                        type="button"
+                        onClick={resetAll}
+                        className="transition hover:underline"
+                    >
                         Semesters
                     </button>
 
@@ -113,7 +132,11 @@ function Resource() {
                         <>
                             <span>/</span>
 
-                            <button onClick={resetSubject}>
+                            <button
+                                type="button"
+                                onClick={resetSubject}
+                                className="max-w-[150px] truncate transition hover:underline sm:max-w-none"
+                            >
                                 Semester {selectedSemester.number}
                             </button>
                         </>
@@ -123,7 +146,11 @@ function Resource() {
                         <>
                             <span>/</span>
 
-                            <button onClick={resetType}>
+                            <button
+                                type="button"
+                                onClick={resetType}
+                                className="max-w-[150px] truncate transition hover:underline sm:max-w-none"
+                            >
                                 {selectedSubject.name}
                             </button>
                         </>
@@ -133,10 +160,11 @@ function Resource() {
                         <>
                             <span>/</span>
 
-                            <span>{selectedType}</span>
+                            <span className="max-w-[150px] truncate sm:max-w-none">
+                                {selectedType}
+                            </span>
                         </>
                     )}
-
                 </div>
 
                 {/* STEP 1 */}
@@ -149,39 +177,41 @@ function Resource() {
                 )}
 
                 {/* STEP 2 */}
-                {selectedSemester && !selectedSubject && (
-                    <SubjectBox
-                        subjects={semesterSubjects}
-                        semester={selectedSemester}
-                        isDark={isDark}
-                        onSelect={handleSubjectSelect}
-                        onBack={resetAll}
-                    />
-                )}
+                {selectedSemester &&
+                    !selectedSubject && (
+                        <SubjectBox
+                            subjects={semesterSubjects}
+                            semester={selectedSemester}
+                            isDark={isDark}
+                            onSelect={handleSubjectSelect}
+                            onBack={resetAll}
+                        />
+                    )}
 
                 {/* STEP 3 */}
-                {selectedSubject && !selectedType && (
-                    <ResourceTypeBox
-                        isDark={isDark}
-                        subject={selectedSubject}
-                        semester={selectedSemester}
-                        onSelect={handleTypeSelect}
-                        onBack={resetSubject}
-                    />
-                )}
+                {selectedSubject &&
+                    !selectedType && (
+                        <ResourceTypeBox
+                            isDark={isDark}
+                            subject={selectedSubject}
+                            semester={selectedSemester}
+                            onSelect={handleTypeSelect}
+                            onBack={resetSubject}
+                        />
+                    )}
 
                 {/* STEP 4 */}
-                {selectedSubject && selectedType && (
-                    <ResourceCard
-                        resources={subjectResources}
-                        type={selectedType}
-                        subject={selectedSubject}
-                        semester={selectedSemester}
-                        isDark={isDark}
-                        onBack={resetType}
-                    />
-                )}
-
+                {selectedSubject &&
+                    selectedType && (
+                        <ResourceCard
+                            resources={subjectResources}
+                            type={selectedType}
+                            subject={selectedSubject}
+                            semester={selectedSemester}
+                            isDark={isDark}
+                            onBack={resetType}
+                        />
+                    )}
             </div>
         </section>
     );

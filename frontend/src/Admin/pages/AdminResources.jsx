@@ -1,5 +1,9 @@
-import React, { useContext, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import React, {
+    useContext,
+    useMemo,
+    useState,
+} from "react";
+
 import {
     Edit,
     Trash2,
@@ -8,6 +12,8 @@ import {
     Search,
     X,
 } from "lucide-react";
+
+import { Link } from "react-router-dom";
 import { Context } from "../../Context/Context";
 import api from "../../api/axios";
 
@@ -24,14 +30,17 @@ function AdminResources() {
     const [loading, setLoading] = useState(false);
 
     const [search, setSearch] = useState("");
-    const [selectedSemester, setSelectedSemester] = useState("");
-    const [selectedSubject, setSelectedSubject] = useState("");
-    const [selectedType, setSelectedType] = useState("");
+    const [selectedSemester, setSelectedSemester] =
+        useState("");
+    const [selectedSubject, setSelectedSubject] =
+        useState("");
+    const [selectedType, setSelectedType] =
+        useState("");
 
     const resourceTypes = [
         "NOTES",
         "SYLLABUS",
-        "PYQ"
+        "PYQ",
     ];
 
     /*
@@ -57,14 +66,18 @@ function AdminResources() {
     const filteredResources = useMemo(() => {
         return (
             resources?.filter((resource) => {
+                const searchValue =
+                    search.toLowerCase().trim();
+
                 const matchesSearch =
                     resource.title
                         ?.toLowerCase()
-                        .includes(search.toLowerCase());
+                        .includes(searchValue);
 
                 const matchesSemester =
                     !selectedSemester ||
-                    resource.subject?.semester?.id === selectedSemester;
+                    resource.subject?.semester?.id ===
+                    selectedSemester;
 
                 const matchesSubject =
                     !selectedSubject ||
@@ -115,6 +128,9 @@ function AdminResources() {
         selectedSubject ||
         selectedType;
 
+    /*
+     * Delete resource
+     */
     async function handleDelete(id) {
         const confirmed = window.confirm(
             "Are you sure you want to delete this resource?"
@@ -129,8 +145,8 @@ function AdminResources() {
                 `${backendUrl}/api/resources/${id}`
             );
 
-            setResources(
-                resources.filter(
+            setResources((prevResources) =>
+                prevResources.filter(
                     (resource) => resource.id !== id
                 )
             );
@@ -151,18 +167,18 @@ function AdminResources() {
 
     return (
         <section
-            className={`min-h-screen px-6 py-24 transition-colors duration-300 ${isDark
+            className={`min-h-screen w-full px-4 py-20 font-roboto transition-colors duration-300 sm:px-6 sm:py-24 md:px-8 lg:px-10 lg:py-28 ${isDark
                 ? "bg-gray-950 text-white"
                 : "bg-gray-50 text-gray-900"
                 }`}
         >
-            <div className="mx-auto max-w-7xl">
+            <div className="mx-auto w-full max-w-7xl">
 
                 {/* Header */}
-                <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div className="mb-7 flex flex-col gap-4 sm:mb-8 sm:flex-row sm:items-center sm:justify-between">
                     <div>
                         <p
-                            className={`mb-2 text-sm font-semibold uppercase tracking-wider ${isDark
+                            className={`mb-2 text-xs font-semibold uppercase tracking-[0.15em] sm:text-sm sm:tracking-wider ${isDark
                                 ? "text-gray-500"
                                 : "text-gray-400"
                                 }`}
@@ -170,12 +186,12 @@ function AdminResources() {
                             Administration
                         </p>
 
-                        <h1 className="text-3xl font-bold">
+                        <h1 className="text-2xl font-bold sm:text-3xl md:text-4xl">
                             Resources
                         </h1>
 
                         <p
-                            className={`mt-2 ${isDark
+                            className={`mt-2 text-sm sm:text-base ${isDark
                                 ? "text-gray-400"
                                 : "text-gray-500"
                                 }`}
@@ -186,7 +202,7 @@ function AdminResources() {
 
                     <Link
                         to="/admin/dashboard/resources/add"
-                        className={`flex w-fit items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium transition ${isDark
+                        className={`flex w-full items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium transition sm:w-fit ${isDark
                             ? "bg-white text-black hover:bg-gray-200"
                             : "bg-black text-white hover:bg-gray-800"
                             }`}
@@ -198,19 +214,19 @@ function AdminResources() {
 
                 {/* Filters */}
                 <div
-                    className={`mb-6 rounded-2xl border p-5 ${isDark
+                    className={`mb-5 rounded-2xl border p-4 sm:mb-6 sm:p-5 ${isDark
                         ? "border-gray-800 bg-gray-900"
                         : "border-gray-200 bg-white shadow-md"
                         }`}
                 >
-                    <div className="mb-4 flex items-center justify-between">
+                    <div className="mb-4 flex items-start justify-between gap-4">
                         <div>
-                            <h2 className="font-semibold">
+                            <h2 className="text-sm font-semibold sm:text-base">
                                 Filter Resources
                             </h2>
 
                             <p
-                                className={`mt-1 text-sm ${isDark
+                                className={`mt-1 text-xs leading-5 sm:text-sm ${isDark
                                     ? "text-gray-500"
                                     : "text-gray-500"
                                     }`}
@@ -224,18 +240,18 @@ function AdminResources() {
                             <button
                                 type="button"
                                 onClick={clearFilters}
-                                className={`flex items-center gap-1.5 text-sm font-medium hover:underline ${isDark
+                                className={`flex shrink-0 items-center gap-1.5 text-xs font-medium hover:underline sm:text-sm ${isDark
                                     ? "text-gray-300"
                                     : "text-gray-600"
                                     }`}
                             >
-                                <X size={16} />
+                                <X size={15} />
                                 Clear
                             </button>
                         )}
                     </div>
 
-                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                    <div className="grid grid-cols-1 gap-3 sm:gap-4 md:grid-cols-2 lg:grid-cols-4">
 
                         {/* Search */}
                         <div className="relative">
@@ -265,7 +281,7 @@ function AdminResources() {
                         <select
                             value={selectedSemester}
                             onChange={handleSemesterChange}
-                            className={`rounded-lg border px-3 py-2.5 text-sm outline-none transition ${isDark
+                            className={`w-full rounded-lg border px-3 py-2.5 text-sm outline-none transition ${isDark
                                 ? "border-gray-700 bg-gray-800 text-white focus:border-gray-500"
                                 : "border-gray-200 bg-gray-50 text-gray-900 focus:border-gray-400"
                                 }`}
@@ -274,14 +290,17 @@ function AdminResources() {
                                 All Semesters
                             </option>
 
-                            {semesters?.map((semester) => (
-                                <option
-                                    key={semester.id}
-                                    value={semester.id}
-                                >
-                                    Semester {semester.number}
-                                </option>
-                            ))}
+                            {semesters?.map(
+                                (semester) => (
+                                    <option
+                                        key={semester.id}
+                                        value={semester.id}
+                                    >
+                                        Semester{" "}
+                                        {semester.number}
+                                    </option>
+                                )
+                            )}
                         </select>
 
                         {/* Subject */}
@@ -293,7 +312,7 @@ function AdminResources() {
                                         e.target.value
                                     )
                                 }
-                                className={`rounded-lg border px-3 py-2.5 text-sm outline-none transition ${isDark
+                                className={`w-full rounded-lg border px-3 py-2.5 text-sm outline-none transition ${isDark
                                     ? "border-gray-700 bg-gray-800 text-white focus:border-gray-500"
                                     : "border-gray-200 bg-gray-50 text-gray-900 focus:border-gray-400"
                                     }`}
@@ -315,7 +334,7 @@ function AdminResources() {
                             </select>
                         ) : (
                             <div
-                                className={`flex items-center rounded-lg border px-3 py-2.5 text-sm ${isDark
+                                className={`flex min-h-[42px] items-center rounded-lg border px-3 py-2.5 text-sm ${isDark
                                     ? "border-gray-800 bg-gray-800 text-gray-600"
                                     : "border-gray-200 bg-gray-100 text-gray-400"
                                     }`}
@@ -328,9 +347,11 @@ function AdminResources() {
                         <select
                             value={selectedType}
                             onChange={(e) =>
-                                setSelectedType(e.target.value)
+                                setSelectedType(
+                                    e.target.value
+                                )
                             }
-                            className={`rounded-lg border px-3 py-2.5 text-sm outline-none transition ${isDark
+                            className={`w-full rounded-lg border px-3 py-2.5 text-sm outline-none transition ${isDark
                                 ? "border-gray-700 bg-gray-800 text-white focus:border-gray-500"
                                 : "border-gray-200 bg-gray-50 text-gray-900 focus:border-gray-400"
                                 }`}
@@ -339,23 +360,25 @@ function AdminResources() {
                                 All Types
                             </option>
 
-                            {resourceTypes.map((type) => (
-                                <option
-                                    key={type}
-                                    value={type}
-                                >
-                                    {type.replaceAll(
-                                        "_",
-                                        " "
-                                    )}
-                                </option>
-                            ))}
+                            {resourceTypes.map(
+                                (type) => (
+                                    <option
+                                        key={type}
+                                        value={type}
+                                    >
+                                        {type.replaceAll(
+                                            "_",
+                                            " "
+                                        )}
+                                    </option>
+                                )
+                            )}
                         </select>
                     </div>
 
                     {/* Result count */}
                     <div
-                        className={`mt-4 text-sm ${isDark
+                        className={`mt-4 text-xs sm:text-sm ${isDark
                             ? "text-gray-500"
                             : "text-gray-500"
                             }`}
@@ -380,8 +403,7 @@ function AdminResources() {
                         }`}
                 >
                     <div className="overflow-x-auto">
-                        <table className="w-full min-w-[1000px] text-left">
-
+                        <table className="w-full min-w-[950px] text-left">
                             <thead
                                 className={
                                     isDark
@@ -390,38 +412,39 @@ function AdminResources() {
                                 }
                             >
                                 <tr>
-                                    <th className="px-6 py-4 text-sm font-semibold">
+                                    <th className="px-4 py-3 text-xs font-semibold sm:px-6 sm:py-4 sm:text-sm">
                                         Resource
                                     </th>
 
-                                    <th className="px-6 py-4 text-sm font-semibold">
+                                    <th className="px-4 py-3 text-xs font-semibold sm:px-6 sm:py-4 sm:text-sm">
                                         Subject
                                     </th>
 
-                                    <th className="px-6 py-4 text-sm font-semibold">
+                                    <th className="px-4 py-3 text-xs font-semibold sm:px-6 sm:py-4 sm:text-sm">
                                         Semester
                                     </th>
 
-                                    <th className="px-6 py-4 text-sm font-semibold">
+                                    <th className="px-4 py-3 text-xs font-semibold sm:px-6 sm:py-4 sm:text-sm">
                                         Added By
                                     </th>
 
-                                    <th className="px-6 py-4 text-sm font-semibold">
+                                    <th className="px-4 py-3 text-xs font-semibold sm:px-6 sm:py-4 sm:text-sm">
                                         File
                                     </th>
 
-                                    <th className="px-6 py-4 text-sm font-semibold">
+                                    <th className="px-4 py-3 text-xs font-semibold sm:px-6 sm:py-4 sm:text-sm">
                                         Actions
                                     </th>
                                 </tr>
                             </thead>
 
                             <tbody>
-                                {filteredResources.length === 0 ? (
+                                {filteredResources.length ===
+                                    0 ? (
                                     <tr>
                                         <td
                                             colSpan="6"
-                                            className={`px-6 py-12 text-center ${isDark
+                                            className={`px-4 py-10 text-center text-sm sm:px-6 sm:py-12 ${isDark
                                                 ? "text-gray-500"
                                                 : "text-gray-400"
                                                 }`}
@@ -442,8 +465,8 @@ function AdminResources() {
                                                     }`}
                                             >
                                                 {/* Resource */}
-                                                <td className="px-6 py-4">
-                                                    <div className="font-medium">
+                                                <td className="max-w-[240px] px-4 py-4 sm:px-6">
+                                                    <div className="truncate text-sm font-medium">
                                                         {
                                                             resource.title
                                                         }
@@ -462,15 +485,27 @@ function AdminResources() {
                                                 </td>
 
                                                 {/* Subject */}
-                                                <td className="px-6 py-4">
-                                                    {resource
-                                                        .subject
-                                                        ?.name ||
-                                                        "N/A"}
+                                                <td
+                                                    className={`px-4 py-4 text-sm sm:px-6 ${isDark
+                                                        ? "text-gray-300"
+                                                        : "text-gray-700"
+                                                        }`}
+                                                >
+                                                    {
+                                                        resource
+                                                            .subject
+                                                            ?.name ||
+                                                        "N/A"
+                                                    }
                                                 </td>
 
                                                 {/* Semester */}
-                                                <td className="px-6 py-4">
+                                                <td
+                                                    className={`px-4 py-4 text-sm sm:px-6 ${isDark
+                                                        ? "text-gray-300"
+                                                        : "text-gray-700"
+                                                        }`}
+                                                >
                                                     {resource
                                                         .subject
                                                         ?.semester
@@ -480,7 +515,12 @@ function AdminResources() {
                                                 </td>
 
                                                 {/* Added By */}
-                                                <td className="px-6 py-4">
+                                                <td
+                                                    className={`px-4 py-4 text-sm sm:px-6 ${isDark
+                                                        ? "text-gray-300"
+                                                        : "text-gray-700"
+                                                        }`}
+                                                >
                                                     {resource
                                                         .uploadedBy
                                                         ?.name ||
@@ -488,7 +528,7 @@ function AdminResources() {
                                                 </td>
 
                                                 {/* File */}
-                                                <td className="px-6 py-4">
+                                                <td className="px-4 py-4 sm:px-6">
                                                     {resource.fileUrl ? (
                                                         <a
                                                             href={
@@ -496,7 +536,7 @@ function AdminResources() {
                                                             }
                                                             target="_blank"
                                                             rel="noreferrer"
-                                                            className={`inline-flex items-center gap-2 text-sm font-medium hover:underline ${isDark
+                                                            className={`inline-flex items-center gap-2 whitespace-nowrap text-sm font-medium hover:underline ${isDark
                                                                 ? "text-gray-300"
                                                                 : "text-gray-700"
                                                                 }`}
@@ -510,11 +550,10 @@ function AdminResources() {
                                                         </a>
                                                     ) : (
                                                         <span
-                                                            className={
-                                                                isDark
-                                                                    ? "text-gray-600"
-                                                                    : "text-gray-400"
-                                                            }
+                                                            className={`text-sm ${isDark
+                                                                ? "text-gray-600"
+                                                                : "text-gray-400"
+                                                                }`}
                                                         >
                                                             No file
                                                         </span>
@@ -522,8 +561,9 @@ function AdminResources() {
                                                 </td>
 
                                                 {/* Actions */}
-                                                <td className="px-6 py-4">
-                                                    <div className="flex items-center gap-2">
+                                                <td className="px-4 py-4 sm:px-6">
+                                                    <div className="flex items-center gap-1.5 sm:gap-2">
+                                                        {/* Edit */}
                                                         <Link
                                                             to={`/admin/dashboard/resources/edit/${resource.id}`}
                                                             className={`rounded-lg p-2 transition ${isDark
@@ -531,14 +571,16 @@ function AdminResources() {
                                                                 : "text-gray-600 hover:bg-gray-100"
                                                                 }`}
                                                             title="Edit"
+                                                            aria-label={`Edit ${resource.title}`}
                                                         >
                                                             <Edit
                                                                 size={
-                                                                    18
+                                                                    17
                                                                 }
                                                             />
                                                         </Link>
 
+                                                        {/* Delete */}
                                                         <button
                                                             type="button"
                                                             disabled={
@@ -549,15 +591,16 @@ function AdminResources() {
                                                                     resource.id
                                                                 )
                                                             }
-                                                            className={`rounded-lg p-2 transition ${isDark
+                                                            className={`rounded-lg p-2 transition disabled:cursor-not-allowed disabled:opacity-40 ${isDark
                                                                 ? "text-gray-400 hover:bg-gray-700"
                                                                 : "text-gray-600 hover:bg-gray-100"
                                                                 }`}
                                                             title="Delete"
+                                                            aria-label={`Delete ${resource.title}`}
                                                         >
                                                             <Trash2
                                                                 size={
-                                                                    18
+                                                                    17
                                                                 }
                                                             />
                                                         </button>
@@ -571,6 +614,18 @@ function AdminResources() {
                         </table>
                     </div>
                 </div>
+
+                {/* Mobile hint */}
+                {filteredResources.length > 0 && (
+                    <p
+                        className={`mt-3 text-center text-xs sm:hidden ${isDark
+                            ? "text-gray-600"
+                            : "text-gray-400"
+                            }`}
+                    >
+                        Swipe horizontally to view all columns
+                    </p>
+                )}
             </div>
         </section>
     );

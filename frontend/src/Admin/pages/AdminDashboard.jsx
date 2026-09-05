@@ -31,38 +31,41 @@ function AdminDashboard() {
 
     const resourceCounts = useMemo(() => {
         return {
-            NOTES: resources?.filter(
-                (resource) => resource.type === "NOTES"
-            ).length,
+            NOTES:
+                resources?.filter(
+                    (resource) => resource.type === "NOTES"
+                ).length || 0,
 
-            SYLLABUS: resources?.filter(
-                (resource) => resource.type === "SYLLABUS"
-            ).length,
+            SYLLABUS:
+                resources?.filter(
+                    (resource) => resource.type === "SYLLABUS"
+                ).length || 0,
 
-            PYQ: resources?.filter(
-                (resource) => resource.type === "PYQ"
-            ).length,
+            PYQ:
+                resources?.filter(
+                    (resource) => resource.type === "PYQ"
+                ).length || 0,
         };
     }, [resources]);
 
     const statistics = [
         {
             title: "Students",
-            count: students.length,
+            count: students?.length || 0,
             description: "Registered students",
             icon: GraduationCap,
             path: "/admin/dashboard/students",
         },
         {
             title: "Faculty",
-            count: faculty.length,
+            count: faculty?.length || 0,
             description: "Faculty members",
             icon: Users,
             path: "/admin/dashboard/faculties",
         },
         {
             title: "Resources",
-            count: resources.length,
+            count: resources?.length || 0,
             description: "Total resources",
             icon: BookOpen,
             path: "/admin/dashboard/resources",
@@ -95,17 +98,17 @@ function AdminDashboard() {
 
     return (
         <section
-            className={`min-h-screen px-6 py-24 font-roboto transition-colors duration-300 ${isDark
+            className={`min-h-screen w-full px-4 py-20 font-roboto transition-colors duration-300 sm:px-6 sm:py-24 md:px-8 lg:px-10 lg:py-28 ${isDark
                 ? "bg-gray-950 text-white"
                 : "bg-gray-50 text-gray-900"
                 }`}
         >
-            <div className="mx-auto max-w-7xl">
+            <div className="mx-auto w-full max-w-7xl">
 
                 {/* Header */}
-                <div className="mb-10">
+                <div className="mb-8 sm:mb-10">
                     <p
-                        className={`mb-2 text-sm font-semibold uppercase tracking-[0.2em] ${isDark
+                        className={`mb-2 text-xs font-semibold uppercase tracking-[0.15em] sm:text-sm sm:tracking-[0.2em] ${isDark
                             ? "text-gray-500"
                             : "text-gray-400"
                             }`}
@@ -113,12 +116,12 @@ function AdminDashboard() {
                         Administration
                     </p>
 
-                    <h1 className="text-4xl font-bold">
+                    <h1 className="text-3xl font-bold sm:text-4xl md:text-5xl">
                         Dashboard
                     </h1>
 
                     <p
-                        className={`mt-3 ${isDark
+                        className={`mt-2 text-sm sm:mt-3 sm:text-base ${isDark
                             ? "text-gray-400"
                             : "text-gray-500"
                             }`}
@@ -128,8 +131,7 @@ function AdminDashboard() {
                 </div>
 
                 {/* Main Statistics */}
-                <div className="mb-12 grid gap-5 md:grid-cols-3">
-
+                <div className="mb-10 grid grid-cols-1 gap-4 sm:gap-5 md:grid-cols-2 lg:mb-12 lg:grid-cols-3">
                     {statistics.map((item) => {
                         const Icon = item.icon;
 
@@ -138,25 +140,28 @@ function AdminDashboard() {
                                 key={item.title}
                                 type="button"
                                 onClick={() => navigate(item.path)}
-                                className={`group rounded-2xl border p-6 text-left transition-all duration-300 hover:-translate-y-1 ${isDark
+                                className={`group w-full rounded-2xl border p-5 text-left transition-all duration-300 hover:-translate-y-1 sm:p-6 ${isDark
                                     ? "border-gray-800 bg-gray-900 hover:border-gray-600 hover:bg-gray-800 hover:shadow-xl"
                                     : "border-gray-200 bg-white shadow-md hover:border-gray-300 hover:shadow-xl"
                                     }`}
                             >
-                                <div className="flex items-start justify-between">
+                                <div className="flex items-start justify-between gap-4">
 
                                     <div
-                                        className={`flex h-12 w-12 items-center justify-center rounded-xl ${isDark
+                                        className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl sm:h-12 sm:w-12 ${isDark
                                             ? "bg-white text-black"
                                             : "bg-black text-white"
                                             }`}
                                     >
-                                        <Icon size={24} />
+                                        <Icon
+                                            size={22}
+                                            className="sm:h-6 sm:w-6"
+                                        />
                                     </div>
 
                                     <ArrowRight
                                         size={20}
-                                        className={`transition-transform duration-200 group-hover:translate-x-1 ${isDark
+                                        className={`shrink-0 transition-transform duration-200 group-hover:translate-x-1 ${isDark
                                             ? "text-gray-500"
                                             : "text-gray-400"
                                             }`}
@@ -164,7 +169,7 @@ function AdminDashboard() {
                                 </div>
 
                                 <p
-                                    className={`mt-6 text-sm ${isDark
+                                    className={`mt-5 text-sm sm:mt-6 ${isDark
                                         ? "text-gray-400"
                                         : "text-gray-500"
                                         }`}
@@ -172,7 +177,7 @@ function AdminDashboard() {
                                     {item.title}
                                 </p>
 
-                                <h2 className="mt-1 text-4xl font-bold">
+                                <h2 className="mt-1 text-3xl font-bold sm:text-4xl">
                                     {item.count}
                                 </h2>
 
@@ -187,15 +192,14 @@ function AdminDashboard() {
                             </button>
                         );
                     })}
-
                 </div>
 
                 {/* Resources */}
                 <div>
-                    <div className="mb-6 flex items-end justify-between">
+                    <div className="mb-5 flex flex-col gap-3 sm:mb-6 sm:flex-row sm:items-end sm:justify-between">
 
                         <div>
-                            <h2 className="text-2xl font-bold">
+                            <h2 className="text-xl font-bold sm:text-2xl">
                                 Resources
                             </h2>
 
@@ -212,20 +216,21 @@ function AdminDashboard() {
                         <button
                             type="button"
                             onClick={() =>
-                                navigate("/admin/resources")
+                                navigate(
+                                    "/admin/dashboard/resources"
+                                )
                             }
-                            className={`text-sm font-medium transition hover:underline ${isDark
+                            className={`self-start text-sm font-medium transition hover:underline sm:self-auto ${isDark
                                 ? "text-gray-300"
                                 : "text-gray-700"
                                 }`}
                         >
                             View all
                         </button>
-
                     </div>
 
-                    <div className="grid gap-5 md:grid-cols-3">
-
+                    {/* Resource Type Cards */}
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
                         {resourceTypes.map((item) => {
                             const Icon = item.icon;
 
@@ -236,38 +241,40 @@ function AdminDashboard() {
                                     onClick={() =>
                                         navigate(item.path)
                                     }
-                                    className={`group rounded-2xl border p-6 text-left transition-all duration-300 hover:-translate-y-1 ${isDark
+                                    className={`group w-full rounded-2xl border p-5 text-left transition-all duration-300 hover:-translate-y-1 sm:p-6 ${isDark
                                         ? "border-gray-800 bg-gray-900 hover:border-gray-600 hover:bg-gray-800 hover:shadow-xl"
                                         : "border-gray-200 bg-white shadow-md hover:border-gray-300 hover:shadow-xl"
                                         }`}
                                 >
-                                    <div className="flex items-center justify-between">
+                                    <div className="flex items-center justify-between gap-4">
 
                                         <div
-                                            className={`flex h-11 w-11 items-center justify-center rounded-xl ${isDark
+                                            className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl sm:h-11 sm:w-11 ${isDark
                                                 ? "bg-gray-800 text-white"
                                                 : "bg-gray-100 text-black"
                                                 }`}
                                         >
-                                            <Icon size={22} />
+                                            <Icon
+                                                size={21}
+                                                className="sm:h-[22px] sm:w-[22px]"
+                                            />
                                         </div>
 
                                         <ArrowRight
                                             size={19}
-                                            className={`transition-transform duration-200 group-hover:translate-x-1 ${isDark
+                                            className={`shrink-0 transition-transform duration-200 group-hover:translate-x-1 ${isDark
                                                 ? "text-gray-600"
                                                 : "text-gray-400"
                                                 }`}
                                         />
-
                                     </div>
 
-                                    <h3 className="mt-5 text-lg font-semibold">
+                                    <h3 className="mt-5 text-base font-semibold leading-6 sm:text-lg">
                                         {item.title}
                                     </h3>
 
                                     <p
-                                        className={`mt-1 text-sm ${isDark
+                                        className={`mt-1 text-sm leading-6 ${isDark
                                             ? "text-gray-500"
                                             : "text-gray-500"
                                             }`}
@@ -275,8 +282,8 @@ function AdminDashboard() {
                                         {item.description}
                                     </p>
 
-                                    <div className="mt-5">
-                                        <span className="text-3xl font-bold">
+                                    <div className="mt-4 sm:mt-5">
+                                        <span className="text-2xl font-bold sm:text-3xl">
                                             {item.count}
                                         </span>
 
@@ -292,26 +299,26 @@ function AdminDashboard() {
                                 </button>
                             );
                         })}
-
                     </div>
                 </div>
 
                 {/* Quick Overview */}
                 <div
-                    className={`mt-10 rounded-2xl border p-6 ${isDark
+                    className={`mt-8 rounded-2xl border p-5 sm:mt-10 sm:p-6 ${isDark
                         ? "border-gray-800 bg-gray-900"
                         : "border-gray-200 bg-white shadow-md"
                         }`}
                 >
-                    <h2 className="text-xl font-bold">
+                    <h2 className="text-lg font-bold sm:text-xl">
                         Quick Overview
                     </h2>
 
-                    <div className="mt-6 grid grid-cols-2 gap-6 md:grid-cols-4">
+                    <div className="mt-5 grid grid-cols-2 gap-y-6 gap-x-4 sm:mt-6 sm:gap-6 md:grid-cols-4">
 
+                        {/* Students */}
                         <div>
                             <p
-                                className={`text-sm ${isDark
+                                className={`text-xs sm:text-sm ${isDark
                                     ? "text-gray-500"
                                     : "text-gray-500"
                                     }`}
@@ -319,14 +326,15 @@ function AdminDashboard() {
                                 Students
                             </p>
 
-                            <p className="mt-1 text-2xl font-bold">
-                                {students.length}
+                            <p className="mt-1 text-xl font-bold sm:text-2xl">
+                                {students?.length || 0}
                             </p>
                         </div>
 
+                        {/* Faculty */}
                         <div>
                             <p
-                                className={`text-sm ${isDark
+                                className={`text-xs sm:text-sm ${isDark
                                     ? "text-gray-500"
                                     : "text-gray-500"
                                     }`}
@@ -334,14 +342,15 @@ function AdminDashboard() {
                                 Faculty
                             </p>
 
-                            <p className="mt-1 text-2xl font-bold">
-                                {faculty.length}
+                            <p className="mt-1 text-xl font-bold sm:text-2xl">
+                                {faculty?.length || 0}
                             </p>
                         </div>
 
+                        {/* Notes */}
                         <div>
                             <p
-                                className={`text-sm ${isDark
+                                className={`text-xs sm:text-sm ${isDark
                                     ? "text-gray-500"
                                     : "text-gray-500"
                                     }`}
@@ -349,14 +358,15 @@ function AdminDashboard() {
                                 Notes
                             </p>
 
-                            <p className="mt-1 text-2xl font-bold">
+                            <p className="mt-1 text-xl font-bold sm:text-2xl">
                                 {resourceCounts.NOTES}
                             </p>
                         </div>
 
+                        {/* PYQs */}
                         <div>
                             <p
-                                className={`text-sm ${isDark
+                                className={`text-xs sm:text-sm ${isDark
                                     ? "text-gray-500"
                                     : "text-gray-500"
                                     }`}
@@ -364,7 +374,7 @@ function AdminDashboard() {
                                 PYQs
                             </p>
 
-                            <p className="mt-1 text-2xl font-bold">
+                            <p className="mt-1 text-xl font-bold sm:text-2xl">
                                 {resourceCounts.PYQ}
                             </p>
                         </div>

@@ -144,7 +144,8 @@ function AdminEditResource() {
             );
 
             if (response.data.success) {
-                const updatedResource = response.data.resource;
+                const updatedResource =
+                    response.data.resource;
 
                 setResources((prevResources) =>
                     prevResources.map((resource) =>
@@ -154,7 +155,9 @@ function AdminEditResource() {
                     )
                 );
 
-                navigate("/admin/dashboard/resources");
+                navigate(
+                    "/admin/dashboard/resources"
+                );
             }
         } catch (error) {
             console.error(
@@ -171,16 +174,24 @@ function AdminEditResource() {
         }
     }
 
+    /*
+     * Loading state
+     */
     if (loading) {
         return (
             <section
-                className={`min-h-screen px-6 py-24 ${isDark
+                className={`min-h-screen w-full px-4 py-20 font-roboto sm:px-6 sm:py-24 md:px-8 lg:px-10 lg:py-28 ${isDark
                     ? "bg-gray-950 text-white"
                     : "bg-gray-50 text-gray-900"
                     }`}
             >
-                <div className="mx-auto max-w-4xl">
-                    <p className="text-gray-500">
+                <div className="mx-auto w-full max-w-4xl">
+                    <p
+                        className={`text-sm sm:text-base ${isDark
+                            ? "text-gray-400"
+                            : "text-gray-500"
+                            }`}
+                    >
                         Loading resource...
                     </p>
                 </div>
@@ -188,22 +199,28 @@ function AdminEditResource() {
         );
     }
 
+    /*
+     * Resource not found
+     */
     if (!resource) {
         return (
             <section
-                className={`min-h-screen px-6 py-24 ${isDark
+                className={`min-h-screen w-full px-4 py-20 font-roboto sm:px-6 sm:py-24 md:px-8 lg:px-10 lg:py-28 ${isDark
                     ? "bg-gray-950 text-white"
                     : "bg-gray-50 text-gray-900"
                     }`}
             >
-                <div className="mx-auto max-w-4xl">
-                    <h1 className="text-2xl font-bold">
+                <div className="mx-auto w-full max-w-4xl">
+                    <h1 className="text-2xl font-bold sm:text-3xl">
                         Resource not found
                     </h1>
 
                     <Link
                         to="/admin/dashboard/resources"
-                        className="mt-4 inline-block underline"
+                        className={`mt-4 inline-block text-sm underline sm:text-base ${isDark
+                            ? "text-gray-300"
+                            : "text-gray-700"
+                            }`}
                     >
                         Back to Resources
                     </Link>
@@ -214,17 +231,17 @@ function AdminEditResource() {
 
     return (
         <section
-            className={`min-h-screen px-6 py-24 font-roboto transition-colors duration-300 ${isDark
+            className={`min-h-screen w-full px-4 py-20 font-roboto transition-colors duration-300 sm:px-6 sm:py-24 md:px-8 lg:px-10 lg:py-28 ${isDark
                 ? "bg-gray-950 text-white"
                 : "bg-gray-50 text-gray-900"
                 }`}
         >
-            <div className="mx-auto max-w-4xl">
+            <div className="mx-auto w-full max-w-4xl">
 
                 {/* Header */}
-                <div className="mb-8">
+                <div className="mb-7 sm:mb-8">
                     <p
-                        className={`mb-2 text-sm font-semibold uppercase tracking-wider ${isDark
+                        className={`mb-2 text-xs font-semibold uppercase tracking-[0.15em] sm:text-sm sm:tracking-wider ${isDark
                             ? "text-gray-500"
                             : "text-gray-400"
                             }`}
@@ -232,12 +249,12 @@ function AdminEditResource() {
                         Administration
                     </p>
 
-                    <h1 className="text-3xl font-bold">
+                    <h1 className="text-2xl font-bold sm:text-3xl md:text-4xl">
                         Edit Resource
                     </h1>
 
                     <p
-                        className={`mt-2 ${isDark
+                        className={`mt-2 text-sm leading-6 sm:text-base sm:leading-7 ${isDark
                             ? "text-gray-400"
                             : "text-gray-500"
                             }`}
@@ -249,15 +266,15 @@ function AdminEditResource() {
                 {/* Form */}
                 <form
                     onSubmit={handleSubmit}
-                    className={`rounded-2xl border p-8 shadow-md ${isDark
+                    className={`rounded-2xl border p-4 shadow-md sm:rounded-3xl sm:p-6 md:p-8 ${isDark
                         ? "border-gray-800 bg-gray-900"
                         : "border-gray-200 bg-white"
                         }`}
                 >
-
                     {/* Title */}
-                    <div className="mb-6">
+                    <div className="mb-5 sm:mb-6">
                         <label
+                            htmlFor="resource-title"
                             className={`mb-2 block text-sm font-medium ${isDark
                                 ? "text-gray-300"
                                 : "text-gray-700"
@@ -267,22 +284,24 @@ function AdminEditResource() {
                         </label>
 
                         <input
+                            id="resource-title"
                             type="text"
                             value={title}
                             onChange={(e) =>
                                 setTitle(e.target.value)
                             }
                             required
-                            className={`w-full rounded-lg border px-4 py-3 outline-none transition ${isDark
-                                ? "border-gray-700 bg-gray-800 text-white focus:border-gray-500"
-                                : "border-gray-300 bg-white text-gray-900 focus:border-black"
+                            className={`w-full rounded-lg border px-3 py-3 text-sm outline-none transition sm:px-4 sm:text-base ${isDark
+                                ? "border-gray-700 bg-gray-800 text-white placeholder:text-gray-600 focus:border-gray-500"
+                                : "border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 focus:border-black"
                                 }`}
                         />
                     </div>
 
                     {/* Description */}
-                    <div className="mb-6">
+                    <div className="mb-5 sm:mb-6">
                         <label
+                            htmlFor="resource-description"
                             className={`mb-2 block text-sm font-medium ${isDark
                                 ? "text-gray-300"
                                 : "text-gray-700"
@@ -292,24 +311,28 @@ function AdminEditResource() {
                         </label>
 
                         <textarea
+                            id="resource-description"
                             rows="4"
                             value={description}
                             onChange={(e) =>
-                                setDescription(e.target.value)
+                                setDescription(
+                                    e.target.value
+                                )
                             }
-                            className={`w-full resize-none rounded-lg border px-4 py-3 outline-none transition ${isDark
-                                ? "border-gray-700 bg-gray-800 text-white focus:border-gray-500"
-                                : "border-gray-300 bg-white text-gray-900 focus:border-black"
+                            className={`w-full resize-none rounded-lg border px-3 py-3 text-sm leading-6 outline-none transition sm:px-4 sm:text-base ${isDark
+                                ? "border-gray-700 bg-gray-800 text-white placeholder:text-gray-600 focus:border-gray-500"
+                                : "border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 focus:border-black"
                                 }`}
                         />
                     </div>
 
                     {/* Semester + Subject */}
-                    <div className="mb-6 grid gap-5 md:grid-cols-2">
+                    <div className="mb-5 grid grid-cols-1 gap-5 sm:mb-6 md:grid-cols-2">
 
                         {/* Semester */}
                         <div>
                             <label
+                                htmlFor="resource-semester"
                                 className={`mb-2 block text-sm font-medium ${isDark
                                     ? "text-gray-300"
                                     : "text-gray-700"
@@ -319,12 +342,13 @@ function AdminEditResource() {
                             </label>
 
                             <select
+                                id="resource-semester"
                                 value={semester}
                                 onChange={
                                     handleSemesterChange
                                 }
                                 required
-                                className={`w-full rounded-lg border px-4 py-3 outline-none ${isDark
+                                className={`w-full rounded-lg border px-3 py-3 text-sm outline-none sm:px-4 sm:text-base ${isDark
                                     ? "border-gray-700 bg-gray-800 text-white focus:border-gray-500"
                                     : "border-gray-300 bg-white text-gray-900 focus:border-black"
                                     }`}
@@ -350,6 +374,7 @@ function AdminEditResource() {
                         {/* Subject */}
                         <div>
                             <label
+                                htmlFor="resource-subject"
                                 className={`mb-2 block text-sm font-medium ${isDark
                                     ? "text-gray-300"
                                     : "text-gray-700"
@@ -359,6 +384,7 @@ function AdminEditResource() {
                             </label>
 
                             <select
+                                id="resource-subject"
                                 value={subject}
                                 onChange={(e) =>
                                     setSubject(
@@ -367,9 +393,9 @@ function AdminEditResource() {
                                 }
                                 required
                                 disabled={!semester}
-                                className={`w-full rounded-lg border px-4 py-3 outline-none ${isDark
+                                className={`w-full rounded-lg border px-3 py-3 text-sm outline-none sm:px-4 sm:text-base ${isDark
                                     ? "border-gray-700 bg-gray-800 text-white disabled:text-gray-600"
-                                    : "border-gray-300 bg-white text-gray-900 disabled:bg-gray-100"
+                                    : "border-gray-300 bg-white text-gray-900 disabled:bg-gray-100 disabled:text-gray-400"
                                     }`}
                             >
                                 <option value="">
@@ -393,8 +419,9 @@ function AdminEditResource() {
                     </div>
 
                     {/* Type */}
-                    <div className="mb-6">
+                    <div className="mb-5 sm:mb-6">
                         <label
+                            htmlFor="resource-type"
                             className={`mb-2 block text-sm font-medium ${isDark
                                 ? "text-gray-300"
                                 : "text-gray-700"
@@ -404,12 +431,13 @@ function AdminEditResource() {
                         </label>
 
                         <select
+                            id="resource-type"
                             value={type}
                             onChange={(e) =>
                                 setType(e.target.value)
                             }
                             required
-                            className={`w-full rounded-lg border px-4 py-3 outline-none ${isDark
+                            className={`w-full rounded-lg border px-3 py-3 text-sm outline-none sm:px-4 sm:text-base ${isDark
                                 ? "border-gray-700 bg-gray-800 text-white focus:border-gray-500"
                                 : "border-gray-300 bg-white text-gray-900 focus:border-black"
                                 }`}
@@ -435,6 +463,7 @@ function AdminEditResource() {
                     {/* URL */}
                     <div className="mb-6">
                         <label
+                            htmlFor="resource-url"
                             className={`mb-2 block text-sm font-medium ${isDark
                                 ? "text-gray-300"
                                 : "text-gray-700"
@@ -444,20 +473,21 @@ function AdminEditResource() {
                         </label>
 
                         <div
-                            className={`flex items-center rounded-lg border ${isDark
+                            className={`flex w-full items-center rounded-lg border ${isDark
                                 ? "border-gray-700 bg-gray-800"
                                 : "border-gray-300 bg-white"
                                 }`}
                         >
                             <LinkIcon
                                 size={18}
-                                className={`mx-3 ${isDark
+                                className={`mx-3 shrink-0 ${isDark
                                     ? "text-gray-500"
                                     : "text-gray-400"
                                     }`}
                             />
 
                             <input
+                                id="resource-url"
                                 type="url"
                                 value={fileUrl}
                                 onChange={(e) =>
@@ -467,7 +497,7 @@ function AdminEditResource() {
                                 }
                                 placeholder="https://drive.google.com/..."
                                 required
-                                className={`w-full bg-transparent px-2 py-3 outline-none ${isDark
+                                className={`min-w-0 w-full bg-transparent px-2 py-3 text-sm outline-none sm:text-base ${isDark
                                     ? "text-white placeholder:text-gray-600"
                                     : "text-gray-900 placeholder:text-gray-400"
                                     }`}
@@ -477,14 +507,14 @@ function AdminEditResource() {
 
                     {/* Actions */}
                     <div
-                        className={`flex justify-end gap-3 border-t pt-6 ${isDark
+                        className={`flex flex-col-reverse gap-3 border-t pt-5 sm:flex-row sm:justify-end sm:pt-6 ${isDark
                             ? "border-gray-800"
                             : "border-gray-200"
                             }`}
                     >
                         <Link
                             to="/admin/dashboard/resources"
-                            className={`rounded-lg border px-5 py-2.5 font-medium transition ${isDark
+                            className={`flex w-full items-center justify-center rounded-lg border px-5 py-2.5 text-sm font-medium transition sm:w-auto sm:text-base ${isDark
                                 ? "border-gray-700 hover:bg-gray-800"
                                 : "border-gray-300 hover:bg-gray-50"
                                 }`}
@@ -495,7 +525,7 @@ function AdminEditResource() {
                         <button
                             type="submit"
                             disabled={saving}
-                            className={`flex items-center gap-2 rounded-lg px-5 py-2.5 font-medium transition ${isDark
+                            className={`flex w-full items-center justify-center gap-2 rounded-lg px-5 py-2.5 text-sm font-medium transition sm:w-auto sm:text-base ${isDark
                                 ? "bg-white text-black hover:bg-gray-200"
                                 : "bg-black text-white hover:bg-gray-800"
                                 } disabled:cursor-not-allowed disabled:opacity-50`}

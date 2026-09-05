@@ -3,7 +3,7 @@ import Main from "../components/Login/Main.jsx"
 
 function Login() {
     return (
-        <div className='w-[100vw] h-[100vh] flex justify-center items-center'>
+        <div className="flex min-h-screen w-full items-center justify-center bg-[#f3f4f6]">
             <Main />
         </div>
     )

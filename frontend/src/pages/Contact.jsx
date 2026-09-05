@@ -27,16 +27,20 @@ function Contact() {
     return (
         <section
             id="contact"
-            className={`min-h-screen px-6 py-24 font-roboto transition-colors duration-300 ${isDark
+            className={`min-h-screen w-full px-4 py-20 font-roboto transition-colors duration-300 sm:px-6 sm:py-24 md:px-8 lg:px-10 ${isDark
                 ? "bg-gray-950 text-white"
                 : "bg-white text-gray-900"
                 }`}
         >
-            <div className="mx-auto max-w-7xl">
+            <div className="mx-auto w-full max-w-7xl">
 
-                <div className="mb-16 text-center">
+                {/* =========================
+                    HEADER
+                ========================= */}
+
+                <div className="mb-10 text-center sm:mb-14 md:mb-16">
                     <p
-                        className={`mb-3 text-sm font-semibold uppercase tracking-[0.2em] ${isDark
+                        className={`mb-2 text-xs font-semibold uppercase tracking-[0.15em] sm:mb-3 sm:text-sm sm:tracking-[0.2em] ${isDark
                             ? "text-gray-500"
                             : "text-gray-400"
                             }`}
@@ -45,7 +49,7 @@ function Contact() {
                     </p>
 
                     <h1
-                        className={`text-4xl font-bold md:text-5xl ${isDark
+                        className={`text-3xl font-bold sm:text-4xl md:text-5xl ${isDark
                             ? "text-white"
                             : "text-gray-900"
                             }`}
@@ -54,7 +58,7 @@ function Contact() {
                     </h1>
 
                     <p
-                        className={`mx-auto mt-5 max-w-2xl text-lg leading-8 ${isDark
+                        className={`mx-auto mt-4 max-w-2xl text-sm leading-7 sm:mt-5 sm:text-base md:text-lg md:leading-8 ${isDark
                             ? "text-gray-400"
                             : "text-gray-600"
                             }`}
@@ -65,16 +69,25 @@ function Contact() {
                     </p>
                 </div>
 
-                <div className="grid gap-8 lg:grid-cols-2">
+
+                {/* =========================
+                    CONTACT GRID
+                ========================= */}
+
+                <div className="grid gap-6 md:gap-8 lg:grid-cols-2">
+
+                    {/* =========================
+                        CONTACT INFORMATION
+                    ========================= */}
 
                     <div
-                        className={`rounded-3xl border p-8 md:p-10 ${isDark
+                        className={`rounded-2xl border p-5 sm:rounded-3xl sm:p-8 md:p-10 ${isDark
                             ? "border-gray-800 bg-gray-900"
                             : "border-gray-200 bg-white shadow-md"
                             }`}
                     >
                         <h2
-                            className={`text-2xl font-bold ${isDark
+                            className={`text-xl font-bold sm:text-2xl ${isDark
                                 ? "text-white"
                                 : "text-gray-900"
                                 }`}
@@ -83,7 +96,7 @@ function Contact() {
                         </h2>
 
                         <p
-                            className={`mt-3 leading-7 ${isDark
+                            className={`mt-3 text-sm leading-6 sm:text-base sm:leading-7 ${isDark
                                 ? "text-gray-400"
                                 : "text-gray-600"
                                 }`}
@@ -92,19 +105,22 @@ function Contact() {
                             contact details below.
                         </p>
 
-                        <div className="mt-8 space-y-6">
 
-                            <div className="flex gap-4">
+                        {/* Contact Details */}
+                        <div className="mt-7 space-y-6 sm:mt-8">
+
+                            {/* Address */}
+                            <div className="flex items-start gap-3 sm:gap-4">
                                 <div
-                                    className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl ${isDark
+                                    className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl sm:h-11 sm:w-11 ${isDark
                                         ? "bg-white text-black"
                                         : "bg-black text-white"
                                         }`}
                                 >
-                                    <MapPin size={21} />
+                                    <MapPin size={19} />
                                 </div>
 
-                                <div>
+                                <div className="min-w-0">
                                     <h3
                                         className={`font-semibold ${isDark
                                             ? "text-white"
@@ -131,17 +147,19 @@ function Contact() {
                                 </div>
                             </div>
 
-                            <div className="flex gap-4">
+
+                            {/* Phone */}
+                            <div className="flex items-start gap-3 sm:gap-4">
                                 <div
-                                    className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl ${isDark
+                                    className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl sm:h-11 sm:w-11 ${isDark
                                         ? "bg-white text-black"
                                         : "bg-black text-white"
                                         }`}
                                 >
-                                    <Phone size={21} />
+                                    <Phone size={19} />
                                 </div>
 
-                                <div>
+                                <div className="min-w-0">
                                     <h3
                                         className={`font-semibold ${isDark
                                             ? "text-white"
@@ -173,17 +191,19 @@ function Contact() {
                                 </div>
                             </div>
 
-                            <div className="flex gap-4">
+
+                            {/* Email */}
+                            <div className="flex items-start gap-3 sm:gap-4">
                                 <div
-                                    className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl ${isDark
+                                    className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl sm:h-11 sm:w-11 ${isDark
                                         ? "bg-white text-black"
                                         : "bg-black text-white"
                                         }`}
                                 >
-                                    <Mail size={21} />
+                                    <Mail size={19} />
                                 </div>
 
-                                <div>
+                                <div className="min-w-0">
                                     <h3
                                         className={`font-semibold ${isDark
                                             ? "text-white"
@@ -195,7 +215,7 @@ function Contact() {
 
                                     <a
                                         href="mailto:mail@farookcollege.ac.in"
-                                        className={`mt-1 block text-sm transition ${isDark
+                                        className={`mt-1 block break-all text-sm transition sm:break-normal ${isDark
                                             ? "text-gray-400 hover:text-white"
                                             : "text-gray-600 hover:text-black"
                                             }`}
@@ -206,18 +226,21 @@ function Contact() {
                             </div>
 
                         </div>
-
-
                     </div>
 
+
+                    {/* =========================
+                        MESSAGE FORM
+                    ========================= */}
+
                     <div
-                        className={`rounded-3xl border p-8 md:p-10 ${isDark
+                        className={`rounded-2xl border p-5 sm:rounded-3xl sm:p-8 md:p-10 ${isDark
                             ? "border-gray-800 bg-gray-900"
                             : "border-gray-200 bg-white shadow-md"
                             }`}
                     >
                         <h2
-                            className={`text-2xl font-bold ${isDark
+                            className={`text-xl font-bold sm:text-2xl ${isDark
                                 ? "text-white"
                                 : "text-gray-900"
                                 }`}
@@ -226,7 +249,7 @@ function Contact() {
                         </h2>
 
                         <p
-                            className={`mt-3 leading-7 ${isDark
+                            className={`mt-3 text-sm leading-6 sm:text-base sm:leading-7 ${isDark
                                 ? "text-gray-400"
                                 : "text-gray-600"
                                 }`}
@@ -235,12 +258,16 @@ function Contact() {
                             you as soon as possible.
                         </p>
 
+
                         <form
                             onSubmit={handleSubmit}
-                            className="mt-8 space-y-5"
+                            className="mt-7 space-y-4 sm:mt-8 sm:space-y-5"
                         >
+
+                            {/* Name */}
                             <div>
                                 <label
+                                    htmlFor="contact-name"
                                     className={`mb-2 block text-sm font-medium ${isDark
                                         ? "text-gray-300"
                                         : "text-gray-700"
@@ -250,6 +277,7 @@ function Contact() {
                                 </label>
 
                                 <input
+                                    id="contact-name"
                                     type="text"
                                     value={name}
                                     onChange={(e) =>
@@ -257,15 +285,18 @@ function Contact() {
                                     }
                                     placeholder="Your name"
                                     required
-                                    className={`w-full rounded-xl border px-4 py-3 outline-none transition ${isDark
+                                    className={`w-full rounded-xl border px-4 py-3 text-sm outline-none transition sm:text-base ${isDark
                                         ? "border-gray-700 bg-gray-800 text-white placeholder:text-gray-500 focus:border-white"
                                         : "border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 focus:border-black"
                                         }`}
                                 />
                             </div>
 
+
+                            {/* Email */}
                             <div>
                                 <label
+                                    htmlFor="contact-email"
                                     className={`mb-2 block text-sm font-medium ${isDark
                                         ? "text-gray-300"
                                         : "text-gray-700"
@@ -275,6 +306,7 @@ function Contact() {
                                 </label>
 
                                 <input
+                                    id="contact-email"
                                     type="email"
                                     value={email}
                                     onChange={(e) =>
@@ -282,15 +314,18 @@ function Contact() {
                                     }
                                     placeholder="your@email.com"
                                     required
-                                    className={`w-full rounded-xl border px-4 py-3 outline-none transition ${isDark
+                                    className={`w-full rounded-xl border px-4 py-3 text-sm outline-none transition sm:text-base ${isDark
                                         ? "border-gray-700 bg-gray-800 text-white placeholder:text-gray-500 focus:border-white"
                                         : "border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 focus:border-black"
                                         }`}
                                 />
                             </div>
 
+
+                            {/* Message */}
                             <div>
                                 <label
+                                    htmlFor="contact-message"
                                     className={`mb-2 block text-sm font-medium ${isDark
                                         ? "text-gray-300"
                                         : "text-gray-700"
@@ -300,6 +335,7 @@ function Contact() {
                                 </label>
 
                                 <textarea
+                                    id="contact-message"
                                     rows="6"
                                     value={message}
                                     onChange={(e) =>
@@ -307,16 +343,18 @@ function Contact() {
                                     }
                                     placeholder="Write your message..."
                                     required
-                                    className={`w-full resize-none rounded-xl border px-4 py-3 outline-none transition ${isDark
+                                    className={`w-full resize-none rounded-xl border px-4 py-3 text-sm leading-6 outline-none transition sm:text-base ${isDark
                                         ? "border-gray-700 bg-gray-800 text-white placeholder:text-gray-500 focus:border-white"
                                         : "border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 focus:border-black"
                                         }`}
                                 />
                             </div>
 
+
+                            {/* Submit */}
                             <button
                                 type="submit"
-                                className={`flex w-full items-center justify-center gap-2 rounded-xl px-5 py-3 font-semibold transition-all duration-200 hover:scale-[1.01] active:scale-[0.98] ${isDark
+                                className={`flex w-full items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold transition-all duration-200 hover:scale-[1.01] active:scale-[0.98] sm:text-base ${isDark
                                     ? "bg-white text-black hover:bg-gray-200"
                                     : "bg-black text-white hover:bg-gray-800"
                                     }`}
@@ -324,6 +362,7 @@ function Contact() {
                                 <Send size={18} />
                                 Send Message
                             </button>
+
                         </form>
                     </div>
 
