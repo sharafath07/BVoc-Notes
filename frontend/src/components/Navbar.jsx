@@ -2,7 +2,7 @@ import React, { useContext, useState } from 'react'
 import { Context } from '../Context/Context.jsx'
 import { Moon, Sun, Menu, X } from 'lucide-react'
 import { NavLink, Link, useNavigate } from 'react-router-dom'
-import axios from 'axios'
+import api from '../api/axios.js'
 
 function Navbar() {
     const {
@@ -28,10 +28,8 @@ function Navbar() {
 
     async function handleSignOut() {
         try {
-            const response = await axios.post(
-                `${backendUrl}/api/auth/logout`,
-                {}
-            )
+            const response = await api.post(
+                `${backendUrl}/api/auth/logout`)
 
             if (response.data.success) {
                 localStorage.removeItem('token')
