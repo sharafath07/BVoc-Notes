@@ -136,3 +136,4 @@ docker-compose.override.yml
 *.backup
 *~
 /src/generated/prisma
+.neon
