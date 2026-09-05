@@ -57,8 +57,11 @@ function App() {
 
 
       </Routes>
-
-      <Footer />
+      {
+        !hideNavbarRoutes.includes(
+          location.pathname
+        ) ? <Footer /> : <></>
+      }
     </>
   )
 }
