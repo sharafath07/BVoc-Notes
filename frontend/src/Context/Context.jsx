@@ -1,5 +1,5 @@
 import React, { useState, createContext, useEffect } from "react";
-import getUsers from "./user";
+import getUsers from "./Userr";
 import api from "../api/axios";
 import getSemesters from "./Semester";
 import getSubjects from "./Subject";
