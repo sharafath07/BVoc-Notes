@@ -39,12 +39,26 @@ model TeacherProfile {
   user       User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
+model Program {
+  id        String     @id @default(cuid())
+  name      String     @unique
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  semesters Semester[]
+}
+
 model Semester {
   id        String    @id @default(cuid())
-  number    Int       @unique
+  number    Int
+  programId String
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
+
+  program   Program   @relation(fields: [programId], references: [id], onDelete: Cascade)
   subjects  Subject[]
+
+  @@unique([number, programId])
+  @@index([programId])
 }
 
 model Subject {
@@ -53,8 +67,9 @@ model Subject {
   semesterId String
   createdAt  DateTime   @default(now())
   updatedAt  DateTime   @updatedAt
-  resources  Resource[]
+
   semester   Semester   @relation(fields: [semesterId], references: [id], onDelete: Cascade)
+  resources  Resource[]
 
   @@unique([name, semesterId])
   @@index([semesterId])
@@ -71,6 +86,7 @@ model Resource {
   uploadedById String
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt
+
   subject      Subject      @relation(fields: [subjectId], references: [id], onDelete: Cascade)
   uploadedBy   User         @relation(fields: [uploadedById], references: [id])
 

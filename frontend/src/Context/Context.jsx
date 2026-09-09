@@ -4,6 +4,7 @@ import api from "../api/axios";
 import getSemesters from "./Semester";
 import getSubjects from "./Subject";
 import getResources from "./Resource";
+import getProgram from "./Program";
 
 export const Context = createContext();
 
@@ -14,7 +15,7 @@ function ContextProvider(props) {
     const [isDark, setIsDark] = useState(false);
     const [user, setUser] = useState(null);
     const [authLoading, setAuthLoading] = useState(true);
-
+    const [program, setProgram] = useState([]);
     const [students, setStudents] = useState([]);
     const [faculty, setFaculty] = useState([]);
     const [subjects, setSubjects] = useState([]);
@@ -29,6 +30,8 @@ function ContextProvider(props) {
         setIsDark,
         user,
         setUser,
+        program,
+        setProgram,
         semesters,
         setSemesters,
         subjects,
@@ -50,10 +53,12 @@ function ContextProvider(props) {
                 const semestersData = await getSemesters(backendUrl);
                 const subjectsData = await getSubjects(backendUrl);
                 const resourcesData = await getResources(backendUrl);
+                const programData = await getProgram(backendUrl);
 
                 setSemesters(semestersData || []);
                 setSubjects(subjectsData || []);
                 setResources(resourcesData || []);
+                setProgram(programData || []);
 
                 if (user.role === "ADMIN") {
                     const usersData = await getUsers(backendUrl);

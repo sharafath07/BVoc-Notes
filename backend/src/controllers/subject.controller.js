@@ -1,9 +1,58 @@
 import {
     getAllSubjects,
     getSubjectsBySemester,
+    createSubject,
     updateSubject,
     deleteSubject,
 } from "../services/subject.service.js";
+
+export async function createSubjectController(req, res) {
+    try {
+        const { name, semesterId } = req.body;
+
+        if (!name?.trim() || !semesterId) {
+            return res.status(400).json({
+                success: false,
+                message: "Subject name and semester ID are required",
+            });
+        }
+
+        const subject = await createSubject(
+            name.trim(),
+            semesterId
+        );
+
+        return res.status(201).json({
+            success: true,
+            message: "Subject created successfully",
+            subject,
+        });
+    } catch (error) {
+        console.error("Create subject error:", error);
+
+        if (error.message === "Semester not found") {
+            return res.status(404).json({
+                success: false,
+                message: error.message,
+            });
+        }
+
+        if (
+            error.message ===
+            "Subject already exists for this semester"
+        ) {
+            return res.status(409).json({
+                success: false,
+                message: error.message,
+            });
+        }
+
+        return res.status(400).json({
+            success: false,
+            message: error.message,
+        });
+    }
+}
 
 
 // GET /api/subjects

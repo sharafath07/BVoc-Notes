@@ -1,15 +1,26 @@
-// SemesterBox.jsx
-
 import React from "react";
-import { GraduationCap } from "lucide-react";
+import { GraduationCap, ArrowLeft } from "lucide-react";
 
 function SemesterBox({
     semesters,
     isDark,
     onSelect,
+    onBack
 }) {
     return (
         <div className="w-full">
+            <button
+                type="button"
+                onClick={onBack}
+                className={`mb-5 flex items-center gap-2 text-sm transition hover:underline ${isDark
+                    ? "text-gray-400"
+                    : "text-gray-500"
+                    }`}
+            >
+                <ArrowLeft size={16} />
+                <span>Back to Programs</span>
+            </button>
+
             <div className="mb-6 flex items-center gap-3">
                 <GraduationCap size={22} />
 

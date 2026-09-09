@@ -11,31 +11,44 @@ const prisma = new PrismaClient({
 });
 
 async function main() {
-    console.log("Seeding semesters and subjects...");
+    console.log("Seeding programs, semesters and subjects...");
 
-    const semesters = [];
+    // --------------------------------------------------
+    // Programs
+    // --------------------------------------------------
 
-    for (let number = 1; number <= 8; number++) {
-        const semester = await prisma.semester.upsert({
-            where: {
-                number,
-            },
-            update: {},
-            create: {
-                number,
-            },
-        });
+    const fyug = await prisma.program.upsert({
+        where: {
+            name: "FYUG",
+        },
+        update: {},
+        create: {
+            name: "FYUG",
+        },
+    });
 
-        semesters.push(semester);
-    }
-    const subjects = {
+    const ug = await prisma.program.upsert({
+        where: {
+            name: "UG",
+        },
+        update: {},
+        create: {
+            name: "UG",
+        },
+    });
+
+    // --------------------------------------------------
+    // FYUG Subjects
+    // --------------------------------------------------
+
+    const fyugSubjects = {
         1: [
             "Programming Fundamentals With C",
             "Web Programming",
             "Discrete Mathematics",
             "Descriptive Statistics for Data Analytics",
             "Office Automation",
-            "English"
+            "English",
         ],
 
         2: [
@@ -46,7 +59,7 @@ async function main() {
             "English",
             "Arabic",
             "Hindi",
-            "Malayalam"
+            "Malayalam",
         ],
 
         3: [
@@ -58,15 +71,30 @@ async function main() {
             "Cyber Law",
             "KKS-Arabic",
             "KKS-Malayalam",
-            "KKS-Hindi"
+            "KKS-Hindi",
         ],
     };
-    for (const [semesterNumber, subjectNames] of Object.entries(subjects)) {
-        const semester = await prisma.semester.findUnique({
+
+    // --------------------------------------------------
+    // Create FYUG Semesters + Subjects
+    // --------------------------------------------------
+
+    for (let number = 1; number <= 8; number++) {
+        const semester = await prisma.semester.upsert({
             where: {
-                number: Number(semesterNumber),
+                number_programId: {
+                    number,
+                    programId: fyug.id,
+                },
+            },
+            update: {},
+            create: {
+                number,
+                programId: fyug.id,
             },
         });
+
+        const subjectNames = fyugSubjects[number] ?? [];
 
         for (const name of subjectNames) {
             await prisma.subject.upsert({
@@ -84,6 +112,28 @@ async function main() {
             });
         }
     }
+
+    // --------------------------------------------------
+    // UG Semesters
+    // --------------------------------------------------
+
+    for (let number = 1; number <= 6; number++) {
+        await prisma.semester.upsert({
+            where: {
+                number_programId: {
+                    number,
+                    programId: ug.id,
+                },
+            },
+            update: {},
+            create: {
+                number,
+                programId: ug.id,
+            },
+        });
+    }
+
+    console.log("Seeding completed successfully.");
 }
 
 main()

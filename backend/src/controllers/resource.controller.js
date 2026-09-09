@@ -34,9 +34,14 @@ export async function createResourceController(req, res) {
 
 export async function getResourcesController(req, res) {
     try {
-        const { subjectId, type } = req.query;
+        const {
+            programId,
+            subjectId,
+            type,
+        } = req.query;
 
         const resources = await getResources({
+            programId,
             subjectId,
             type,
         });

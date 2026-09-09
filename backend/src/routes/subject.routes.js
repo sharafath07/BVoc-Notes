@@ -3,6 +3,7 @@ import express from "express";
 import {
     getAllSubjectsController,
     getSubjectsBySemesterController,
+    createSubjectController,
     updateSubjectController,
     deleteSubjectController,
 } from "../controllers/subject.controller.js";
@@ -28,6 +29,15 @@ router.get(
     "/semester/:semesterId",
     authenticate,
     getSubjectsBySemesterController
+);
+
+
+// CREATE subject
+router.post(
+    "/",
+    authenticate,
+    authorize("ADMIN"),
+    createSubjectController
 );
 
 

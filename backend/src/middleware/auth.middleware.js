@@ -5,14 +5,16 @@ import prisma from "../lib/prisma.js";
 
 export async function authenticate(req, res, next) {
     try {
-        const token = req.cookies.accessToken;
+        const authHeader = req.headers.authorization;
 
-        if (!token) {
+        if (!authHeader || !authHeader.startsWith("Bearer ")) {
             return res.status(401).json({
                 success: false,
                 message: "Authentication required",
             });
         }
+
+        const token = authHeader.split(" ")[1];
 
         const decoded = jwt.verify(token, env.JWT_SECRET);
 
@@ -39,6 +41,8 @@ export async function authenticate(req, res, next) {
 
         next();
     } catch (error) {
+        console.error("Authentication error:", error);
+
         return res.status(401).json({
             success: false,
             message: "Invalid or expired authentication",

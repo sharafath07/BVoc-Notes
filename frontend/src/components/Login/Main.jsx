@@ -24,8 +24,8 @@ function Main() {
     );
 
     const batches = Array.from(
-        { length: new Date().getFullYear() - 2025 + 1 },
-        (_, index) => 2025 + index
+        { length: new Date().getFullYear() - 2020 + 1 },
+        (_, index) => 2020 + index
     );
 
     async function handleSignIn(e) {

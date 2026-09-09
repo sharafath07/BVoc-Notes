@@ -23,15 +23,34 @@ export async function createResource(data, userId) {
         },
     });
 }
-
 export async function getResources({ subjectId, type }) {
     return prisma.resource.findMany({
+        where: {
+            ...(subjectId && {
+                subjectId,
+            }),
+
+            ...(type && {
+                type,
+            }),
+        },
+
         include: {
             subject: {
                 include: {
-                    semester: true,
+                    semester: {
+                        include: {
+                            program: {
+                                select: {
+                                    id: true,
+                                    name: true,
+                                },
+                            },
+                        },
+                    },
                 },
             },
+
             uploadedBy: {
                 select: {
                     id: true,
@@ -39,6 +58,7 @@ export async function getResources({ subjectId, type }) {
                 },
             },
         },
+
         orderBy: {
             createdAt: "desc",
         },
@@ -53,7 +73,11 @@ export async function getResourceById(id) {
         include: {
             subject: {
                 include: {
-                    semester: true,
+                    semester: {
+                        include: {
+                            program: true,
+                        },
+                    },
                 },
             },
         },

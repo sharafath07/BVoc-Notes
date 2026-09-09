@@ -8,6 +8,7 @@ import React, {
 
 import { Context } from "../Context/Context";
 
+import ProgramBox from "../components/Resources/ProgramBox";
 import SemesterBox from "../components/Resources/SemesterBox";
 import SubjectBox from "../components/Resources/SubjectBox";
 import ResourceTypeBox from "../components/Resources/ResourceTypeBox";
@@ -19,11 +20,22 @@ function Resource() {
         resources = [],
         semesters = [],
         subjects = [],
+        program = [],
     } = useContext(Context);
 
+    const [selectedProgram, setSelectedProgram] = useState(null);
     const [selectedSemester, setSelectedSemester] = useState(null);
     const [selectedSubject, setSelectedSubject] = useState(null);
     const [selectedType, setSelectedType] = useState(null);
+
+    const programSemesters = useMemo(() => {
+        if (!selectedProgram) return [];
+
+        return semesters.filter(
+            (semester) =>
+                semester.programId === selectedProgram.id
+        );
+    }, [selectedProgram, semesters]);
 
     const semesterSubjects = useMemo(() => {
         if (!selectedSemester) return [];
@@ -48,6 +60,13 @@ function Resource() {
         resources,
     ]);
 
+    const handleProgramSelect = (program) => {
+        setSelectedProgram(program);
+        setSelectedSemester(null);
+        setSelectedSubject(null);
+        setSelectedType(null);
+    }
+
     const handleSemesterSelect = (semester) => {
         setSelectedSemester(semester);
         setSelectedSubject(null);
@@ -67,7 +86,14 @@ function Resource() {
         setSelectedSemester(null);
         setSelectedSubject(null);
         setSelectedType(null);
+        setSelectedProgram(null);
     };
+
+    const resetSemester = () => {
+        setSelectedSemester(null);
+        setSelectedSubject(null);
+        setSelectedType(null);
+    }
 
     const resetSubject = () => {
         setSelectedSubject(null);
@@ -125,8 +151,21 @@ function Resource() {
                         onClick={resetAll}
                         className="transition hover:underline"
                     >
-                        Semesters
+                        Programs
                     </button>
+
+                    {selectedProgram && (
+                        <>
+                            <span>/</span>
+                            <button
+                                type="button"
+                                onClick={resetSemester}
+                                className="transition hover:underline"
+                            >
+                                {selectedProgram.name}
+                            </button>
+                        </>
+                    )}
 
                     {selectedSemester && (
                         <>
@@ -167,12 +206,21 @@ function Resource() {
                     )}
                 </div>
 
+                {!selectedProgram && (
+                    <ProgramBox
+                        programs={program}
+                        isDark={isDark}
+                        onSelect={handleProgramSelect}
+                    />
+                )}
+
                 {/* STEP 1 */}
-                {!selectedSemester && (
+                {selectedProgram && !selectedSemester && (
                     <SemesterBox
-                        semesters={semesters}
+                        semesters={programSemesters}
                         isDark={isDark}
                         onSelect={handleSemesterSelect}
+                        onBack={resetAll}
                     />
                 )}
 
@@ -184,7 +232,7 @@ function Resource() {
                             semester={selectedSemester}
                             isDark={isDark}
                             onSelect={handleSubjectSelect}
-                            onBack={resetAll}
+                            onBack={resetSemester}
                         />
                     )}
 
