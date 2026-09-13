@@ -7,8 +7,15 @@ import {
     ClipboardList,
     ArrowRight,
 } from "lucide-react";
+import { motion } from "motion/react";
 import { useNavigate } from "react-router-dom";
 import { Context } from "../../Context/Context";
+import {
+    pageVariants,
+    containerVariants,
+    cardVariants,
+    buttonVariants,
+} from "../../animations";
 
 function AdminDashboard() {
     const {
@@ -97,7 +104,14 @@ function AdminDashboard() {
     ];
 
     return (
-        <section
+        <motion.section
+            variants={pageVariants}
+            initial="hidden"
+            animate="visible"
+            transition={{
+                duration: 0.45,
+                ease: "easeOut",
+            }}
             className={`min-h-screen w-full px-4 py-20 font-roboto transition-colors duration-300 sm:px-6 sm:py-24 md:px-8 lg:px-10 lg:py-28 ${isDark
                 ? "bg-gray-950 text-white"
                 : "bg-gray-50 text-gray-900"
@@ -106,48 +120,70 @@ function AdminDashboard() {
             <div className="mx-auto w-full max-w-7xl">
 
                 {/* Header */}
-                <div className="mb-8 sm:mb-10">
-                    <p
+                <motion.div
+                    variants={containerVariants}
+                    initial="hidden"
+                    animate="visible"
+                    className="mb-8 sm:mb-10"
+                >
+                    <motion.p
+                        variants={cardVariants}
                         className={`mb-2 text-xs font-semibold uppercase tracking-[0.15em] sm:text-sm sm:tracking-[0.2em] ${isDark
                             ? "text-gray-500"
                             : "text-gray-400"
                             }`}
                     >
                         Administration
-                    </p>
+                    </motion.p>
 
-                    <h1 className="text-3xl font-bold sm:text-4xl md:text-5xl">
+                    <motion.h1
+                        variants={cardVariants}
+                        className="text-3xl font-bold sm:text-4xl md:text-5xl"
+                    >
                         Dashboard
-                    </h1>
+                    </motion.h1>
 
-                    <p
+                    <motion.p
+                        variants={cardVariants}
                         className={`mt-2 text-sm sm:mt-3 sm:text-base ${isDark
                             ? "text-gray-400"
                             : "text-gray-500"
                             }`}
                     >
                         Overview of your BVOC SD platform.
-                    </p>
-                </div>
+                    </motion.p>
+                </motion.div>
 
                 {/* Main Statistics */}
-                <div className="mb-10 grid grid-cols-1 gap-4 sm:gap-5 md:grid-cols-2 lg:mb-12 lg:grid-cols-3">
+                <motion.div
+                    variants={containerVariants}
+                    initial="hidden"
+                    animate="visible"
+                    className="mb-10 grid grid-cols-1 gap-4 sm:gap-5 md:grid-cols-2 lg:mb-12 lg:grid-cols-3"
+                >
                     {statistics.map((item) => {
                         const Icon = item.icon;
 
                         return (
-                            <button
+                            <motion.button
                                 key={item.title}
                                 type="button"
+                                variants={cardVariants}
+                                whileHover="hover"
+                                whileTap="tap"
                                 onClick={() => navigate(item.path)}
-                                className={`group w-full rounded-2xl border p-5 text-left transition-all duration-300 hover:-translate-y-1 sm:p-6 ${isDark
+                                className={`group w-full rounded-2xl border p-5 text-left transition-colors duration-300 sm:p-6 ${isDark
                                     ? "border-gray-800 bg-gray-900 hover:border-gray-600 hover:bg-gray-800 hover:shadow-xl"
                                     : "border-gray-200 bg-white shadow-md hover:border-gray-300 hover:shadow-xl"
                                     }`}
                             >
                                 <div className="flex items-start justify-between gap-4">
 
-                                    <div
+                                    <motion.div
+                                        whileHover={{ scale: 1.04 }}
+                                        transition={{
+                                            duration: 0.2,
+                                        }}
                                         className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl sm:h-12 sm:w-12 ${isDark
                                             ? "bg-white text-black"
                                             : "bg-black text-white"
@@ -157,15 +193,22 @@ function AdminDashboard() {
                                             size={22}
                                             className="sm:h-6 sm:w-6"
                                         />
-                                    </div>
+                                    </motion.div>
 
-                                    <ArrowRight
-                                        size={20}
-                                        className={`shrink-0 transition-transform duration-200 group-hover:translate-x-1 ${isDark
-                                            ? "text-gray-500"
-                                            : "text-gray-400"
-                                            }`}
-                                    />
+                                    <motion.div
+                                        whileHover={{ x: 4 }}
+                                        transition={{
+                                            duration: 0.2,
+                                        }}
+                                    >
+                                        <ArrowRight
+                                            size={20}
+                                            className={`shrink-0 ${isDark
+                                                ? "text-gray-500"
+                                                : "text-gray-400"
+                                                }`}
+                                        />
+                                    </motion.div>
                                 </div>
 
                                 <p
@@ -177,9 +220,24 @@ function AdminDashboard() {
                                     {item.title}
                                 </p>
 
-                                <h2 className="mt-1 text-3xl font-bold sm:text-4xl">
+                                <motion.h2
+                                    key={item.count}
+                                    initial={{
+                                        opacity: 0,
+                                        y: 8,
+                                    }}
+                                    animate={{
+                                        opacity: 1,
+                                        y: 0,
+                                    }}
+                                    transition={{
+                                        duration: 0.3,
+                                        ease: "easeOut",
+                                    }}
+                                    className="mt-1 text-3xl font-bold sm:text-4xl"
+                                >
                                     {item.count}
-                                </h2>
+                                </motion.h2>
 
                                 <p
                                     className={`mt-2 text-sm ${isDark
@@ -189,13 +247,17 @@ function AdminDashboard() {
                                 >
                                     {item.description}
                                 </p>
-                            </button>
+                            </motion.button>
                         );
                     })}
-                </div>
+                </motion.div>
 
                 {/* Resources */}
-                <div>
+                <motion.div
+                    variants={cardVariants}
+                    initial="hidden"
+                    animate="visible"
+                >
                     <div className="mb-5 flex flex-col gap-3 sm:mb-6 sm:flex-row sm:items-end sm:justify-between">
 
                         <div>
@@ -213,8 +275,11 @@ function AdminDashboard() {
                             </p>
                         </div>
 
-                        <button
+                        <motion.button
                             type="button"
+                            variants={buttonVariants}
+                            whileHover="hover"
+                            whileTap="tap"
                             onClick={() =>
                                 navigate(
                                     "/admin/dashboard/resources"
@@ -226,29 +291,43 @@ function AdminDashboard() {
                                 }`}
                         >
                             View all
-                        </button>
+                        </motion.button>
                     </div>
 
                     {/* Resource Type Cards */}
-                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
+                    <motion.div
+                        variants={containerVariants}
+                        initial="hidden"
+                        animate="visible"
+                        className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3"
+                    >
                         {resourceTypes.map((item) => {
                             const Icon = item.icon;
 
                             return (
-                                <button
+                                <motion.button
                                     key={item.title}
                                     type="button"
+                                    variants={cardVariants}
+                                    whileHover="hover"
+                                    whileTap="tap"
                                     onClick={() =>
                                         navigate(item.path)
                                     }
-                                    className={`group w-full rounded-2xl border p-5 text-left transition-all duration-300 hover:-translate-y-1 sm:p-6 ${isDark
+                                    className={`group w-full rounded-2xl border p-5 text-left transition-colors duration-300 sm:p-6 ${isDark
                                         ? "border-gray-800 bg-gray-900 hover:border-gray-600 hover:bg-gray-800 hover:shadow-xl"
                                         : "border-gray-200 bg-white shadow-md hover:border-gray-300 hover:shadow-xl"
                                         }`}
                                 >
                                     <div className="flex items-center justify-between gap-4">
 
-                                        <div
+                                        <motion.div
+                                            whileHover={{
+                                                scale: 1.04,
+                                            }}
+                                            transition={{
+                                                duration: 0.2,
+                                            }}
                                             className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl sm:h-11 sm:w-11 ${isDark
                                                 ? "bg-gray-800 text-white"
                                                 : "bg-gray-100 text-black"
@@ -258,15 +337,22 @@ function AdminDashboard() {
                                                 size={21}
                                                 className="sm:h-[22px] sm:w-[22px]"
                                             />
-                                        </div>
+                                        </motion.div>
 
-                                        <ArrowRight
-                                            size={19}
-                                            className={`shrink-0 transition-transform duration-200 group-hover:translate-x-1 ${isDark
-                                                ? "text-gray-600"
-                                                : "text-gray-400"
-                                                }`}
-                                        />
+                                        <motion.div
+                                            whileHover={{ x: 4 }}
+                                            transition={{
+                                                duration: 0.2,
+                                            }}
+                                        >
+                                            <ArrowRight
+                                                size={19}
+                                                className={`shrink-0 ${isDark
+                                                    ? "text-gray-600"
+                                                    : "text-gray-400"
+                                                    }`}
+                                            />
+                                        </motion.div>
                                     </div>
 
                                     <h3 className="mt-5 text-base font-semibold leading-6 sm:text-lg">
@@ -283,9 +369,23 @@ function AdminDashboard() {
                                     </p>
 
                                     <div className="mt-4 sm:mt-5">
-                                        <span className="text-2xl font-bold sm:text-3xl">
+                                        <motion.span
+                                            key={item.count}
+                                            initial={{
+                                                opacity: 0,
+                                                y: 6,
+                                            }}
+                                            animate={{
+                                                opacity: 1,
+                                                y: 0,
+                                            }}
+                                            transition={{
+                                                duration: 0.3,
+                                            }}
+                                            className="text-2xl font-bold sm:text-3xl"
+                                        >
                                             {item.count}
-                                        </span>
+                                        </motion.span>
 
                                         <span
                                             className={`ml-2 text-sm ${isDark
@@ -296,27 +396,41 @@ function AdminDashboard() {
                                             resources
                                         </span>
                                     </div>
-                                </button>
+                                </motion.button>
                             );
                         })}
-                    </div>
-                </div>
+                    </motion.div>
+                </motion.div>
 
                 {/* Quick Overview */}
-                <div
+                <motion.div
+                    variants={cardVariants}
+                    initial="hidden"
+                    animate="visible"
+                    transition={{
+                        delay: 0.15,
+                    }}
                     className={`mt-8 rounded-2xl border p-5 sm:mt-10 sm:p-6 ${isDark
                         ? "border-gray-800 bg-gray-900"
                         : "border-gray-200 bg-white shadow-md"
                         }`}
                 >
-                    <h2 className="text-lg font-bold sm:text-xl">
+                    <motion.h2
+                        variants={cardVariants}
+                        className="text-lg font-bold sm:text-xl"
+                    >
                         Quick Overview
-                    </h2>
+                    </motion.h2>
 
-                    <div className="mt-5 grid grid-cols-2 gap-y-6 gap-x-4 sm:mt-6 sm:gap-6 md:grid-cols-4">
+                    <motion.div
+                        variants={containerVariants}
+                        initial="hidden"
+                        animate="visible"
+                        className="mt-5 grid grid-cols-2 gap-x-4 gap-y-6 sm:mt-6 sm:gap-6 md:grid-cols-4"
+                    >
 
                         {/* Students */}
-                        <div>
+                        <motion.div variants={cardVariants}>
                             <p
                                 className={`text-xs sm:text-sm ${isDark
                                     ? "text-gray-500"
@@ -326,13 +440,27 @@ function AdminDashboard() {
                                 Students
                             </p>
 
-                            <p className="mt-1 text-xl font-bold sm:text-2xl">
+                            <motion.p
+                                key={students?.length || 0}
+                                initial={{
+                                    opacity: 0,
+                                    y: 6,
+                                }}
+                                animate={{
+                                    opacity: 1,
+                                    y: 0,
+                                }}
+                                transition={{
+                                    duration: 0.3,
+                                }}
+                                className="mt-1 text-xl font-bold sm:text-2xl"
+                            >
                                 {students?.length || 0}
-                            </p>
-                        </div>
+                            </motion.p>
+                        </motion.div>
 
                         {/* Faculty */}
-                        <div>
+                        <motion.div variants={cardVariants}>
                             <p
                                 className={`text-xs sm:text-sm ${isDark
                                     ? "text-gray-500"
@@ -342,13 +470,27 @@ function AdminDashboard() {
                                 Faculty
                             </p>
 
-                            <p className="mt-1 text-xl font-bold sm:text-2xl">
+                            <motion.p
+                                key={faculty?.length || 0}
+                                initial={{
+                                    opacity: 0,
+                                    y: 6,
+                                }}
+                                animate={{
+                                    opacity: 1,
+                                    y: 0,
+                                }}
+                                transition={{
+                                    duration: 0.3,
+                                }}
+                                className="mt-1 text-xl font-bold sm:text-2xl"
+                            >
                                 {faculty?.length || 0}
-                            </p>
-                        </div>
+                            </motion.p>
+                        </motion.div>
 
                         {/* Notes */}
-                        <div>
+                        <motion.div variants={cardVariants}>
                             <p
                                 className={`text-xs sm:text-sm ${isDark
                                     ? "text-gray-500"
@@ -358,13 +500,27 @@ function AdminDashboard() {
                                 Notes
                             </p>
 
-                            <p className="mt-1 text-xl font-bold sm:text-2xl">
+                            <motion.p
+                                key={resourceCounts.NOTES}
+                                initial={{
+                                    opacity: 0,
+                                    y: 6,
+                                }}
+                                animate={{
+                                    opacity: 1,
+                                    y: 0,
+                                }}
+                                transition={{
+                                    duration: 0.3,
+                                }}
+                                className="mt-1 text-xl font-bold sm:text-2xl"
+                            >
                                 {resourceCounts.NOTES}
-                            </p>
-                        </div>
+                            </motion.p>
+                        </motion.div>
 
                         {/* PYQs */}
-                        <div>
+                        <motion.div variants={cardVariants}>
                             <p
                                 className={`text-xs sm:text-sm ${isDark
                                     ? "text-gray-500"
@@ -374,16 +530,30 @@ function AdminDashboard() {
                                 PYQs
                             </p>
 
-                            <p className="mt-1 text-xl font-bold sm:text-2xl">
+                            <motion.p
+                                key={resourceCounts.PYQ}
+                                initial={{
+                                    opacity: 0,
+                                    y: 6,
+                                }}
+                                animate={{
+                                    opacity: 1,
+                                    y: 0,
+                                }}
+                                transition={{
+                                    duration: 0.3,
+                                }}
+                                className="mt-1 text-xl font-bold sm:text-2xl"
+                            >
                                 {resourceCounts.PYQ}
-                            </p>
-                        </div>
+                            </motion.p>
+                        </motion.div>
 
-                    </div>
-                </div>
+                    </motion.div>
+                </motion.div>
 
             </div>
-        </section>
+        </motion.section>
     );
 }
 

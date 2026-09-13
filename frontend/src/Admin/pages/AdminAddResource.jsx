@@ -1,8 +1,14 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Link as LinkIcon, Plus } from "lucide-react";
+import { motion } from "motion/react";
 import { Context } from "../../Context/Context";
 import api from "../../api/axios";
 import { Link as LinkTo } from "react-router-dom";
+import {
+    cardVariants,
+    containerVariants,
+    buttonVariants,
+} from "../../animations";
 
 function AdminAddResource() {
     const {
@@ -92,28 +98,66 @@ function AdminAddResource() {
     }
 
     return (
-        <div className="min-h-screen w-full bg-gray-50 px-4 py-8 font-roboto sm:px-6 sm:py-10 md:px-8 lg:px-10 lg:py-12">
+        <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{
+                duration: 0.35,
+                ease: "easeOut",
+            }}
+            className="min-h-screen w-full bg-gray-50 px-4 py-8 font-roboto sm:px-6 sm:py-10 md:px-8 lg:px-10 lg:py-12"
+        >
             <div className="mx-auto w-full max-w-4xl">
 
                 {/* Header */}
-                <div className="mb-7 sm:mb-8">
-                    <h1 className="text-2xl font-bold text-gray-900 sm:text-3xl">
+                <motion.div
+                    className="mb-7 sm:mb-8"
+                    variants={containerVariants}
+                    initial="hidden"
+                    animate="visible"
+                >
+                    <motion.h1
+                        variants={cardVariants}
+                        className="text-2xl font-bold text-gray-900 sm:text-3xl"
+                    >
                         Add Resource
-                    </h1>
+                    </motion.h1>
 
-                    <p className="mt-2 max-w-2xl text-sm leading-6 text-gray-500 sm:text-base sm:leading-7">
+                    <motion.p
+                        variants={cardVariants}
+                        className="mt-2 max-w-2xl text-sm leading-6 text-gray-500 sm:text-base sm:leading-7"
+                    >
                         Add study materials and useful resources
                         for students.
-                    </p>
-                </div>
+                    </motion.p>
+                </motion.div>
+
 
                 {/* Form */}
-                <form
+                <motion.form
                     onSubmit={handleSubmit}
+                    initial={{
+                        opacity: 0,
+                        y: 20,
+                    }}
+                    animate={{
+                        opacity: 1,
+                        y: 0,
+                    }}
+                    transition={{
+                        duration: 0.5,
+                        delay: 0.1,
+                        ease: "easeOut",
+                    }}
                     className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm sm:rounded-3xl sm:p-6 md:p-8"
                 >
                     {/* Title */}
-                    <div className="mb-5 sm:mb-6">
+                    <motion.div
+                        className="mb-5 sm:mb-6"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.35, delay: 0.15 }}
+                    >
                         <label
                             htmlFor="resource-title"
                             className="mb-2 block text-sm font-medium text-gray-700"
@@ -121,7 +165,7 @@ function AdminAddResource() {
                             Resource Title
                         </label>
 
-                        <input
+                        <motion.input
                             id="resource-title"
                             type="text"
                             name="title"
@@ -131,12 +175,20 @@ function AdminAddResource() {
                                 setTitle(e.target.value)
                             }
                             required
+                            whileFocus={{ scale: 1.005 }}
+                            transition={{ duration: 0.15 }}
                             className="w-full rounded-lg border border-gray-300 px-3 py-3 text-sm outline-none transition focus:border-black sm:px-4 sm:text-base"
                         />
-                    </div>
+                    </motion.div>
+
 
                     {/* Description */}
-                    <div className="mb-5 sm:mb-6">
+                    <motion.div
+                        className="mb-5 sm:mb-6"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.35, delay: 0.2 }}
+                    >
                         <label
                             htmlFor="resource-description"
                             className="mb-2 block text-sm font-medium text-gray-700"
@@ -144,7 +196,7 @@ function AdminAddResource() {
                             Description
                         </label>
 
-                        <textarea
+                        <motion.textarea
                             id="resource-description"
                             name="description"
                             rows="4"
@@ -153,12 +205,20 @@ function AdminAddResource() {
                             onChange={(e) =>
                                 setDescription(e.target.value)
                             }
+                            whileFocus={{ scale: 1.005 }}
+                            transition={{ duration: 0.15 }}
                             className="w-full resize-none rounded-lg border border-gray-300 px-3 py-3 text-sm leading-6 outline-none transition focus:border-black sm:px-4 sm:text-base"
                         />
-                    </div>
+                    </motion.div>
+
 
                     {/* Semester + Subject */}
-                    <div className="mb-5 grid grid-cols-1 gap-5 sm:mb-6 md:grid-cols-2">
+                    <motion.div
+                        className="mb-5 grid grid-cols-1 gap-5 sm:mb-6 md:grid-cols-2"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.35, delay: 0.25 }}
+                    >
                         {/* Semester */}
                         <div>
                             <label
@@ -168,7 +228,7 @@ function AdminAddResource() {
                                 Semester
                             </label>
 
-                            <select
+                            <motion.select
                                 id="resource-semester"
                                 name="semester"
                                 value={semester}
@@ -176,6 +236,8 @@ function AdminAddResource() {
                                     setSemester(e.target.value)
                                 }
                                 required
+                                whileFocus={{ scale: 1.005 }}
+                                transition={{ duration: 0.15 }}
                                 className="w-full rounded-lg border border-gray-300 bg-white px-3 py-3 text-sm outline-none focus:border-black sm:px-4 sm:text-base"
                             >
                                 <option value="">
@@ -190,8 +252,9 @@ function AdminAddResource() {
                                         Semester {item.number}
                                     </option>
                                 ))}
-                            </select>
+                            </motion.select>
                         </div>
+
 
                         {/* Subject */}
                         <div>
@@ -202,7 +265,7 @@ function AdminAddResource() {
                                 Subject
                             </label>
 
-                            <select
+                            <motion.select
                                 id="resource-subject"
                                 name="subject"
                                 required
@@ -211,6 +274,12 @@ function AdminAddResource() {
                                     setSubject(e.target.value)
                                 }
                                 disabled={!semester}
+                                whileFocus={
+                                    semester
+                                        ? { scale: 1.005 }
+                                        : undefined
+                                }
+                                transition={{ duration: 0.15 }}
                                 className="w-full rounded-lg border border-gray-300 bg-white px-3 py-3 text-sm outline-none transition focus:border-black disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-400 sm:px-4 sm:text-base"
                             >
                                 <option value="">
@@ -227,12 +296,18 @@ function AdminAddResource() {
                                         {item.name}
                                     </option>
                                 ))}
-                            </select>
+                            </motion.select>
                         </div>
-                    </div>
+                    </motion.div>
+
 
                     {/* Resource Type */}
-                    <div className="mb-5 sm:mb-6">
+                    <motion.div
+                        className="mb-5 sm:mb-6"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.35, delay: 0.3 }}
+                    >
                         <label
                             htmlFor="resource-type"
                             className="mb-2 block text-sm font-medium text-gray-700"
@@ -240,7 +315,7 @@ function AdminAddResource() {
                             Resource Type
                         </label>
 
-                        <select
+                        <motion.select
                             id="resource-type"
                             name="type"
                             required
@@ -248,6 +323,8 @@ function AdminAddResource() {
                             onChange={(e) =>
                                 setType(e.target.value)
                             }
+                            whileFocus={{ scale: 1.005 }}
+                            transition={{ duration: 0.15 }}
                             className="w-full rounded-lg border border-gray-300 bg-white px-3 py-3 text-sm outline-none focus:border-black sm:px-4 sm:text-base"
                         >
                             <option value="">
@@ -265,11 +342,17 @@ function AdminAddResource() {
                             <option value="NOTES">
                                 Notes
                             </option>
-                        </select>
-                    </div>
+                        </motion.select>
+                    </motion.div>
+
 
                     {/* URL */}
-                    <div className="mb-6">
+                    <motion.div
+                        className="mb-6"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.35, delay: 0.35 }}
+                    >
                         <label
                             htmlFor="resource-url"
                             className="mb-2 block text-sm font-medium text-gray-700"
@@ -277,7 +360,10 @@ function AdminAddResource() {
                             Resource URL
                         </label>
 
-                        <div className="flex w-full items-center rounded-lg border border-gray-300 transition focus-within:border-black">
+                        <motion.div
+                            className="flex w-full items-center rounded-lg border border-gray-300 transition focus-within:border-black"
+                            whileFocus={{ scale: 1.005 }}
+                        >
                             <LinkIcon
                                 size={19}
                                 className="mx-3 shrink-0 text-gray-500"
@@ -295,29 +381,53 @@ function AdminAddResource() {
                                 required
                                 className="min-w-0 w-full rounded-r-lg bg-transparent px-2 py-3 text-sm outline-none sm:text-base"
                             />
-                        </div>
-                    </div>
+                        </motion.div>
+                    </motion.div>
+
 
                     {/* Actions */}
-                    <div className="flex flex-col-reverse gap-3 border-t border-gray-200 pt-5 sm:flex-row sm:justify-end sm:pt-6">
-                        <LinkTo
-                            to="/admin/dashboard/resources"
-                            className="flex w-full items-center justify-center rounded-lg border border-gray-300 px-5 py-2.5 text-sm font-medium transition hover:bg-gray-50 sm:w-auto sm:text-base"
+                    <motion.div
+                        className="flex flex-col-reverse gap-3 border-t border-gray-200 pt-5 sm:flex-row sm:justify-end sm:pt-6"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{
+                            duration: 0.35,
+                            delay: 0.4,
+                        }}
+                    >
+                        <motion.div
+                            whileHover={{ scale: 1.01 }}
+                            whileTap={{ scale: 0.98 }}
+                            className="w-full sm:w-auto"
                         >
-                            Cancel
-                        </LinkTo>
+                            <LinkTo
+                                to="/admin/dashboard/resources"
+                                className="flex w-full items-center justify-center rounded-lg border border-gray-300 px-5 py-2.5 text-sm font-medium transition hover:bg-gray-50 sm:w-auto sm:text-base"
+                            >
+                                Cancel
+                            </LinkTo>
+                        </motion.div>
 
-                        <button
+                        <motion.button
                             type="submit"
-                            className="flex w-full items-center justify-center gap-2 rounded-lg bg-black px-5 py-2.5 text-sm font-medium text-white transition hover:bg-gray-800 active:scale-95 sm:w-auto sm:text-base"
+                            variants={buttonVariants}
+                            whileHover="hover"
+                            whileTap="tap"
+                            className="flex w-full items-center justify-center gap-2 rounded-lg bg-black px-5 py-2.5 text-sm font-medium text-white transition hover:bg-gray-800 sm:w-auto sm:text-base"
                         >
-                            <Plus size={18} />
+                            <motion.span
+                                whileHover={{ rotate: 3 }}
+                                transition={{ duration: 0.2 }}
+                            >
+                                <Plus size={18} />
+                            </motion.span>
+
                             Add Resource
-                        </button>
-                    </div>
-                </form>
+                        </motion.button>
+                    </motion.div>
+                </motion.form>
             </div>
-        </div>
+        </motion.div>
     );
 }
 

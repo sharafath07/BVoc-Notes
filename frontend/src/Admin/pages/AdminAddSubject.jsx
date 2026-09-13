@@ -5,11 +5,18 @@ import React, {
     useState,
 } from "react";
 
+import { motion } from "motion/react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, BookOpen, ChevronDown } from "lucide-react";
 
 import { Context } from "../../Context/Context";
 import api from "../../api/axios";
+
+import {
+    cardVariants,
+    containerVariants,
+    buttonVariants,
+} from "../../animations";
 
 function AdminAddSubject() {
     const {
@@ -130,48 +137,82 @@ function AdminAddSubject() {
     };
 
     return (
-        <section
+        <motion.section
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{
+                duration: 0.35,
+                ease: "easeOut",
+            }}
             className={`min-h-screen w-full px-4 py-20 font-roboto transition-colors duration-300 sm:px-6 sm:py-24 md:px-8 lg:px-10 ${isDark
                 ? "bg-gray-950 text-white"
                 : "bg-gray-50 text-gray-900"
                 }`}
         >
             <div className="mx-auto w-full max-w-3xl">
+
                 {/* Back */}
-                <button
+                <motion.button
                     type="button"
                     onClick={() =>
                         navigate("/admin/dashboard/subjects")
                     }
-                    className={`mb-6 flex items-center gap-2 text-sm transition hover:underline ${isDark
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{
+                        duration: 0.35,
+                        ease: "easeOut",
+                    }}
+                    whileHover={{ x: -4 }}
+                    whileTap={{ scale: 0.97 }}
+                    className={`mb-6 flex items-center gap-2 text-sm transition ${isDark
                         ? "text-gray-400 hover:text-white"
                         : "text-gray-500 hover:text-gray-900"
                         }`}
                 >
                     <ArrowLeft size={17} />
                     Back to Subjects
-                </button>
+                </motion.button>
+
 
                 {/* Header */}
-                <div className="mb-8">
-                    <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-white">
+                <motion.div
+                    className="mb-8"
+                    variants={containerVariants}
+                    initial="hidden"
+                    animate="visible"
+                >
+                    <motion.div
+                        variants={cardVariants}
+                        whileHover={{
+                            scale: 1.06,
+                            rotate: 2,
+                        }}
+                        transition={{ duration: 0.2 }}
+                        className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-white"
+                    >
                         <BookOpen size={24} />
-                    </div>
+                    </motion.div>
 
-                    <p
+                    <motion.p
+                        variants={cardVariants}
                         className={`mb-2 text-xs font-semibold uppercase tracking-[0.15em] ${isDark
                             ? "text-gray-500"
                             : "text-gray-400"
                             }`}
                     >
                         Administration
-                    </p>
+                    </motion.p>
 
-                    <h1 className="text-3xl font-bold sm:text-4xl">
+                    <motion.h1
+                        variants={cardVariants}
+                        className="text-3xl font-bold sm:text-4xl"
+                    >
                         Add Subject
-                    </h1>
+                    </motion.h1>
 
-                    <p
+                    <motion.p
+                        variants={cardVariants}
                         className={`mt-3 text-sm leading-6 sm:text-base ${isDark
                             ? "text-gray-400"
                             : "text-gray-600"
@@ -179,20 +220,40 @@ function AdminAddSubject() {
                     >
                         Add a new subject to a program and
                         semester.
-                    </p>
-                </div>
+                    </motion.p>
+                </motion.div>
+
 
                 {/* Form */}
-                <form
+                <motion.form
                     onSubmit={handleSubmit}
+                    initial={{
+                        opacity: 0,
+                        y: 20,
+                    }}
+                    animate={{
+                        opacity: 1,
+                        y: 0,
+                    }}
+                    transition={{
+                        duration: 0.5,
+                        delay: 0.1,
+                        ease: "easeOut",
+                    }}
                     className={`rounded-2xl border p-5 sm:p-7 ${isDark
                         ? "border-gray-800 bg-gray-900"
                         : "border-gray-200 bg-white shadow-sm"
                         }`}
                 >
-                    <div className="space-y-6">
+                    <motion.div
+                        className="space-y-6"
+                        variants={containerVariants}
+                        initial="hidden"
+                        animate="visible"
+                    >
+
                         {/* Program */}
-                        <div>
+                        <motion.div variants={cardVariants}>
                             <label
                                 htmlFor="program"
                                 className="mb-2 block text-sm font-semibold"
@@ -201,7 +262,7 @@ function AdminAddSubject() {
                             </label>
 
                             <div className="relative">
-                                <select
+                                <motion.select
                                     id="program"
                                     value={selectedProgram}
                                     onChange={(event) =>
@@ -209,6 +270,10 @@ function AdminAddSubject() {
                                             event.target.value
                                         )
                                     }
+                                    whileFocus={{ scale: 1.005 }}
+                                    transition={{
+                                        duration: 0.15,
+                                    }}
                                     className={`w-full appearance-none rounded-xl border px-4 py-3 pr-10 text-sm outline-none transition ${isDark
                                         ? "border-gray-700 bg-gray-950 text-white focus:border-gray-500"
                                         : "border-gray-200 bg-gray-50 text-gray-900 focus:border-gray-400"
@@ -226,17 +291,18 @@ function AdminAddSubject() {
                                             {item.name}
                                         </option>
                                     ))}
-                                </select>
+                                </motion.select>
 
                                 <ChevronDown
                                     size={18}
                                     className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 opacity-50"
                                 />
                             </div>
-                        </div>
+                        </motion.div>
+
 
                         {/* Semester */}
-                        <div>
+                        <motion.div variants={cardVariants}>
                             <label
                                 htmlFor="semester"
                                 className="mb-2 block text-sm font-semibold"
@@ -245,7 +311,7 @@ function AdminAddSubject() {
                             </label>
 
                             <div className="relative">
-                                <select
+                                <motion.select
                                     id="semester"
                                     value={selectedSemester}
                                     onChange={(event) =>
@@ -254,6 +320,16 @@ function AdminAddSubject() {
                                         )
                                     }
                                     disabled={!selectedProgram}
+                                    whileFocus={
+                                        selectedProgram
+                                            ? {
+                                                scale: 1.005,
+                                            }
+                                            : undefined
+                                    }
+                                    transition={{
+                                        duration: 0.15,
+                                    }}
                                     className={`w-full appearance-none rounded-xl border px-4 py-3 pr-10 text-sm outline-none transition disabled:cursor-not-allowed disabled:opacity-50 ${isDark
                                         ? "border-gray-700 bg-gray-950 text-white focus:border-gray-500"
                                         : "border-gray-200 bg-gray-50 text-gray-900 focus:border-gray-400"
@@ -278,17 +354,18 @@ function AdminAddSubject() {
                                             </option>
                                         )
                                     )}
-                                </select>
+                                </motion.select>
 
                                 <ChevronDown
                                     size={18}
                                     className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 opacity-50"
                                 />
                             </div>
-                        </div>
+                        </motion.div>
+
 
                         {/* Subject name */}
-                        <div>
+                        <motion.div variants={cardVariants}>
                             <label
                                 htmlFor="subjectName"
                                 className="mb-2 block text-sm font-semibold"
@@ -296,7 +373,7 @@ function AdminAddSubject() {
                                 Subject Name
                             </label>
 
-                            <input
+                            <motion.input
                                 id="subjectName"
                                 type="text"
                                 value={subjectName}
@@ -307,26 +384,58 @@ function AdminAddSubject() {
                                 }
                                 placeholder="Enter subject name"
                                 maxLength={150}
+                                whileFocus={{ scale: 1.005 }}
+                                transition={{
+                                    duration: 0.15,
+                                }}
                                 className={`w-full rounded-xl border px-4 py-3 text-sm outline-none transition ${isDark
                                     ? "border-gray-700 bg-gray-950 text-white placeholder:text-gray-600 focus:border-gray-500"
                                     : "border-gray-200 bg-gray-50 text-gray-900 placeholder:text-gray-400 focus:border-gray-400"
                                     }`}
                             />
 
-                            <p
+                            <motion.p
+                                key={subjectName.length}
+                                initial={{
+                                    opacity: 0,
+                                    y: -2,
+                                }}
+                                animate={{
+                                    opacity: 1,
+                                    y: 0,
+                                }}
+                                transition={{
+                                    duration: 0.15,
+                                }}
                                 className={`mt-2 text-xs ${isDark
                                     ? "text-gray-500"
                                     : "text-gray-400"
                                     }`}
                             >
                                 {subjectName.length}/150
-                            </p>
-                        </div>
-                    </div>
+                            </motion.p>
+                        </motion.div>
+
+                    </motion.div>
+
 
                     {/* Actions */}
-                    <div className="mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
-                        <button
+                    <motion.div
+                        className="mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end"
+                        initial={{
+                            opacity: 0,
+                            y: 10,
+                        }}
+                        animate={{
+                            opacity: 1,
+                            y: 0,
+                        }}
+                        transition={{
+                            duration: 0.35,
+                            delay: 0.4,
+                        }}
+                    >
+                        <motion.button
                             type="button"
                             onClick={() =>
                                 navigate(
@@ -334,17 +443,26 @@ function AdminAddSubject() {
                                 )
                             }
                             disabled={loading}
+                            whileHover={{
+                                scale: 1.01,
+                            }}
+                            whileTap={{
+                                scale: 0.98,
+                            }}
                             className={`rounded-xl px-5 py-3 text-sm font-semibold transition disabled:opacity-50 ${isDark
                                 ? "bg-gray-800 hover:bg-gray-700"
                                 : "bg-gray-100 hover:bg-gray-200"
                                 }`}
                         >
                             Cancel
-                        </button>
+                        </motion.button>
 
-                        <button
+                        <motion.button
                             type="submit"
                             disabled={loading}
+                            variants={buttonVariants}
+                            whileHover="hover"
+                            whileTap="tap"
                             className={`rounded-xl px-5 py-3 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-50 ${isDark
                                 ? "bg-white text-black hover:bg-gray-200"
                                 : "bg-black text-white hover:bg-gray-800"
@@ -353,11 +471,11 @@ function AdminAddSubject() {
                             {loading
                                 ? "Adding..."
                                 : "Add Subject"}
-                        </button>
-                    </div>
-                </form>
+                        </motion.button>
+                    </motion.div>
+                </motion.form>
             </div>
-        </section>
+        </motion.section>
     );
 }
 
