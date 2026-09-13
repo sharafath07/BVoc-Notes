@@ -62,6 +62,10 @@ function AdminNavbar() {
             path: "/admin/dashboard/faculties",
         },
         {
+            name: "Subjects",
+            path: "/admin/dashboard/subjects",
+        },
+        {
             name: "Resources",
             path: "/admin/dashboard/resources",
         },

@@ -21,6 +21,8 @@ import AdminResources from './Admin/pages/AdminResources';
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminAddResources from './Admin/pages/AdminAddResource';
 import AdminEditResource from './Admin/pages/AdminEditResource';
+import AdminSubjects from './Admin/pages/AdminSubjects';
+import AdminAddSubject from './Admin/pages/AdminAddSubject';
 
 function App() {
 
@@ -54,7 +56,8 @@ function App() {
         <Route path="/admin/dashboard/resources" element={<ProtectedRoute toUrl="/admin/login" adminOnly={true}><AdminResources /></ProtectedRoute>} />
         <Route path="/admin/dashboard/resources/add" element={<ProtectedRoute toUrl="/admin/login" adminOnly={true}><AdminAddResources /></ProtectedRoute>} />
         <Route path="/admin/dashboard/resources/edit/:id" element={<ProtectedRoute toUrl='/admin/login' adminOnly={true}><AdminEditResource /></ProtectedRoute>} />
-
+        <Route path="/admin/dashboard/subjects" element={<ProtectedRoute toUrl="/admin/login" adminOnly={true}><AdminSubjects /></ProtectedRoute>} />
+        <Route path="/admin/dashboard/subjects/add" element={<ProtectedRoute toUrl="/admin/login" adminOnly={true}><AdminAddSubject /></ProtectedRoute>} />
 
       </Routes>
       {
