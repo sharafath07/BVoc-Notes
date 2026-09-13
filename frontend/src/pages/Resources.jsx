@@ -1,10 +1,9 @@
-// Resource.jsx
-
 import React, {
     useContext,
     useMemo,
     useState,
 } from "react";
+import { motion, AnimatePresence } from "motion/react";
 
 import { Context } from "../Context/Context";
 
@@ -13,6 +12,11 @@ import SemesterBox from "../components/Resources/SemesterBox";
 import SubjectBox from "../components/Resources/SubjectBox";
 import ResourceTypeBox from "../components/Resources/ResourceTypeBox";
 import ResourceCard from "../components/Resources/ResourceCard";
+
+import {
+    cardVariants,
+    containerVariants,
+} from "../animations";
 
 function Resource() {
     const {
@@ -65,7 +69,7 @@ function Resource() {
         setSelectedSemester(null);
         setSelectedSubject(null);
         setSelectedType(null);
-    }
+    };
 
     const handleSemesterSelect = (semester) => {
         setSelectedSemester(semester);
@@ -93,7 +97,7 @@ function Resource() {
         setSelectedSemester(null);
         setSelectedSubject(null);
         setSelectedType(null);
-    }
+    };
 
     const resetSubject = () => {
         setSelectedSubject(null);
@@ -114,21 +118,31 @@ function Resource() {
             <div className="mx-auto w-full max-w-7xl">
 
                 {/* Header */}
-                <div className="mb-8 sm:mb-12">
-                    <p
+                <motion.div
+                    className="mb-8 sm:mb-12"
+                    variants={containerVariants}
+                    initial="hidden"
+                    animate="visible"
+                >
+                    <motion.p
+                        variants={cardVariants}
                         className={`mb-2 text-xs font-semibold uppercase tracking-[0.15em] sm:mb-3 sm:text-sm sm:tracking-[0.2em] ${isDark
                             ? "text-gray-500"
                             : "text-gray-400"
                             }`}
                     >
                         Learning Materials
-                    </p>
+                    </motion.p>
 
-                    <h1 className="text-3xl font-bold sm:text-4xl md:text-5xl">
+                    <motion.h1
+                        variants={cardVariants}
+                        className="text-3xl font-bold sm:text-4xl md:text-5xl"
+                    >
                         Resources
-                    </h1>
+                    </motion.h1>
 
-                    <p
+                    <motion.p
+                        variants={cardVariants}
                         className={`mt-3 max-w-2xl text-sm leading-6 sm:mt-4 sm:text-base sm:leading-7 ${isDark
                             ? "text-gray-400"
                             : "text-gray-600"
@@ -136,130 +150,266 @@ function Resource() {
                     >
                         Select your semester, subject, and resource
                         type to find the study materials you need.
-                    </p>
-                </div>
+                    </motion.p>
+                </motion.div>
+
 
                 {/* Breadcrumb */}
-                <div
-                    className={`mb-7 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs sm:mb-8 sm:text-sm ${isDark
-                        ? "text-gray-400"
-                        : "text-gray-500"
-                        }`}
-                >
-                    <button
-                        type="button"
-                        onClick={resetAll}
-                        className="transition hover:underline"
+                <AnimatePresence mode="wait">
+                    <motion.div
+                        key={`${selectedProgram?.id || "program"}-${selectedSemester?.id || "semester"}-${selectedSubject?.id || "subject"}-${selectedType || "type"}`}
+                        initial={{ opacity: 0, y: -5 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 5 }}
+                        transition={{
+                            duration: 0.2,
+                            ease: "easeOut",
+                        }}
+                        className={`mb-7 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs sm:mb-8 sm:text-sm ${isDark
+                            ? "text-gray-400"
+                            : "text-gray-500"
+                            }`}
                     >
-                        Programs
-                    </button>
+                        <motion.button
+                            type="button"
+                            onClick={resetAll}
+                            whileHover={{ y: -1 }}
+                            whileTap={{ scale: 0.97 }}
+                            className="transition hover:underline"
+                        >
+                            Programs
+                        </motion.button>
 
-                    {selectedProgram && (
-                        <>
-                            <span>/</span>
-                            <button
-                                type="button"
-                                onClick={resetSemester}
-                                className="transition hover:underline"
+                        {selectedProgram && (
+                            <>
+                                <span>/</span>
+
+                                <motion.button
+                                    type="button"
+                                    onClick={resetSemester}
+                                    whileHover={{ y: -1 }}
+                                    whileTap={{ scale: 0.97 }}
+                                    className="transition hover:underline"
+                                >
+                                    {selectedProgram.name}
+                                </motion.button>
+                            </>
+                        )}
+
+                        {selectedSemester && (
+                            <>
+                                <span>/</span>
+
+                                <motion.button
+                                    type="button"
+                                    onClick={resetSubject}
+                                    whileHover={{ y: -1 }}
+                                    whileTap={{ scale: 0.97 }}
+                                    className="max-w-[150px] truncate transition hover:underline sm:max-w-none"
+                                >
+                                    Semester {selectedSemester.number}
+                                </motion.button>
+                            </>
+                        )}
+
+                        {selectedSubject && (
+                            <>
+                                <span>/</span>
+
+                                <motion.button
+                                    type="button"
+                                    onClick={resetType}
+                                    whileHover={{ y: -1 }}
+                                    whileTap={{ scale: 0.97 }}
+                                    className="max-w-[150px] truncate transition hover:underline sm:max-w-none"
+                                >
+                                    {selectedSubject.name}
+                                </motion.button>
+                            </>
+                        )}
+
+                        {selectedType && (
+                            <>
+                                <span>/</span>
+
+                                <motion.span
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    className="max-w-[150px] truncate sm:max-w-none"
+                                >
+                                    {selectedType}
+                                </motion.span>
+                            </>
+                        )}
+                    </motion.div>
+                </AnimatePresence>
+
+
+                {/* Resource Navigation Steps */}
+                <div className="relative">
+
+                    <AnimatePresence mode="wait" initial={false}>
+
+                        {/* Programs */}
+                        {!selectedProgram && (
+                            <motion.div
+                                key="programs"
+                                initial={{
+                                    opacity: 0,
+                                    x: -20,
+                                }}
+                                animate={{
+                                    opacity: 1,
+                                    x: 0,
+                                }}
+                                exit={{
+                                    opacity: 0,
+                                    x: 20,
+                                }}
+                                transition={{
+                                    duration: 0.3,
+                                    ease: "easeOut",
+                                }}
                             >
-                                {selectedProgram.name}
-                            </button>
-                        </>
-                    )}
+                                <ProgramBox
+                                    programs={program}
+                                    isDark={isDark}
+                                    onSelect={handleProgramSelect}
+                                />
+                            </motion.div>
+                        )}
 
-                    {selectedSemester && (
-                        <>
-                            <span>/</span>
 
-                            <button
-                                type="button"
-                                onClick={resetSubject}
-                                className="max-w-[150px] truncate transition hover:underline sm:max-w-none"
+                        {/* Semesters */}
+                        {selectedProgram && !selectedSemester && (
+                            <motion.div
+                                key="semesters"
+                                initial={{
+                                    opacity: 0,
+                                    x: 20,
+                                }}
+                                animate={{
+                                    opacity: 1,
+                                    x: 0,
+                                }}
+                                exit={{
+                                    opacity: 0,
+                                    x: -20,
+                                }}
+                                transition={{
+                                    duration: 0.3,
+                                    ease: "easeOut",
+                                }}
                             >
-                                Semester {selectedSemester.number}
-                            </button>
-                        </>
-                    )}
+                                <SemesterBox
+                                    semesters={programSemesters}
+                                    isDark={isDark}
+                                    onSelect={handleSemesterSelect}
+                                    onBack={resetAll}
+                                />
+                            </motion.div>
+                        )}
 
-                    {selectedSubject && (
-                        <>
-                            <span>/</span>
 
-                            <button
-                                type="button"
-                                onClick={resetType}
-                                className="max-w-[150px] truncate transition hover:underline sm:max-w-none"
+                        {/* Subjects */}
+                        {selectedSemester && !selectedSubject && (
+                            <motion.div
+                                key="subjects"
+                                initial={{
+                                    opacity: 0,
+                                    x: 20,
+                                }}
+                                animate={{
+                                    opacity: 1,
+                                    x: 0,
+                                }}
+                                exit={{
+                                    opacity: 0,
+                                    x: -20,
+                                }}
+                                transition={{
+                                    duration: 0.3,
+                                    ease: "easeOut",
+                                }}
                             >
-                                {selectedSubject.name}
-                            </button>
-                        </>
-                    )}
+                                <SubjectBox
+                                    subjects={semesterSubjects}
+                                    semester={selectedSemester}
+                                    isDark={isDark}
+                                    onSelect={handleSubjectSelect}
+                                    onBack={resetSemester}
+                                />
+                            </motion.div>
+                        )}
 
-                    {selectedType && (
-                        <>
-                            <span>/</span>
 
-                            <span className="max-w-[150px] truncate sm:max-w-none">
-                                {selectedType}
-                            </span>
-                        </>
-                    )}
+                        {/* Resource Types */}
+                        {selectedSubject && !selectedType && (
+                            <motion.div
+                                key="resource-types"
+                                initial={{
+                                    opacity: 0,
+                                    x: 20,
+                                }}
+                                animate={{
+                                    opacity: 1,
+                                    x: 0,
+                                }}
+                                exit={{
+                                    opacity: 0,
+                                    x: -20,
+                                }}
+                                transition={{
+                                    duration: 0.3,
+                                    ease: "easeOut",
+                                }}
+                            >
+                                <ResourceTypeBox
+                                    isDark={isDark}
+                                    subject={selectedSubject}
+                                    semester={selectedSemester}
+                                    onSelect={handleTypeSelect}
+                                    onBack={resetSubject}
+                                />
+                            </motion.div>
+                        )}
+
+
+                        {/* Resources */}
+                        {selectedSubject && selectedType && (
+                            <motion.div
+                                key="resources"
+                                initial={{
+                                    opacity: 0,
+                                    x: 20,
+                                }}
+                                animate={{
+                                    opacity: 1,
+                                    x: 0,
+                                }}
+                                exit={{
+                                    opacity: 0,
+                                    x: -20,
+                                }}
+                                transition={{
+                                    duration: 0.3,
+                                    ease: "easeOut",
+                                }}
+                            >
+                                <ResourceCard
+                                    resources={subjectResources}
+                                    type={selectedType}
+                                    subject={selectedSubject}
+                                    semester={selectedSemester}
+                                    isDark={isDark}
+                                    onBack={resetType}
+                                />
+                            </motion.div>
+                        )}
+
+                    </AnimatePresence>
                 </div>
 
-                {!selectedProgram && (
-                    <ProgramBox
-                        programs={program}
-                        isDark={isDark}
-                        onSelect={handleProgramSelect}
-                    />
-                )}
-
-                {/* STEP 1 */}
-                {selectedProgram && !selectedSemester && (
-                    <SemesterBox
-                        semesters={programSemesters}
-                        isDark={isDark}
-                        onSelect={handleSemesterSelect}
-                        onBack={resetAll}
-                    />
-                )}
-
-                {/* STEP 2 */}
-                {selectedSemester &&
-                    !selectedSubject && (
-                        <SubjectBox
-                            subjects={semesterSubjects}
-                            semester={selectedSemester}
-                            isDark={isDark}
-                            onSelect={handleSubjectSelect}
-                            onBack={resetSemester}
-                        />
-                    )}
-
-                {/* STEP 3 */}
-                {selectedSubject &&
-                    !selectedType && (
-                        <ResourceTypeBox
-                            isDark={isDark}
-                            subject={selectedSubject}
-                            semester={selectedSemester}
-                            onSelect={handleTypeSelect}
-                            onBack={resetSubject}
-                        />
-                    )}
-
-                {/* STEP 4 */}
-                {selectedSubject &&
-                    selectedType && (
-                        <ResourceCard
-                            resources={subjectResources}
-                            type={selectedType}
-                            subject={selectedSubject}
-                            semester={selectedSemester}
-                            isDark={isDark}
-                            onBack={resetType}
-                        />
-                    )}
             </div>
         </section>
     );

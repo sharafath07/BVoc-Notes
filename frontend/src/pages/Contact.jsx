@@ -5,7 +5,13 @@ import {
     Mail,
     Send,
 } from "lucide-react";
+import { motion } from "motion/react";
 import { Context } from "../Context/Context";
+import {
+    cardVariants,
+    containerVariants,
+    buttonVariants,
+} from "../animations";
 
 function Contact() {
     const { isDark } = useContext(Context);
@@ -38,26 +44,35 @@ function Contact() {
                     HEADER
                 ========================= */}
 
-                <div className="mb-10 text-center sm:mb-14 md:mb-16">
-                    <p
+                <motion.div
+                    className="mb-10 text-center sm:mb-14 md:mb-16"
+                    variants={containerVariants}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true, amount: 0.2 }}
+                >
+                    <motion.p
+                        variants={cardVariants}
                         className={`mb-2 text-xs font-semibold uppercase tracking-[0.15em] sm:mb-3 sm:text-sm sm:tracking-[0.2em] ${isDark
                             ? "text-gray-500"
                             : "text-gray-400"
                             }`}
                     >
                         Get In Touch
-                    </p>
+                    </motion.p>
 
-                    <h1
+                    <motion.h1
+                        variants={cardVariants}
                         className={`text-3xl font-bold sm:text-4xl md:text-5xl ${isDark
                             ? "text-white"
                             : "text-gray-900"
                             }`}
                     >
                         Contact Us
-                    </h1>
+                    </motion.h1>
 
-                    <p
+                    <motion.p
+                        variants={cardVariants}
                         className={`mx-auto mt-4 max-w-2xl text-sm leading-7 sm:mt-5 sm:text-base md:text-lg md:leading-8 ${isDark
                             ? "text-gray-400"
                             : "text-gray-600"
@@ -66,8 +81,8 @@ function Contact() {
                         Have a question or need more information?
                         Feel free to get in touch with the Department
                         of Software Development.
-                    </p>
-                </div>
+                    </motion.p>
+                </motion.div>
 
 
                 {/* =========================
@@ -80,7 +95,14 @@ function Contact() {
                         CONTACT INFORMATION
                     ========================= */}
 
-                    <div
+                    <motion.div
+                        initial={{ opacity: 0, x: -30 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={{ once: true, amount: 0.15 }}
+                        transition={{
+                            duration: 0.6,
+                            ease: "easeOut",
+                        }}
                         className={`rounded-2xl border p-5 sm:rounded-3xl sm:p-8 md:p-10 ${isDark
                             ? "border-gray-800 bg-gray-900"
                             : "border-gray-200 bg-white shadow-md"
@@ -107,18 +129,32 @@ function Contact() {
 
 
                         {/* Contact Details */}
-                        <div className="mt-7 space-y-6 sm:mt-8">
+                        <motion.div
+                            className="mt-7 space-y-6 sm:mt-8"
+                            variants={containerVariants}
+                            initial="hidden"
+                            whileInView="visible"
+                            viewport={{ once: true, amount: 0.2 }}
+                        >
 
                             {/* Address */}
-                            <div className="flex items-start gap-3 sm:gap-4">
-                                <div
+                            <motion.div
+                                variants={cardVariants}
+                                className="flex items-start gap-3 sm:gap-4"
+                            >
+                                <motion.div
+                                    whileHover={{
+                                        scale: 1.08,
+                                        rotate: -3,
+                                    }}
+                                    transition={{ duration: 0.2 }}
                                     className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl sm:h-11 sm:w-11 ${isDark
                                         ? "bg-white text-black"
                                         : "bg-black text-white"
                                         }`}
                                 >
                                     <MapPin size={19} />
-                                </div>
+                                </motion.div>
 
                                 <div className="min-w-0">
                                     <h3
@@ -145,19 +181,27 @@ function Contact() {
                                         Kozhikode Dist. Kerala, India
                                     </p>
                                 </div>
-                            </div>
+                            </motion.div>
 
 
                             {/* Phone */}
-                            <div className="flex items-start gap-3 sm:gap-4">
-                                <div
+                            <motion.div
+                                variants={cardVariants}
+                                className="flex items-start gap-3 sm:gap-4"
+                            >
+                                <motion.div
+                                    whileHover={{
+                                        scale: 1.08,
+                                        rotate: 3,
+                                    }}
+                                    transition={{ duration: 0.2 }}
                                     className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl sm:h-11 sm:w-11 ${isDark
                                         ? "bg-white text-black"
                                         : "bg-black text-white"
                                         }`}
                                 >
                                     <Phone size={19} />
-                                </div>
+                                </motion.div>
 
                                 <div className="min-w-0">
                                     <h3
@@ -189,19 +233,27 @@ function Contact() {
                                         +91 495 2440661
                                     </a>
                                 </div>
-                            </div>
+                            </motion.div>
 
 
                             {/* Email */}
-                            <div className="flex items-start gap-3 sm:gap-4">
-                                <div
+                            <motion.div
+                                variants={cardVariants}
+                                className="flex items-start gap-3 sm:gap-4"
+                            >
+                                <motion.div
+                                    whileHover={{
+                                        scale: 1.08,
+                                        rotate: -3,
+                                    }}
+                                    transition={{ duration: 0.2 }}
                                     className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl sm:h-11 sm:w-11 ${isDark
                                         ? "bg-white text-black"
                                         : "bg-black text-white"
                                         }`}
                                 >
                                     <Mail size={19} />
-                                </div>
+                                </motion.div>
 
                                 <div className="min-w-0">
                                     <h3
@@ -223,17 +275,25 @@ function Contact() {
                                         mail@farookcollege.ac.in
                                     </a>
                                 </div>
-                            </div>
+                            </motion.div>
 
-                        </div>
-                    </div>
+                        </motion.div>
+                    </motion.div>
 
 
                     {/* =========================
                         MESSAGE FORM
                     ========================= */}
 
-                    <div
+                    <motion.div
+                        initial={{ opacity: 0, x: 30 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={{ once: true, amount: 0.15 }}
+                        transition={{
+                            duration: 0.6,
+                            ease: "easeOut",
+                            delay: 0.1,
+                        }}
                         className={`rounded-2xl border p-5 sm:rounded-3xl sm:p-8 md:p-10 ${isDark
                             ? "border-gray-800 bg-gray-900"
                             : "border-gray-200 bg-white shadow-md"
@@ -259,9 +319,16 @@ function Contact() {
                         </p>
 
 
-                        <form
+                        <motion.form
                             onSubmit={handleSubmit}
                             className="mt-7 space-y-4 sm:mt-8 sm:space-y-5"
+                            initial={{ opacity: 0, y: 15 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true, amount: 0.15 }}
+                            transition={{
+                                duration: 0.5,
+                                delay: 0.2,
+                            }}
                         >
 
                             {/* Name */}
@@ -276,7 +343,7 @@ function Contact() {
                                     Name
                                 </label>
 
-                                <input
+                                <motion.input
                                     id="contact-name"
                                     type="text"
                                     value={name}
@@ -285,6 +352,10 @@ function Contact() {
                                     }
                                     placeholder="Your name"
                                     required
+                                    whileFocus={{
+                                        scale: 1.01,
+                                    }}
+                                    transition={{ duration: 0.15 }}
                                     className={`w-full rounded-xl border px-4 py-3 text-sm outline-none transition sm:text-base ${isDark
                                         ? "border-gray-700 bg-gray-800 text-white placeholder:text-gray-500 focus:border-white"
                                         : "border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 focus:border-black"
@@ -305,7 +376,7 @@ function Contact() {
                                     Email
                                 </label>
 
-                                <input
+                                <motion.input
                                     id="contact-email"
                                     type="email"
                                     value={email}
@@ -314,6 +385,10 @@ function Contact() {
                                     }
                                     placeholder="your@email.com"
                                     required
+                                    whileFocus={{
+                                        scale: 1.01,
+                                    }}
+                                    transition={{ duration: 0.15 }}
                                     className={`w-full rounded-xl border px-4 py-3 text-sm outline-none transition sm:text-base ${isDark
                                         ? "border-gray-700 bg-gray-800 text-white placeholder:text-gray-500 focus:border-white"
                                         : "border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 focus:border-black"
@@ -334,7 +409,7 @@ function Contact() {
                                     Message
                                 </label>
 
-                                <textarea
+                                <motion.textarea
                                     id="contact-message"
                                     rows="6"
                                     value={message}
@@ -343,6 +418,10 @@ function Contact() {
                                     }
                                     placeholder="Write your message..."
                                     required
+                                    whileFocus={{
+                                        scale: 1.01,
+                                    }}
+                                    transition={{ duration: 0.15 }}
                                     className={`w-full resize-none rounded-xl border px-4 py-3 text-sm leading-6 outline-none transition sm:text-base ${isDark
                                         ? "border-gray-700 bg-gray-800 text-white placeholder:text-gray-500 focus:border-white"
                                         : "border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 focus:border-black"
@@ -352,19 +431,28 @@ function Contact() {
 
 
                             {/* Submit */}
-                            <button
+                            <motion.button
                                 type="submit"
-                                className={`flex w-full items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold transition-all duration-200 hover:scale-[1.01] active:scale-[0.98] sm:text-base ${isDark
+                                variants={buttonVariants}
+                                whileHover="hover"
+                                whileTap="tap"
+                                className={`flex w-full items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold transition-all duration-200 sm:text-base ${isDark
                                     ? "bg-white text-black hover:bg-gray-200"
                                     : "bg-black text-white hover:bg-gray-800"
                                     }`}
                             >
-                                <Send size={18} />
-                                Send Message
-                            </button>
+                                <motion.span
+                                    whileHover={{ x: 2 }}
+                                    transition={{ duration: 0.2 }}
+                                >
+                                    <Send size={18} />
+                                </motion.span>
 
-                        </form>
-                    </div>
+                                Send Message
+                            </motion.button>
+
+                        </motion.form>
+                    </motion.div>
 
                 </div>
             </div>

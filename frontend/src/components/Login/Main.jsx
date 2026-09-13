@@ -3,6 +3,7 @@ import { Context } from '../../Context/Context.jsx';
 import './Login.css';
 import { useNavigate } from 'react-router-dom';
 import { Eye, EyeOff } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
 import api from '../../api/axios.js';
 
 function Main() {
@@ -108,11 +109,62 @@ function Main() {
         setShowPassword((prev) => !prev);
     };
 
+    // =========================
+    // Motion variants
+    // =========================
+
+    const formContentVariants = {
+        hidden: {
+            opacity: 0,
+            y: 15
+        },
+        visible: {
+            opacity: 1,
+            y: 0,
+            transition: {
+                duration: 0.4,
+                ease: 'easeOut',
+                staggerChildren: 0.06
+            }
+        }
+    };
+
+    const formItemVariants = {
+        hidden: {
+            opacity: 0,
+            y: 10
+        },
+        visible: {
+            opacity: 1,
+            y: 0,
+            transition: {
+                duration: 0.3,
+                ease: 'easeOut'
+            }
+        }
+    };
+
+    const overlayVariants = {
+        hidden: {
+            opacity: 0,
+            y: 15
+        },
+        visible: {
+            opacity: 1,
+            y: 0,
+            transition: {
+                duration: 0.4,
+                ease: 'easeOut',
+                staggerChildren: 0.08
+            }
+        }
+    };
+
     return (
         <div className="login-page">
             <div
                 className={`my-auto login-container ${isSignIn ? 'right-panel-active' : ''
-                    } `}
+                    }`}
                 id="container"
             >
 
@@ -125,143 +177,226 @@ function Main() {
                         className="login-form"
                         onSubmit={handleSignUp}
                     >
-                        <h1 className="login-h1">
-                            Create Account
-                        </h1>
-
-                        <span className="login-span">
-                            or use your email for registration
-                        </span>
-
-                        <input
-                            className="login-input"
-                            type="text"
-                            placeholder="Register Number"
-                            value={registerNumber}
-                            onChange={(e) =>
-                                setRegisterNumber(e.target.value)
-                            }
-                            required
-                        />
-
-                        <input
-                            className="login-input"
-                            type="text"
-                            placeholder="Full Name"
-                            value={name}
-                            onChange={(e) =>
-                                setName(e.target.value)
-                            }
-                            required
-                        />
-
-                        <select
-                            className="login-input"
-                            value={semester}
-                            onChange={(e) =>
-                                setSemester(e.target.value)
-                            }
-                            required
+                        <motion.div
+                            className="flex w-full flex-col items-center"
+                            variants={formContentVariants}
+                            initial="hidden"
+                            animate="visible"
                         >
-                            <option value="" disabled>
-                                Select Semester
-                            </option>
+                            <motion.h1
+                                className="login-h1"
+                                variants={formItemVariants}
+                            >
+                                Create Account
+                            </motion.h1>
 
-                            {semesters.map((semester) => (
-                                <option
-                                    key={semester}
-                                    value={semester}
-                                >
-                                    Semester {semester}
-                                </option>
-                            ))}
-                        </select>
+                            <motion.span
+                                className="login-span"
+                                variants={formItemVariants}
+                            >
+                                or use your email for registration
+                            </motion.span>
 
-                        <select
-                            className="login-input"
-                            value={batch}
-                            onChange={(e) =>
-                                setBatch(e.target.value)
-                            }
-                            required
-                        >
-                            <option value="" disabled>
-                                Select Batch
-                            </option>
-
-                            {batches.map((batch) => (
-                                <option
-                                    key={batch}
-                                    value={batch}
-                                >
-                                    {batch}
-                                </option>
-                            ))}
-                        </select>
-
-                        <input
-                            className="login-input"
-                            type="email"
-                            placeholder="Email"
-                            value={email}
-                            onChange={(e) =>
-                                setEmail(e.target.value)
-                            }
-                            required
-                        />
-
-                        <div className="password-wrapper">
-                            <input
-                                type={
-                                    showPassword
-                                        ? 'text'
-                                        : 'password'
-                                }
-                                className="login-input password"
-                                placeholder="Password"
-                                value={password}
+                            <motion.input
+                                className="login-input"
+                                type="text"
+                                placeholder="Register Number"
+                                value={registerNumber}
                                 onChange={(e) =>
-                                    setPassword(e.target.value)
+                                    setRegisterNumber(e.target.value)
                                 }
                                 required
+                                variants={formItemVariants}
+                                whileFocus={{
+                                    scale: 1.01
+                                }}
                             />
 
-                            <button
-                                type="button"
-                                onClick={togglePassword}
-                                className="password-toggle"
-                                aria-label={
-                                    showPassword
-                                        ? 'Hide password'
-                                        : 'Show password'
+                            <motion.input
+                                className="login-input"
+                                type="text"
+                                placeholder="Full Name"
+                                value={name}
+                                onChange={(e) =>
+                                    setName(e.target.value)
                                 }
+                                required
+                                variants={formItemVariants}
+                                whileFocus={{
+                                    scale: 1.01
+                                }}
+                            />
+
+                            <motion.select
+                                className="login-input"
+                                value={semester}
+                                onChange={(e) =>
+                                    setSemester(e.target.value)
+                                }
+                                required
+                                variants={formItemVariants}
+                                whileFocus={{
+                                    scale: 1.01
+                                }}
                             >
-                                {showPassword ? (
-                                    <Eye size={19} />
-                                ) : (
-                                    <EyeOff size={19} />
-                                )}
-                            </button>
-                        </div>
+                                <option value="" disabled>
+                                    Select Semester
+                                </option>
 
-                        <button
-                            type="submit"
-                            className="btn"
-                        >
-                            Sign Up
-                        </button>
+                                {semesters.map((semester) => (
+                                    <option
+                                        key={semester}
+                                        value={semester}
+                                    >
+                                        Semester {semester}
+                                    </option>
+                                ))}
+                            </motion.select>
 
-                        {/* Mobile switch */}
-                        <button
-                            type="button"
-                            className="mobile-switch"
-                            onClick={() =>
-                                setIsSignIn(!isSignIn)
-                            }
-                        >
-                            Already have an account?
-                            <span> Sign In</span>
-                        </button>
+                            <motion.select
+                                className="login-input"
+                                value={batch}
+                                onChange={(e) =>
+                                    setBatch(e.target.value)
+                                }
+                                required
+                                variants={formItemVariants}
+                                whileFocus={{
+                                    scale: 1.01
+                                }}
+                            >
+                                <option value="" disabled>
+                                    Select Batch
+                                </option>
+
+                                {batches.map((batch) => (
+                                    <option
+                                        key={batch}
+                                        value={batch}
+                                    >
+                                        {batch}
+                                    </option>
+                                ))}
+                            </motion.select>
+
+                            <motion.input
+                                className="login-input"
+                                type="email"
+                                placeholder="Email"
+                                value={email}
+                                onChange={(e) =>
+                                    setEmail(e.target.value)
+                                }
+                                required
+                                variants={formItemVariants}
+                                whileFocus={{
+                                    scale: 1.01
+                                }}
+                            />
+
+                            <motion.div
+                                className="password-wrapper"
+                                variants={formItemVariants}
+                            >
+                                <input
+                                    type={
+                                        showPassword
+                                            ? 'text'
+                                            : 'password'
+                                    }
+                                    className="login-input password"
+                                    placeholder="Password"
+                                    value={password}
+                                    onChange={(e) =>
+                                        setPassword(e.target.value)
+                                    }
+                                    required
+                                />
+
+                                <motion.button
+                                    type="button"
+                                    onClick={togglePassword}
+                                    className="password-toggle"
+                                    aria-label={
+                                        showPassword
+                                            ? 'Hide password'
+                                            : 'Show password'
+                                    }
+                                    whileHover={{
+                                        scale: 1.08
+                                    }}
+                                    whileTap={{
+                                        scale: 0.9
+                                    }}
+                                >
+                                    <AnimatePresence
+                                        mode="wait"
+                                        initial={false}
+                                    >
+                                        <motion.span
+                                            key={
+                                                showPassword
+                                                    ? 'eye'
+                                                    : 'eye-off'
+                                            }
+                                            initial={{
+                                                opacity: 0,
+                                                scale: 0.7,
+                                                rotate: -20
+                                            }}
+                                            animate={{
+                                                opacity: 1,
+                                                scale: 1,
+                                                rotate: 0
+                                            }}
+                                            exit={{
+                                                opacity: 0,
+                                                scale: 0.7,
+                                                rotate: 20
+                                            }}
+                                            transition={{
+                                                duration: 0.15
+                                            }}
+                                        >
+                                            {showPassword ? (
+                                                <Eye size={19} />
+                                            ) : (
+                                                <EyeOff size={19} />
+                                            )}
+                                        </motion.span>
+                                    </AnimatePresence>
+                                </motion.button>
+                            </motion.div>
+
+                            <motion.button
+                                type="submit"
+                                className="btn"
+                                variants={formItemVariants}
+                                whileHover={{
+                                    scale: 1.03
+                                }}
+                                whileTap={{
+                                    scale: 0.96
+                                }}
+                            >
+                                Sign Up
+                            </motion.button>
+
+                            <motion.button
+                                type="button"
+                                className="mobile-switch"
+                                onClick={() =>
+                                    setIsSignIn(!isSignIn)
+                                }
+                                variants={formItemVariants}
+                                whileTap={{
+                                    scale: 0.97
+                                }}
+                            >
+                                Already have an account?
+                                <span> Sign In</span>
+                            </motion.button>
+                        </motion.div>
                     </form>
                 </div>
 
@@ -275,77 +410,144 @@ function Main() {
                         className="login-form"
                         onSubmit={handleSignIn}
                     >
-                        <h1 className="login-h1">
-                            Sign in
-                        </h1>
+                        <motion.div
+                            className="flex w-full flex-col items-center"
+                            variants={formContentVariants}
+                            initial="hidden"
+                            animate="visible"
+                        >
+                            <motion.h1
+                                className="login-h1"
+                                variants={formItemVariants}
+                            >
+                                Sign in
+                            </motion.h1>
 
-                        <span className="login-span">
-                            or use your account
-                        </span>
+                            <motion.span
+                                className="login-span"
+                                variants={formItemVariants}
+                            >
+                                or use your account
+                            </motion.span>
 
-                        <input
-                            className="login-input"
-                            type="email"
-                            placeholder="Email"
-                            value={email}
-                            onChange={(e) =>
-                                setEmail(e.target.value)
-                            }
-                            required
-                        />
-
-                        <div className="password-wrapper">
-                            <input
-                                type={
-                                    showPassword
-                                        ? 'text'
-                                        : 'password'
-                                }
-                                className="login-input password"
-                                placeholder="Password"
-                                value={password}
+                            <motion.input
+                                className="login-input"
+                                type="email"
+                                placeholder="Email"
+                                value={email}
                                 onChange={(e) =>
-                                    setPassword(e.target.value)
+                                    setEmail(e.target.value)
                                 }
                                 required
+                                variants={formItemVariants}
+                                whileFocus={{
+                                    scale: 1.01
+                                }}
                             />
 
-                            <button
-                                type="button"
-                                onClick={togglePassword}
-                                className="password-toggle"
-                                aria-label={
-                                    showPassword
-                                        ? 'Hide password'
-                                        : 'Show password'
-                                }
+                            <motion.div
+                                className="password-wrapper"
+                                variants={formItemVariants}
                             >
-                                {showPassword ? (
-                                    <Eye size={19} />
-                                ) : (
-                                    <EyeOff size={19} />
-                                )}
-                            </button>
-                        </div>
+                                <input
+                                    type={
+                                        showPassword
+                                            ? 'text'
+                                            : 'password'
+                                    }
+                                    className="login-input password"
+                                    placeholder="Password"
+                                    value={password}
+                                    onChange={(e) =>
+                                        setPassword(e.target.value)
+                                    }
+                                    required
+                                />
 
-                        <button
-                            type="submit"
-                            className="btn"
-                        >
-                            Sign In
-                        </button>
+                                <motion.button
+                                    type="button"
+                                    onClick={togglePassword}
+                                    className="password-toggle"
+                                    aria-label={
+                                        showPassword
+                                            ? 'Hide password'
+                                            : 'Show password'
+                                    }
+                                    whileHover={{
+                                        scale: 1.08
+                                    }}
+                                    whileTap={{
+                                        scale: 0.9
+                                    }}
+                                >
+                                    <AnimatePresence
+                                        mode="wait"
+                                        initial={false}
+                                    >
+                                        <motion.span
+                                            key={
+                                                showPassword
+                                                    ? 'eye-signin'
+                                                    : 'eye-off-signin'
+                                            }
+                                            initial={{
+                                                opacity: 0,
+                                                scale: 0.7,
+                                                rotate: -20
+                                            }}
+                                            animate={{
+                                                opacity: 1,
+                                                scale: 1,
+                                                rotate: 0
+                                            }}
+                                            exit={{
+                                                opacity: 0,
+                                                scale: 0.7,
+                                                rotate: 20
+                                            }}
+                                            transition={{
+                                                duration: 0.15
+                                            }}
+                                        >
+                                            {showPassword ? (
+                                                <Eye size={19} />
+                                            ) : (
+                                                <EyeOff size={19} />
+                                            )}
+                                        </motion.span>
+                                    </AnimatePresence>
+                                </motion.button>
+                            </motion.div>
 
-                        {/* Mobile switch */}
-                        <button
-                            type="button"
-                            className="mobile-switch"
-                            onClick={() =>
-                                setIsSignIn(!isSignIn)
-                            }
-                        >
-                            Don't have an account?
-                            <span> Sign Up</span>
-                        </button>
+                            <motion.button
+                                type="submit"
+                                className="btn"
+                                variants={formItemVariants}
+                                whileHover={{
+                                    scale: 1.03
+                                }}
+                                whileTap={{
+                                    scale: 0.96
+                                }}
+                            >
+                                Sign In
+                            </motion.button>
+
+                            <motion.button
+                                type="button"
+                                className="mobile-switch"
+                                onClick={() =>
+                                    setIsSignIn(!isSignIn)
+                                }
+                                variants={formItemVariants}
+                                whileTap={{
+                                    scale: 0.97
+                                }}
+                            >
+                                Don't have an account?
+                                <span> Sign Up</span>
+                            </motion.button>
+                        </motion.div>
                     </form>
                 </div>
 
@@ -357,47 +559,91 @@ function Main() {
                 <div className="overlay-container">
                     <div className="overlay">
 
+                        {/* LEFT */}
+
                         <div className="overlay-panel overlay-left">
-                            <h1 className="login-h1">
-                                Welcome Back!
-                            </h1>
-
-                            <p className="login-p">
-                                To keep connected with us please
-                                login with your personal info
-                            </p>
-
-                            <button
-                                type="button"
-                                className="btn ghost"
-                                onClick={() =>
-                                    setIsSignIn(!isSignIn)
-                                }
+                            <motion.div
+                                className="flex flex-col items-center"
+                                variants={overlayVariants}
+                                initial="hidden"
+                                animate="visible"
                             >
-                                Sign In
-                            </button>
+                                <motion.h1
+                                    className="login-h1"
+                                    variants={formItemVariants}
+                                >
+                                    Welcome Back!
+                                </motion.h1>
+
+                                <motion.p
+                                    className="login-p"
+                                    variants={formItemVariants}
+                                >
+                                    To keep connected with us please
+                                    login with your personal info
+                                </motion.p>
+
+                                <motion.button
+                                    type="button"
+                                    className="btn ghost"
+                                    onClick={() =>
+                                        setIsSignIn(!isSignIn)
+                                    }
+                                    variants={formItemVariants}
+                                    whileHover={{
+                                        scale: 1.04
+                                    }}
+                                    whileTap={{
+                                        scale: 0.96
+                                    }}
+                                >
+                                    Sign In
+                                </motion.button>
+                            </motion.div>
                         </div>
 
 
+                        {/* RIGHT */}
+
                         <div className="overlay-panel overlay-right">
-                            <h1 className="login-h1">
-                                Hello, Friend!
-                            </h1>
-
-                            <p className="login-p">
-                                Enter your personal details and
-                                start journey with us
-                            </p>
-
-                            <button
-                                type="button"
-                                onClick={() =>
-                                    setIsSignIn(!isSignIn)
-                                }
-                                className="btn ghost"
+                            <motion.div
+                                className="flex flex-col items-center"
+                                variants={overlayVariants}
+                                initial="hidden"
+                                animate="visible"
                             >
-                                Sign Up
-                            </button>
+                                <motion.h1
+                                    className="login-h1"
+                                    variants={formItemVariants}
+                                >
+                                    Hello, Friend!
+                                </motion.h1>
+
+                                <motion.p
+                                    className="login-p"
+                                    variants={formItemVariants}
+                                >
+                                    Enter your personal details and
+                                    start journey with us
+                                </motion.p>
+
+                                <motion.button
+                                    type="button"
+                                    onClick={() =>
+                                        setIsSignIn(!isSignIn)
+                                    }
+                                    className="btn ghost"
+                                    variants={formItemVariants}
+                                    whileHover={{
+                                        scale: 1.04
+                                    }}
+                                    whileTap={{
+                                        scale: 0.96
+                                    }}
+                                >
+                                    Sign Up
+                                </motion.button>
+                            </motion.div>
                         </div>
 
                     </div>

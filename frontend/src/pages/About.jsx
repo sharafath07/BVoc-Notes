@@ -7,7 +7,12 @@ import {
     Target,
     Rocket,
 } from "lucide-react";
+import { motion } from "motion/react";
 import { Context } from "../Context/Context";
+import {
+    cardVariants,
+    containerVariants,
+} from "../animations";
 
 function About() {
     const { isDark } = useContext(Context);
@@ -26,26 +31,35 @@ function About() {
                     HEADER
                 ========================= */}
 
-                <div className="mb-12 max-w-3xl sm:mb-16">
-                    <p
+                <motion.div
+                    className="mb-12 max-w-3xl sm:mb-16"
+                    variants={containerVariants}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true, amount: 0.2 }}
+                >
+                    <motion.p
+                        variants={cardVariants}
                         className={`mb-2 text-xs font-semibold uppercase tracking-[0.15em] sm:mb-3 sm:text-sm sm:tracking-[0.2em] ${isDark
                             ? "text-gray-400"
                             : "text-gray-500"
                             }`}
                     >
                         About Us
-                    </p>
+                    </motion.p>
 
-                    <h2
+                    <motion.h2
+                        variants={cardVariants}
                         className={`text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl ${isDark
                             ? "text-white"
                             : "text-gray-900"
                             }`}
                     >
                         B.Voc Software Development
-                    </h2>
+                    </motion.h2>
 
-                    <p
+                    <motion.p
+                        variants={cardVariants}
                         className={`mt-4 text-base leading-7 sm:mt-5 sm:text-lg sm:leading-8 ${isDark
                             ? "text-gray-300"
                             : "text-gray-600"
@@ -55,8 +69,8 @@ function About() {
                         develop strong technical knowledge, practical skills,
                         and professional capabilities in Computer Science and
                         Software Development.
-                    </p>
-                </div>
+                    </motion.p>
+                </motion.div>
 
 
                 {/* =========================
@@ -66,26 +80,55 @@ function About() {
                 <div className="grid items-center gap-8 sm:gap-10 md:gap-12 lg:grid-cols-2">
 
                     {/* Image */}
-                    <div className="w-full overflow-hidden rounded-2xl sm:rounded-3xl">
-                        <img
+                    <motion.div
+                        className="w-full overflow-hidden rounded-2xl sm:rounded-3xl"
+                        initial={{ opacity: 0, x: -35 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={{ once: true, amount: 0.2 }}
+                        transition={{
+                            duration: 0.6,
+                            ease: "easeOut",
+                        }}
+                    >
+                        <motion.img
                             src={image}
                             alt="Farook College"
-                            className="h-[280px] w-full object-cover transition duration-500 hover:scale-105 sm:h-[350px] md:h-[420px] lg:h-[500px]"
+                            className="h-[280px] w-full object-cover sm:h-[350px] md:h-[420px] lg:h-[500px]"
+                            whileHover={{ scale: 1.04 }}
+                            transition={{
+                                duration: 0.5,
+                                ease: "easeOut",
+                            }}
                         />
-                    </div>
+                    </motion.div>
 
 
                     {/* Text */}
-                    <div className="w-full">
+                    <motion.div
+                        className="w-full"
+                        initial={{ opacity: 0, x: 35 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={{ once: true, amount: 0.2 }}
+                        transition={{
+                            duration: 0.6,
+                            ease: "easeOut",
+                            delay: 0.1,
+                        }}
+                    >
 
-                        <div
+                        <motion.div
                             className={`mb-4 flex h-11 w-11 items-center justify-center rounded-xl sm:mb-5 sm:h-12 sm:w-12 ${isDark
                                 ? "bg-white text-black"
                                 : "bg-gray-900 text-white"
                                 }`}
+                            whileHover={{
+                                scale: 1.08,
+                                rotate: 3,
+                            }}
+                            transition={{ duration: 0.2 }}
                         >
                             <Building2 size={22} />
-                        </div>
+                        </motion.div>
 
                         <h3
                             className={`text-2xl font-bold sm:text-3xl ${isDark
@@ -132,7 +175,7 @@ function About() {
                             that supports academic growth and personal
                             development.
                         </p>
-                    </div>
+                    </motion.div>
                 </div>
 
 
@@ -140,35 +183,55 @@ function About() {
                     B.VOC SECTION
                 ========================= */}
 
-                <div
+                <motion.div
                     className={`mt-16 rounded-2xl p-5 transition-colors duration-300 sm:mt-20 sm:rounded-3xl sm:p-8 md:mt-24 md:p-12 ${isDark
                         ? "bg-gray-900"
                         : "bg-gray-100"
                         }`}
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, amount: 0.15 }}
+                    transition={{
+                        duration: 0.6,
+                        ease: "easeOut",
+                    }}
                 >
                     <div className="grid gap-10 lg:grid-cols-2">
 
                         {/* Description */}
-                        <div>
-                            <div
+                        <motion.div
+                            variants={containerVariants}
+                            initial="hidden"
+                            whileInView="visible"
+                            viewport={{ once: true, amount: 0.2 }}
+                        >
+                            <motion.div
+                                variants={cardVariants}
                                 className={`mb-4 flex h-11 w-11 items-center justify-center rounded-xl sm:mb-5 sm:h-12 sm:w-12 ${isDark
                                     ? "bg-white text-black"
                                     : "bg-black text-white"
                                     }`}
+                                whileHover={{
+                                    scale: 1.08,
+                                    rotate: -3,
+                                }}
+                                transition={{ duration: 0.2 }}
                             >
                                 <GraduationCap size={22} />
-                            </div>
+                            </motion.div>
 
-                            <h3
+                            <motion.h3
+                                variants={cardVariants}
                                 className={`text-2xl font-bold sm:text-3xl ${isDark
                                     ? "text-white"
                                     : "text-gray-900"
                                     }`}
                             >
                                 B.Voc in Software Development
-                            </h3>
+                            </motion.h3>
 
-                            <p
+                            <motion.p
+                                variants={cardVariants}
                                 className={`mt-4 text-sm leading-7 sm:mt-5 sm:text-base ${isDark
                                     ? "text-gray-300"
                                     : "text-gray-600"
@@ -179,9 +242,10 @@ function About() {
                                 Vocation in Software Development, a four-year
                                 undergraduate programme focused on both
                                 theoretical knowledge and practical training.
-                            </p>
+                            </motion.p>
 
-                            <p
+                            <motion.p
+                                variants={cardVariants}
                                 className={`mt-4 text-sm leading-7 sm:text-base ${isDark
                                     ? "text-gray-300"
                                     : "text-gray-600"
@@ -193,27 +257,48 @@ function About() {
                                 students with the knowledge and practical
                                 abilities required in Computer Science and
                                 Software Development.
-                            </p>
-                        </div>
+                            </motion.p>
+                        </motion.div>
 
 
                         {/* Feature Cards */}
-                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                        <motion.div
+                            className="grid grid-cols-1 gap-4 sm:grid-cols-2"
+                            variants={containerVariants}
+                            initial="hidden"
+                            whileInView="visible"
+                            viewport={{ once: true, amount: 0.15 }}
+                        >
 
                             {/* Software Development */}
-                            <div
+                            <motion.div
+                                variants={cardVariants}
+                                whileHover={{
+                                    y: -5,
+                                    scale: 1.01,
+                                }}
+                                whileTap={{ scale: 0.98 }}
+                                transition={{ duration: 0.2 }}
                                 className={`rounded-2xl p-5 shadow-sm transition-colors duration-300 sm:p-6 ${isDark
                                     ? "bg-gray-800"
                                     : "bg-white"
                                     }`}
                             >
-                                <Code2
-                                    size={24}
-                                    className={`mb-3 sm:mb-4 ${isDark
-                                        ? "text-white"
-                                        : "text-gray-900"
-                                        }`}
-                                />
+                                <motion.div
+                                    whileHover={{
+                                        scale: 1.08,
+                                        rotate: 3,
+                                    }}
+                                    transition={{ duration: 0.2 }}
+                                >
+                                    <Code2
+                                        size={24}
+                                        className={`mb-3 sm:mb-4 ${isDark
+                                            ? "text-white"
+                                            : "text-gray-900"
+                                            }`}
+                                    />
+                                </motion.div>
 
                                 <h4
                                     className={`font-semibold ${isDark
@@ -234,23 +319,38 @@ function About() {
                                     software development, and modern computing
                                     technologies.
                                 </p>
-                            </div>
+                            </motion.div>
 
 
                             {/* Practical Learning */}
-                            <div
+                            <motion.div
+                                variants={cardVariants}
+                                whileHover={{
+                                    y: -5,
+                                    scale: 1.01,
+                                }}
+                                whileTap={{ scale: 0.98 }}
+                                transition={{ duration: 0.2 }}
                                 className={`rounded-2xl p-5 shadow-sm transition-colors duration-300 sm:p-6 ${isDark
                                     ? "bg-gray-800"
                                     : "bg-white"
                                     }`}
                             >
-                                <Rocket
-                                    size={24}
-                                    className={`mb-3 sm:mb-4 ${isDark
-                                        ? "text-white"
-                                        : "text-gray-900"
-                                        }`}
-                                />
+                                <motion.div
+                                    whileHover={{
+                                        scale: 1.08,
+                                        rotate: 3,
+                                    }}
+                                    transition={{ duration: 0.2 }}
+                                >
+                                    <Rocket
+                                        size={24}
+                                        className={`mb-3 sm:mb-4 ${isDark
+                                            ? "text-white"
+                                            : "text-gray-900"
+                                            }`}
+                                    />
+                                </motion.div>
 
                                 <h4
                                     className={`font-semibold ${isDark
@@ -270,23 +370,38 @@ function About() {
                                     Gain hands-on experience alongside
                                     theoretical understanding.
                                 </p>
-                            </div>
+                            </motion.div>
 
 
                             {/* Career Focused */}
-                            <div
+                            <motion.div
+                                variants={cardVariants}
+                                whileHover={{
+                                    y: -5,
+                                    scale: 1.01,
+                                }}
+                                whileTap={{ scale: 0.98 }}
+                                transition={{ duration: 0.2 }}
                                 className={`rounded-2xl p-5 shadow-sm transition-colors duration-300 sm:p-6 ${isDark
                                     ? "bg-gray-800"
                                     : "bg-white"
                                     }`}
                             >
-                                <Target
-                                    size={24}
-                                    className={`mb-3 sm:mb-4 ${isDark
-                                        ? "text-white"
-                                        : "text-gray-900"
-                                        }`}
-                                />
+                                <motion.div
+                                    whileHover={{
+                                        scale: 1.08,
+                                        rotate: 3,
+                                    }}
+                                    transition={{ duration: 0.2 }}
+                                >
+                                    <Target
+                                        size={24}
+                                        className={`mb-3 sm:mb-4 ${isDark
+                                            ? "text-white"
+                                            : "text-gray-900"
+                                            }`}
+                                    />
+                                </motion.div>
 
                                 <h4
                                     className={`font-semibold ${isDark
@@ -307,23 +422,38 @@ function About() {
                                     careers in the software and technology
                                     industry.
                                 </p>
-                            </div>
+                            </motion.div>
 
 
                             {/* Skill Development */}
-                            <div
+                            <motion.div
+                                variants={cardVariants}
+                                whileHover={{
+                                    y: -5,
+                                    scale: 1.01,
+                                }}
+                                whileTap={{ scale: 0.98 }}
+                                transition={{ duration: 0.2 }}
                                 className={`rounded-2xl p-5 shadow-sm transition-colors duration-300 sm:p-6 ${isDark
                                     ? "bg-gray-800"
                                     : "bg-white"
                                     }`}
                             >
-                                <GraduationCap
-                                    size={24}
-                                    className={`mb-3 sm:mb-4 ${isDark
-                                        ? "text-white"
-                                        : "text-gray-900"
-                                        }`}
-                                />
+                                <motion.div
+                                    whileHover={{
+                                        scale: 1.08,
+                                        rotate: 3,
+                                    }}
+                                    transition={{ duration: 0.2 }}
+                                >
+                                    <GraduationCap
+                                        size={24}
+                                        className={`mb-3 sm:mb-4 ${isDark
+                                            ? "text-white"
+                                            : "text-gray-900"
+                                            }`}
+                                    />
+                                </motion.div>
 
                                 <h4
                                     className={`font-semibold ${isDark
@@ -344,21 +474,32 @@ function About() {
                                     professional capabilities through
                                     vocational education.
                                 </p>
-                            </div>
+                            </motion.div>
 
-                        </div>
+                        </motion.div>
                     </div>
-                </div>
+                </motion.div>
 
 
                 {/* =========================
                     VISION & MISSION
                 ========================= */}
 
-                <div className="mt-16 grid gap-5 sm:mt-20 sm:gap-6 md:grid-cols-2 lg:mt-24">
+                <motion.div
+                    className="mt-16 grid gap-5 sm:mt-20 sm:gap-6 md:grid-cols-2 lg:mt-24"
+                    variants={containerVariants}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true, amount: 0.15 }}
+                >
 
                     {/* Vision */}
-                    <div
+                    <motion.div
+                        variants={cardVariants}
+                        whileHover={{
+                            y: -5,
+                        }}
+                        transition={{ duration: 0.25 }}
                         className={`rounded-2xl border p-6 transition-colors duration-300 sm:rounded-3xl sm:p-8 md:p-10 ${isDark
                             ? "border-gray-800 bg-gray-900"
                             : "border-gray-200 bg-white"
@@ -392,11 +533,16 @@ function About() {
                             can take up the challenges of the future on behalf
                             of the community, society, nation, and the world.
                         </p>
-                    </div>
+                    </motion.div>
 
 
                     {/* Mission */}
-                    <div
+                    <motion.div
+                        variants={cardVariants}
+                        whileHover={{
+                            y: -5,
+                        }}
+                        transition={{ duration: 0.25 }}
                         className={`rounded-2xl p-6 transition-colors duration-300 sm:rounded-3xl sm:p-8 md:p-10 ${isDark
                             ? "bg-white text-gray-900"
                             : "bg-black text-white"
@@ -427,9 +573,9 @@ function About() {
                             encourage research and social outreach, and ensure
                             excellence in education and related activities.
                         </p>
-                    </div>
+                    </motion.div>
 
-                </div>
+                </motion.div>
 
             </div>
         </section>

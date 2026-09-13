@@ -1,4 +1,5 @@
 import React, { useContext } from 'react';
+import { motion } from 'motion/react';
 import { Context } from '../../Context/Context';
 import image from '../../assets/img1.jpg';
 
@@ -29,7 +30,7 @@ function Content() {
                 IMAGE
             ========================= */}
 
-            <div
+            <motion.div
                 className="
                     w-full
                     md:w-[42%]
@@ -39,8 +40,24 @@ function Content() {
                     items-center
                     shrink-0
                 "
+                initial={{
+                    opacity: 0,
+                    x: -40,
+                }}
+                whileInView={{
+                    opacity: 1,
+                    x: 0,
+                }}
+                viewport={{
+                    once: true,
+                    amount: 0.25,
+                }}
+                transition={{
+                    duration: 0.6,
+                    ease: 'easeOut',
+                }}
             >
-                <img
+                <motion.img
                     src={image}
                     alt="B.Voc Software Development"
                     className={`
@@ -63,15 +80,21 @@ function Content() {
                             : 'outline-blue-900'
                         }
                     `}
+                    whileHover={{
+                        scale: 1.02,
+                    }}
+                    transition={{
+                        duration: 0.3,
+                    }}
                 />
-            </div>
+            </motion.div>
 
 
             {/* =========================
                 CONTENT
             ========================= */}
 
-            <div
+            <motion.div
                 className="
                     flex
                     flex-col
@@ -85,8 +108,25 @@ function Content() {
                     md:min-h-[40vh]
                     lg:min-h-[50vh]
                 "
+                initial={{
+                    opacity: 0,
+                    x: 40,
+                }}
+                whileInView={{
+                    opacity: 1,
+                    x: 0,
+                }}
+                viewport={{
+                    once: true,
+                    amount: 0.25,
+                }}
+                transition={{
+                    duration: 0.6,
+                    delay: 0.12,
+                    ease: 'easeOut',
+                }}
             >
-                <h1
+                <motion.h1
                     className={`
                         text-2xl
                         sm:text-3xl
@@ -101,11 +141,26 @@ function Content() {
                             : 'text-blue-900'
                         }
                     `}
+                    initial={{
+                        opacity: 0,
+                        y: 15,
+                    }}
+                    whileInView={{
+                        opacity: 1,
+                        y: 0,
+                    }}
+                    viewport={{
+                        once: true,
+                    }}
+                    transition={{
+                        duration: 0.4,
+                        delay: 0.25,
+                    }}
                 >
                     B.Voc Software Development
-                </h1>
+                </motion.h1>
 
-                <p
+                <motion.p
                     className={`
                         text-sm
                         sm:text-base
@@ -119,6 +174,21 @@ function Content() {
                             : 'text-gray-600'
                         }
                     `}
+                    initial={{
+                        opacity: 0,
+                        y: 15,
+                    }}
+                    whileInView={{
+                        opacity: 1,
+                        y: 0,
+                    }}
+                    viewport={{
+                        once: true,
+                    }}
+                    transition={{
+                        duration: 0.4,
+                        delay: 0.35,
+                    }}
                 >
                     The Bachelor of Vocation (B.Voc) IN SOFTWARE DEVELOPMENT
                     offers an undergraduate programme, which is of 4-year
@@ -127,8 +197,8 @@ function Content() {
                     well as practical training. The main aim of this course is
                     to equip students with skills related to Computer Science
                     and Software Development.
-                </p>
-            </div>
+                </motion.p>
+            </motion.div>
 
         </section>
     );

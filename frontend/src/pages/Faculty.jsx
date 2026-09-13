@@ -1,6 +1,11 @@
 import React, { useContext } from "react";
 import { Mail, Phone, GraduationCap } from "lucide-react";
+import { motion } from "motion/react";
 import { Context } from "../Context/Context";
+import {
+    cardVariants,
+    containerVariants,
+} from "../animations";
 
 function Faculty() {
     const { isDark } = useContext(Context);
@@ -53,26 +58,35 @@ function Faculty() {
             <div className="mx-auto w-full max-w-7xl">
 
                 {/* Header */}
-                <div className="mb-10 text-center sm:mb-14 md:mb-16">
-                    <p
+                <motion.div
+                    className="mb-10 text-center sm:mb-14 md:mb-16"
+                    variants={containerVariants}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true, amount: 0.2 }}
+                >
+                    <motion.p
+                        variants={cardVariants}
                         className={`mb-2 text-xs font-semibold uppercase tracking-[0.15em] sm:mb-3 sm:text-sm sm:tracking-[0.2em] ${isDark
                             ? "text-gray-500"
                             : "text-gray-400"
                             }`}
                     >
                         Department of Software Development
-                    </p>
+                    </motion.p>
 
-                    <h1
+                    <motion.h1
+                        variants={cardVariants}
                         className={`text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl ${isDark
                             ? "text-white"
                             : "text-gray-900"
                             }`}
                     >
                         Our Faculty
-                    </h1>
+                    </motion.h1>
 
-                    <p
+                    <motion.p
+                        variants={cardVariants}
                         className={`mx-auto mt-4 max-w-2xl text-sm leading-7 sm:mt-5 sm:text-base sm:leading-8 md:text-lg ${isDark
                             ? "text-gray-400"
                             : "text-gray-600"
@@ -81,15 +95,32 @@ function Faculty() {
                         Meet the faculty members of the Department of
                         Software Development who guide and support students
                         throughout their academic journey.
-                    </p>
-                </div>
+                    </motion.p>
+                </motion.div>
+
 
                 {/* Faculty Grid */}
-                <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 lg:gap-7">
+                <motion.div
+                    className="grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 lg:gap-7"
+                    variants={containerVariants}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true, amount: 0.1 }}
+                >
                     {faculty.map((member, index) => (
-                        <div
+                        <motion.div
                             key={index}
-                            className={`group overflow-hidden rounded-2xl border transition-all duration-300 hover:-translate-y-1 hover:shadow-xl sm:rounded-3xl ${isDark
+                            variants={cardVariants}
+                            whileHover={{
+                                y: -6,
+                                scale: 1.01,
+                            }}
+                            whileTap={{ scale: 0.99 }}
+                            transition={{
+                                duration: 0.25,
+                                ease: "easeOut",
+                            }}
+                            className={`group overflow-hidden rounded-2xl border sm:rounded-3xl ${isDark
                                 ? "border-gray-800 bg-gray-900 hover:border-gray-700"
                                 : "border-gray-200 bg-white hover:border-gray-300"
                                 }`}
@@ -101,17 +132,25 @@ function Faculty() {
                                     : "bg-gray-100"
                                     }`}
                             >
-                                <div
+                                <motion.div
                                     className={`flex h-24 w-24 items-center justify-center rounded-full sm:h-28 sm:w-28 ${isDark
                                         ? "bg-gray-700 text-gray-300"
                                         : "bg-gray-200 text-gray-500"
                                         }`}
+                                    whileHover={{
+                                        scale: 1.08,
+                                        rotate: 3,
+                                    }}
+                                    transition={{
+                                        duration: 0.25,
+                                        ease: "easeOut",
+                                    }}
                                 >
                                     <GraduationCap
                                         size={44}
                                         className="sm:h-[52px] sm:w-[52px]"
                                     />
-                                </div>
+                                </motion.div>
                             </div>
 
                             {/* Faculty Details */}
@@ -135,7 +174,19 @@ function Faculty() {
                                 </p>
 
                                 {/* Qualification */}
-                                <div className="mt-4 sm:mt-5">
+                                <motion.div
+                                    className="mt-4 sm:mt-5"
+                                    initial={{ opacity: 0 }}
+                                    whileInView={{ opacity: 1 }}
+                                    viewport={{
+                                        once: true,
+                                        amount: 0.2,
+                                    }}
+                                    transition={{
+                                        duration: 0.4,
+                                        delay: 0.1,
+                                    }}
+                                >
                                     <p
                                         className={`text-sm leading-6 ${isDark
                                             ? "text-gray-300"
@@ -147,7 +198,7 @@ function Faculty() {
                                         </span>{" "}
                                         {member.qualification}
                                     </p>
-                                </div>
+                                </motion.div>
 
                                 {/* Contact */}
                                 <div
@@ -156,8 +207,10 @@ function Faculty() {
                                         : "border-gray-200"
                                         }`}
                                 >
-                                    <a
+                                    <motion.a
                                         href={`mailto:${member.email}`}
+                                        whileHover={{ x: 3 }}
+                                        transition={{ duration: 0.2 }}
                                         className={`flex min-w-0 items-center gap-3 text-sm transition ${isDark
                                             ? "text-gray-400 hover:text-white"
                                             : "text-gray-500 hover:text-black"
@@ -171,10 +224,12 @@ function Faculty() {
                                         <span className="min-w-0 break-all sm:break-normal">
                                             {member.email}
                                         </span>
-                                    </a>
+                                    </motion.a>
 
-                                    <a
+                                    <motion.a
                                         href={`tel:${member.phone}`}
+                                        whileHover={{ x: 3 }}
+                                        transition={{ duration: 0.2 }}
                                         className={`mt-3 flex items-center gap-3 text-sm transition ${isDark
                                             ? "text-gray-400 hover:text-white"
                                             : "text-gray-500 hover:text-black"
@@ -186,12 +241,12 @@ function Faculty() {
                                         />
 
                                         <span>{member.phone}</span>
-                                    </a>
+                                    </motion.a>
                                 </div>
                             </div>
-                        </div>
+                        </motion.div>
                     ))}
-                </div>
+                </motion.div>
 
             </div>
         </section>

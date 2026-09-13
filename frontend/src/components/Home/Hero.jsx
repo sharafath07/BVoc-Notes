@@ -1,4 +1,5 @@
 import React, { useContext } from 'react'
+import { motion } from 'motion/react'
 import bg from '../../assets/BackgroundImage.jpg'
 import { Context } from '../../Context/Context'
 import { ChevronDown } from 'lucide-react'
@@ -8,13 +9,14 @@ function Hero() {
 
   return (
     <section
-      className={`relative flex min-h-screen w-full flex-col items-center justify-center gap-8 sm:gap-10 px-4 sm:px-6 md:px-10 bg-cover bg-center bg-no-repeat font-roboto transition-colors duration-300 ${isDark
+      className={`relative flex min-h-screen w-full flex-col items-center justify-center gap-8 px-4 sm:gap-10 sm:px-6 md:px-10 bg-cover bg-center bg-no-repeat font-roboto transition-colors duration-300 ${isDark
         ? 'bg-gray-950 text-white'
         : 'bg-white text-gray-900'
         }`}
       style={{ backgroundImage: `url(${bg})` }}
     >
       {/* Background Overlay */}
+
       <div
         className={`absolute inset-0 ${isDark
           ? 'bg-gradient-to-t from-gray-950 via-black/60 to-black/10'
@@ -23,45 +25,126 @@ function Hero() {
       />
 
       {/* Hero Content */}
-      <div className="relative z-10 flex w-full max-w-5xl flex-col items-center justify-center text-center">
-        <h1
+
+      <motion.div
+        className="relative z-10 flex w-full max-w-5xl flex-col items-center justify-center text-center"
+        initial={{
+          opacity: 0,
+          y: 25,
+        }}
+        animate={{
+          opacity: 1,
+          y: 0,
+        }}
+        transition={{
+          duration: 0.7,
+          ease: 'easeOut',
+        }}
+      >
+        {/* Department Title */}
+
+        <motion.h1
           className={`font-roboto text-3xl font-bold leading-tight transition-colors duration-300 sm:text-4xl md:text-5xl lg:text-6xl ${isDark
             ? 'text-white'
             : 'text-gray-900'
             }`}
+          initial={{
+            opacity: 0,
+            y: 30,
+          }}
+          animate={{
+            opacity: 1,
+            y: 0,
+          }}
+          transition={{
+            duration: 0.7,
+            delay: 0.1,
+            ease: 'easeOut',
+          }}
         >
           Department of Software Development
-        </h1>
+        </motion.h1>
 
-        <p
-          className={`mt-3 text-xl font-semibold sm:text-2xl md:text-3xl lg:text-4xl transition-colors duration-300 ${isDark
+        {/* College Name */}
+
+        <motion.p
+          className={`mt-3 text-xl font-semibold transition-colors duration-300 sm:text-2xl md:text-3xl lg:text-4xl ${isDark
             ? 'text-gray-200'
             : 'text-gray-800'
             }`}
+          initial={{
+            opacity: 0,
+            y: 20,
+          }}
+          animate={{
+            opacity: 1,
+            y: 0,
+          }}
+          transition={{
+            duration: 0.6,
+            delay: 0.3,
+            ease: 'easeOut',
+          }}
         >
           Farook College
-        </p>
-      </div>
+        </motion.p>
+      </motion.div>
+
 
       {/* Explore Button */}
-      <button
+
+      <motion.button
         type="button"
         onClick={() =>
           document.getElementById('content')?.scrollIntoView({
             behavior: 'smooth'
           })
         }
-        className={`relative z-10 flex min-h-[52px] flex-col items-center justify-center rounded-lg border px-5 py-2 text-lg font-caacupe transition-all duration-200 hover:scale-105 active:scale-95 sm:text-xl md:text-2xl ${isDark
+        initial={{
+          opacity: 0,
+          y: 20,
+        }}
+        animate={{
+          opacity: 1,
+          y: 0,
+        }}
+        whileHover={{
+          scale: 1.05,
+          y: -2,
+        }}
+        whileTap={{
+          scale: 0.95,
+        }}
+        transition={{
+          duration: 0.5,
+          delay: 0.55,
+          ease: 'easeOut',
+        }}
+        className={`relative z-10 flex min-h-[52px] flex-col items-center justify-center rounded-lg border px-5 py-2 text-lg font-caacupe transition-colors duration-200 sm:text-xl md:text-2xl ${isDark
           ? 'border-gray-600 bg-gray-900/70 text-white hover:bg-gray-800'
           : 'border-gray-300 bg-white/70 text-gray-900 hover:bg-white'
           }`}
       >
         <span>Explore More</span>
-        <ChevronDown
-          size={24}
-          className="sm:h-7 sm:w-7"
-        />
-      </button>
+
+        {/* Animated Chevron */}
+
+        <motion.span
+          animate={{
+            y: [0, 4, 0],
+          }}
+          transition={{
+            duration: 1.5,
+            repeat: Infinity,
+            ease: 'easeInOut',
+          }}
+        >
+          <ChevronDown
+            size={24}
+            className="sm:h-7 sm:w-7"
+          />
+        </motion.span>
+      </motion.button>
     </section>
   )
 }
