@@ -16,7 +16,7 @@ function Main() {
     const [semester, setSemester] = useState('');
     const [batch, setBatch] = useState('');
 
-    const { backendUrl, setToken, setUser } = useContext(Context);
+    const { backendUrl, setToken, setUser, setIsLoading } = useContext(Context);
     const navigate = useNavigate();
 
     const semesters = Array.from(
@@ -33,6 +33,7 @@ function Main() {
         e.preventDefault();
 
         try {
+            setIsLoading(true);
             const response = await api.post(
                 `${backendUrl}/api/auth/login`,
                 {
@@ -64,6 +65,8 @@ function Main() {
                 error.response?.data?.message ||
                 'Login Failed'
             );
+        } finally {
+            setIsLoading(false);
         }
     }
 
@@ -71,6 +74,7 @@ function Main() {
         e.preventDefault();
 
         try {
+            setIsLoading(true);
             const response = await api.post(
                 `${backendUrl}/api/auth/register/student`,
                 {
@@ -102,6 +106,8 @@ function Main() {
                 error.response?.data?.message ||
                 'SignUp failed'
             );
+        } finally {
+            setIsLoading(false);
         }
     }
 

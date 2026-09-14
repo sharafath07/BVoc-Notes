@@ -167,6 +167,7 @@ function AdminSubjects() {
         if (!confirmed) return;
 
         try {
+            setIsLoading(true);
             setDeletingId(subject.id);
 
             const response = await api.delete(
@@ -199,6 +200,7 @@ function AdminSubjects() {
             );
         } finally {
             setDeletingId(null);
+            setIsLoading(false);
         }
     };
 

@@ -26,6 +26,7 @@ function AdminAddSubject() {
         semesters = [],
         subjects = [],
         setSubjects,
+        setIsLoading,
     } = useContext(Context);
 
     const navigate = useNavigate();
@@ -95,6 +96,7 @@ function AdminAddSubject() {
         }
 
         try {
+            setIsLoading(true);
             setLoading(true);
 
             const response = await api.post(
@@ -133,6 +135,7 @@ function AdminAddSubject() {
             );
         } finally {
             setLoading(false);
+            setIsLoading(false)
         }
     };
 

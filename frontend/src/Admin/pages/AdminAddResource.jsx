@@ -16,6 +16,7 @@ function AdminAddResource() {
         semesters,
         subjects,
         setResources,
+        setIsLoading,
     } = useContext(Context);
 
     const [title, setTitle] = useState("");
@@ -71,6 +72,7 @@ function AdminAddResource() {
         };
 
         try {
+            setIsLoading(true);
             const response = await api.post(
                 `${backendUrl}/api/resources/`,
                 resourceData
@@ -94,6 +96,8 @@ function AdminAddResource() {
                 error.response?.data?.message ||
                 "Creation of Resource Failed"
             );
+        } finally {
+            setIsLoading(false);
         }
     }
 

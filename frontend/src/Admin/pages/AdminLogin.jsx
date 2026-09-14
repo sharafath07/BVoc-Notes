@@ -25,6 +25,7 @@ function AdminLogin() {
         backendUrl,
         setToken,
         setUser,
+        setIsLoading,
     } = useContext(Context);
 
     const navigate = useNavigate();
@@ -33,6 +34,7 @@ function AdminLogin() {
         e.preventDefault();
 
         try {
+            setIsLoading(true);
             const response = await api.post(
                 `${backendUrl}/api/auth/login`,
                 {
@@ -63,6 +65,8 @@ function AdminLogin() {
                 error.response?.data?.message ||
                 "Login failed"
             );
+        } finally {
+            setIsLoading(false);
         }
     }
 

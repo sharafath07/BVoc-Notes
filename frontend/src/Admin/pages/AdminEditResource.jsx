@@ -36,6 +36,7 @@ function AdminEditResource() {
         resources,
         setResources,
         isDark,
+        setIsLoading,
     } = useContext(Context);
 
     const { id } = useParams();
@@ -145,6 +146,7 @@ function AdminEditResource() {
         };
 
         try {
+            setIsLoading(true);
             setSaving(true);
 
             const response = await api.put(
@@ -180,6 +182,7 @@ function AdminEditResource() {
             );
         } finally {
             setSaving(false);
+            setIsLoading(false);
         }
     }
 

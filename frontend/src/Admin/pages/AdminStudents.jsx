@@ -29,6 +29,7 @@ function AdminStudents() {
         setStudents,
         semesters = [],
         backendUrl,
+        setIsLoading,
     } = useContext(Context);
 
     const [search, setSearch] = useState("");
@@ -71,6 +72,7 @@ function AdminStudents() {
         if (!confirmed) return;
 
         try {
+            setIsLoading(true);
             const response = await api.delete(
                 `${backendUrl}/api/users/${student.id}`
             );
@@ -92,6 +94,8 @@ function AdminStudents() {
                 error.response?.data?.message ||
                 "Failed to delete student"
             );
+        } finally {
+            setIsLoading(false);
         }
     }
 

@@ -12,7 +12,8 @@ function Navbar() {
         setIsDark,
         setToken,
         setUser,
-        backendUrl
+        backendUrl,
+        setIsLoading,
     } = useContext(Context)
 
     const navigate = useNavigate()
@@ -29,6 +30,7 @@ function Navbar() {
 
     async function handleSignOut() {
         try {
+            setIsLoading(true)
             const response = await api.post(
                 `${backendUrl}/api/auth/logout`
             )
@@ -46,6 +48,8 @@ function Navbar() {
             alert(
                 error.response?.data?.message || 'Logout Failed'
             )
+        } finally {
+            setIsLoading(false)
         }
     }
 
