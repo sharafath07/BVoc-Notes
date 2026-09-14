@@ -1,12 +1,8 @@
 import api from "../api/axios.js"
-import { Context } from "./Context.jsx"
-import { useContext } from "react"
 
 async function getSemesters(backendUrl) {
-    const { setIsLoading } = useContext(Context);
 
     try {
-        setIsLoading(true);
         const response = await api.get(`${backendUrl}/api/semesters`)
 
         if (response.data.success) {
@@ -18,8 +14,6 @@ async function getSemesters(backendUrl) {
         alert(
             error.response?.data?.message || "Get Semesters"
         )
-    } finally {
-        setIsLoading(false);
     }
 }
 

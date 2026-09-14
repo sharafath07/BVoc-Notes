@@ -1,12 +1,8 @@
 import api from "../api/axios.js"
-import { Context } from "./Context.jsx"
-import { useContext } from "react"
 
 async function getResources(backendUrl) {
-    const { setIsLoading } = useContext(Context);
 
     try {
-        setIsLoading(true)
         const response = await api.get(`${backendUrl}/api/resources`)
 
         if (response.data.success) {
@@ -18,8 +14,6 @@ async function getResources(backendUrl) {
         alert(
             error.response?.data?.message || "Get Resources"
         )
-    } finally {
-        setIsLoading(false)
     }
 }
 
