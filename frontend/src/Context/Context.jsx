@@ -21,6 +21,7 @@ function ContextProvider(props) {
     const [subjects, setSubjects] = useState([]);
     const [semesters, setSemesters] = useState([]);
     const [resources, setResources] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
 
     const value = {
         backendUrl,
@@ -42,7 +43,9 @@ function ContextProvider(props) {
         setStudents,
         faculty,
         setFaculty,
-        authLoading
+        authLoading,
+        isLoading,
+        setIsLoading,
     };
 
     useEffect(() => {
@@ -50,6 +53,8 @@ function ContextProvider(props) {
 
         const loadData = async () => {
             try {
+                setIsLoading(true);
+
                 const semestersData = await getSemesters(backendUrl);
                 const subjectsData = await getSubjects(backendUrl);
                 const resourcesData = await getResources(backendUrl);
@@ -76,7 +81,12 @@ function ContextProvider(props) {
                     );
                 }
             } catch (error) {
-                console.error("Context data loading error:", error);
+                console.error(
+                    "Context data loading error:",
+                    error
+                );
+            } finally {
+                setIsLoading(false);
             }
         };
 
@@ -93,6 +103,8 @@ function ContextProvider(props) {
             }
 
             try {
+                setIsLoading(true);
+
                 const response = await api.get(
                     `${backendUrl}/api/auth/me`,
                     {
@@ -118,6 +130,7 @@ function ContextProvider(props) {
                 setUser(null);
             } finally {
                 setAuthLoading(false);
+                setIsLoading(false);
             }
         };
 

@@ -1,5 +1,8 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Routes, Route, useLocation } from 'react-router-dom'
+
+import Loading from './components/Loading'
+import { Context } from './Context/Context'
 
 import Navbar from './components/Navbar'
 import Home from './pages/Home'
@@ -25,7 +28,7 @@ import AdminSubjects from './Admin/pages/AdminSubjects';
 import AdminAddSubject from './Admin/pages/AdminAddSubject';
 
 function App() {
-
+  const { isLoading } = useContext(Context);
   const location = useLocation();
 
   const hideNavbarRoutes = [
@@ -40,6 +43,7 @@ function App() {
           location.pathname
         ) ? (!location.pathname.startsWith('/admin') ? <Navbar /> : <AdminNavbar />) : <></>
       }
+      {isLoading && <Loading />}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
@@ -60,11 +64,7 @@ function App() {
         <Route path="/admin/dashboard/subjects/add" element={<ProtectedRoute toUrl="/admin/login" adminOnly={true}><AdminAddSubject /></ProtectedRoute>} />
 
       </Routes>
-      {
-        !hideNavbarRoutes.includes(
-          location.pathname
-        ) ? <Footer /> : <></>
-      }
+      {!hideNavbarRoutes.includes(location.pathname) && <Footer />}
     </>
   )
 }

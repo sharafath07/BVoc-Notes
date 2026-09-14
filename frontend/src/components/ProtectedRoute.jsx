@@ -1,6 +1,7 @@
 import React, { useContext } from "react";
 import { Navigate } from "react-router-dom";
 import { Context } from "../Context/Context";
+import Loading from "./Loading";
 
 function ProtectedRoute({
     children,
@@ -13,7 +14,7 @@ function ProtectedRoute({
     if (authLoading) {
         return (
             <div className="min-h-screen flex items-center justify-center">
-                <p>Loading...</p>
+                <Loading />
             </div>
         );
     }
