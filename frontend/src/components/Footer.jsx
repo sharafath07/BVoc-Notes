@@ -334,7 +334,7 @@ function Footer() {
 
                             <motion.li variants={footerItemVariants}>
                                 <Link
-                                    to="/discussion"
+                                    to="/"
                                     className="transition-colors duration-200 hover:text-white"
                                 >
                                     <motion.span
