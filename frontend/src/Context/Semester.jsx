@@ -12,7 +12,7 @@ async function getSemesters(backendUrl) {
         console.error("Get Semesters:", error)
 
         alert(
-            error.response?.data?.message || "Get Semesters"
+            error.response?.data?.message || "Get Semesters failed"
         )
     }
 }

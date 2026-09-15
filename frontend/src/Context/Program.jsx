@@ -12,7 +12,7 @@ async function getPrograms(backendUrl) {
         console.error("Get programs:", error)
 
         alert(
-            error.response?.data?.message || "Get programs"
+            error.response?.data?.message || "Get programs Failed"
         )
     }
 }

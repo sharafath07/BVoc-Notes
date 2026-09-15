@@ -1,5 +1,8 @@
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+
 import prisma from "../lib/prisma.js";
+import { env } from "../config/env.js";
 
 const SALT_ROUNDS = 12;
 
@@ -39,10 +42,10 @@ export async function registerStudent({
         throw new Error("Invalid batch");
     }
 
-    // Validate registration number
+    // Validate register number
     if (!/^[A-Z]{7}\d{3}$/.test(normalizedRegisterNumber)) {
         throw new Error(
-            "Invalid registration number. Format must be 7 letters followed by 3 numbers"
+            "Register Number should like FKAZBVW021"
         );
     }
 
@@ -59,7 +62,7 @@ export async function registerStudent({
         );
     }
 
-    // Check registration number uniqueness
+    // Check register number uniqueness
     const existingStudentProfile =
         await prisma.studentProfile.findUnique({
             where: {
@@ -79,7 +82,7 @@ export async function registerStudent({
         SALT_ROUNDS
     );
 
-    // Create User + StudentProfile
+    // Create user and student profile
     const user = await prisma.$transaction(
         async (tx) => {
             const createdUser = await tx.user.create({
@@ -105,11 +108,27 @@ export async function registerStudent({
         }
     );
 
+    // Create JWT token
+    const token = jwt.sign(
+        {
+            userId: user.id,
+            role: user.role,
+        },
+        env.JWT_SECRET,
+        {
+            expiresIn: "1d",
+        }
+    );
+
     return {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        registerNumber: normalizedRegisterNumber,
+        token,
+
+        user: {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+            registerNumber: normalizedRegisterNumber,
+        },
     };
 }

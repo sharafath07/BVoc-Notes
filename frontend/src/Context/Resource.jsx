@@ -12,7 +12,7 @@ async function getResources(backendUrl) {
         console.error("Get Resources:", error)
 
         alert(
-            error.response?.data?.message || "Get Resources"
+            error.response?.data?.message || "Get Resources failed"
         )
     }
 }

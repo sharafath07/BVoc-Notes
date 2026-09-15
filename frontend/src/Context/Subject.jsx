@@ -12,7 +12,7 @@ async function getSubjects(backendUrl) {
         console.error("Get Subjects:", error)
 
         alert(
-            error.response?.data?.message || "Get Subjects"
+            error.response?.data?.message || "Get Subjects failed"
         )
     }
 }

@@ -85,6 +85,7 @@ function ContextProvider(props) {
                     "Context data loading error:",
                     error
                 );
+                alert(error.response?.data?.message || "Failed to load data. Please try again later.");
             } finally {
                 setIsLoading(false);
             }

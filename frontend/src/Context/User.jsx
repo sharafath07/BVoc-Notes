@@ -12,7 +12,7 @@ async function getUsers(backendUrl) {
         console.error("Get Users:", error)
 
         alert(
-            error.response?.data?.message || "Get Users"
+            error.response?.data?.message || "Get Users failed"
         )
     }
 }

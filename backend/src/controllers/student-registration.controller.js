@@ -14,11 +14,11 @@ const studentRegistrationSchema = z.object({
     email: z
         .string()
         .trim()
-        .email(),
+        .email("Please provide a valid email"),
 
     password: z
         .string()
-        .min(8)
+        .min(8, "Password must be at least 8 characters")
         .max(128),
 
     registerNumber: z
@@ -52,13 +52,22 @@ export async function registerStudentController(
         const data =
             studentRegistrationSchema.parse(req.body);
 
-        const student =
+        const result =
             await registerStudent(data);
+
+        // Set authentication cookie
+        res.cookie("accessToken", result.token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "none",
+            maxAge: 24 * 60 * 60 * 1000,
+        });
 
         return res.status(201).json({
             success: true,
             message: "Student registration successful",
-            user: student,
+            user: result.user,
+            token: result.token,
         });
     } catch (error) {
         next(error);
