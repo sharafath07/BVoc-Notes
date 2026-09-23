@@ -23,12 +23,14 @@ model User {
 }
 
 model StudentProfile {
-  id             String  @id @default(cuid())
-  userId         String  @unique
-  registerNumber String  @unique
+  id             String        @id @default(cuid())
+  userId         String        @unique
+  registerNumber String        @unique
   batch          String?
   semester       Int?
-  user           User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  status         StudentStatus @default(ACTIVE)
+
+  user           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model TeacherProfile {
@@ -102,6 +104,11 @@ enum UserRole {
 enum UserStatus {
   ACTIVE
   SUSPENDED
+}
+
+enum StudentStatus {
+  ACTIVE
+  ALUMNI
 }
 
 enum ResourceType {

@@ -27,17 +27,28 @@ function AdminStudents() {
         isDark,
         students = [],
         setStudents,
-        semesters = [],
         backendUrl,
         setIsLoading,
+        isAdmin,
     } = useContext(Context);
 
     const [search, setSearch] = useState("");
     const [semester, setSemester] = useState("");
     const [batch, setBatch] = useState("");
+    const [status, setStatus] = useState("");
+
+    const semesters = Array.from(
+        { length: 8 },
+        (_, index) => index + 1
+    );
 
     const batches = Array.from(
-        { length: new Date().getFullYear() - 2025 + 1 },
+        {
+            length:
+                new Date().getFullYear() -
+                2025 +
+                1,
+        },
         (_, index) => 2025 + index
     );
 
@@ -46,6 +57,9 @@ function AdminStudents() {
             const matchesName = student.name
                 ?.toLowerCase()
                 .includes(search.toLowerCase().trim());
+
+            const studentStatus =
+                student.studentProfile?.status || "ACTIVE";
 
             const matchesSemester =
                 !semester ||
@@ -56,13 +70,24 @@ function AdminStudents() {
                 !batch ||
                 student.studentProfile?.batch === batch;
 
+            const matchesStatus =
+                !status ||
+                studentStatus === status;
+
             return (
                 matchesName &&
                 matchesSemester &&
-                matchesBatch
+                matchesBatch &&
+                matchesStatus
             );
         });
-    }, [students, search, semester, batch]);
+    }, [
+        students,
+        search,
+        semester,
+        batch,
+        status,
+    ]);
 
     async function handleDelete(student) {
         const confirmed = window.confirm(
@@ -73,6 +98,7 @@ function AdminStudents() {
 
         try {
             setIsLoading(true);
+
             const response = await api.delete(
                 `${backendUrl}/api/users/${student.id}`
             );
@@ -114,7 +140,6 @@ function AdminStudents() {
                 }`}
         >
             <div className="mx-auto w-full max-w-7xl">
-
                 {/* Header */}
                 <motion.div
                     variants={containerVariants}
@@ -123,7 +148,6 @@ function AdminStudents() {
                     className="mb-7 sm:mb-8"
                 >
                     <div className="flex items-center gap-3 sm:gap-4">
-
                         <motion.div
                             variants={cardVariants}
                             whileHover={{
@@ -161,7 +185,6 @@ function AdminStudents() {
                                 Manage registered students
                             </motion.p>
                         </div>
-
                     </div>
                 </motion.div>
 
@@ -182,9 +205,8 @@ function AdminStudents() {
                         variants={containerVariants}
                         initial="hidden"
                         animate="visible"
-                        className="grid grid-cols-1 gap-3 sm:gap-4 md:grid-cols-2"
+                        className="grid grid-cols-1 gap-3 sm:gap-4 md:grid-cols-2 lg:grid-cols-4"
                     >
-
                         {/* Search */}
                         <motion.div
                             variants={cardVariants}
@@ -274,20 +296,50 @@ function AdminStudents() {
 
                             {semesters.map((item) => (
                                 <option
-                                    key={item.id}
-                                    value={item.number}
+                                    key={item}
+                                    value={item}
                                 >
-                                    Semester {item.number}
+                                    Semester {item}
                                 </option>
                             ))}
                         </motion.select>
 
+                        {/* Status */}
+                        <motion.select
+                            variants={cardVariants}
+                            value={status}
+                            onChange={(e) =>
+                                setStatus(e.target.value)
+                            }
+                            whileFocus={{
+                                scale: 1.005,
+                            }}
+                            transition={{
+                                duration: 0.2,
+                            }}
+                            className={`w-full rounded-xl border px-3 py-3 text-sm outline-none transition sm:px-4 sm:text-base ${isDark
+                                ? "border-gray-700 bg-gray-800 text-white focus:border-white"
+                                : "border-gray-300 bg-white text-gray-900 focus:border-black"
+                                }`}
+                        >
+                            <option value="">
+                                All Students
+                            </option>
+
+                            <option value="ACTIVE">
+                                Active Students
+                            </option>
+
+                            <option value="ALUMNI">
+                                Alumni
+                            </option>
+                        </motion.select>
                     </motion.div>
                 </motion.div>
 
                 {/* Student Count */}
                 <motion.div
-                    key={`${filteredStudents.length}-${search}-${semester}-${batch}`}
+                    key={`${filteredStudents.length}-${search}-${semester}-${batch}-${status}`}
                     initial={{
                         opacity: 0,
                         y: 5,
@@ -331,7 +383,6 @@ function AdminStudents() {
                 >
                     <div className="overflow-x-auto">
                         <table className="w-full min-w-[760px] text-left">
-
                             {/* Table Header */}
                             <thead
                                 className={
@@ -415,144 +466,157 @@ function AdminStudents() {
 
                                                     <p className="mt-1 text-xs sm:text-sm">
                                                         Try changing your
-                                                        search or semester
-                                                        filter.
+                                                        search or filters.
                                                     </p>
                                                 </motion.div>
                                             </td>
                                         </motion.tr>
                                     ) : (
                                         filteredStudents.map(
-                                            (student) => (
-                                                <motion.tr
-                                                    key={student.id}
-                                                    initial={{
-                                                        opacity: 0,
-                                                        y: 8,
-                                                    }}
-                                                    animate={{
-                                                        opacity: 1,
-                                                        y: 0,
-                                                    }}
-                                                    exit={{
-                                                        opacity: 0,
-                                                        y: -8,
-                                                    }}
-                                                    transition={{
-                                                        duration: 0.25,
-                                                        ease: "easeOut",
-                                                    }}
-                                                    className={`transition-colors ${isDark
-                                                        ? "hover:bg-gray-800/50"
-                                                        : "hover:bg-gray-50"
-                                                        }`}
-                                                >
-                                                    {/* Register Number */}
-                                                    <td
-                                                        className={`whitespace-nowrap px-4 py-4 text-sm font-medium sm:px-6 ${isDark
-                                                            ? "text-white"
-                                                            : "text-gray-900"
+                                            (student) => {
+                                                const studentStatus =
+                                                    student
+                                                        .studentProfile
+                                                        ?.status ||
+                                                    "ACTIVE";
+
+                                                const isAlumni =
+                                                    studentStatus ===
+                                                    "ALUMNI";
+
+                                                return (
+                                                    <motion.tr
+                                                        key={student.id}
+                                                        initial={{
+                                                            opacity: 0,
+                                                            y: 8,
+                                                        }}
+                                                        animate={{
+                                                            opacity: 1,
+                                                            y: 0,
+                                                        }}
+                                                        exit={{
+                                                            opacity: 0,
+                                                            y: -8,
+                                                        }}
+                                                        transition={{
+                                                            duration: 0.25,
+                                                            ease: "easeOut",
+                                                        }}
+                                                        className={`transition-colors ${isDark
+                                                            ? "hover:bg-gray-800/50"
+                                                            : "hover:bg-gray-50"
                                                             }`}
                                                     >
-                                                        {
-                                                            student
+                                                        {/* Register Number */}
+                                                        <td
+                                                            className={`whitespace-nowrap px-4 py-4 text-sm font-medium sm:px-6 ${isDark
+                                                                ? "text-white"
+                                                                : "text-gray-900"
+                                                                }`}
+                                                        >
+                                                            {student
                                                                 .studentProfile
                                                                 ?.registerNumber ||
-                                                            "N/A"
-                                                        }
-                                                    </td>
+                                                                "N/A"}
+                                                        </td>
 
-                                                    {/* Name */}
-                                                    <td
-                                                        className={`px-4 py-4 text-sm sm:px-6 ${isDark
-                                                            ? "text-gray-200"
-                                                            : "text-gray-700"
-                                                            }`}
-                                                    >
-                                                        <span className="block max-w-[160px] truncate sm:max-w-none">
-                                                            {
-                                                                student.name
-                                                            }
-                                                        </span>
-                                                    </td>
-
-                                                    {/* Batch */}
-                                                    <td
-                                                        className={`whitespace-nowrap px-4 py-4 text-sm sm:px-6 ${isDark
-                                                            ? "text-gray-400"
-                                                            : "text-gray-600"
-                                                            }`}
-                                                    >
-                                                        {student
-                                                            .studentProfile
-                                                            ?.batch
-                                                            ? `${student.studentProfile.batch}`
-                                                            : "N/A"}
-                                                    </td>
-
-                                                    {/* Semester */}
-                                                    <td
-                                                        className={`whitespace-nowrap px-4 py-4 text-sm sm:px-6 ${isDark
-                                                            ? "text-gray-400"
-                                                            : "text-gray-600"
-                                                            }`}
-                                                    >
-                                                        {student
-                                                            .studentProfile
-                                                            ?.semester
-                                                            ? `Semester ${student.studentProfile.semester}`
-                                                            : "N/A"}
-                                                    </td>
-
-                                                    {/* Email */}
-                                                    <td
-                                                        className={`px-4 py-4 text-sm sm:px-6 ${isDark
-                                                            ? "text-gray-400"
-                                                            : "text-gray-600"
-                                                            }`}
-                                                    >
-                                                        <span className="block max-w-[220px] truncate sm:max-w-none">
-                                                            {
-                                                                student.email
-                                                            }
-                                                        </span>
-                                                    </td>
-
-                                                    {/* Actions */}
-                                                    <td className="px-4 py-4 sm:px-6">
-                                                        <div className="flex justify-center">
-
-                                                            <motion.button
-                                                                type="button"
-                                                                onClick={() =>
-                                                                    handleDelete(
-                                                                        student
-                                                                    )
+                                                        {/* Name */}
+                                                        <td
+                                                            className={`px-4 py-4 text-sm sm:px-6 ${isDark
+                                                                ? "text-gray-200"
+                                                                : "text-gray-700"
+                                                                }`}
+                                                        >
+                                                            <span className="block max-w-[160px] truncate sm:max-w-none">
+                                                                {
+                                                                    student.name
                                                                 }
-                                                                title="Delete student"
-                                                                aria-label={`Delete ${student.name}`}
-                                                                whileHover={{
-                                                                    scale: 1.05,
-                                                                }}
-                                                                whileTap={{
-                                                                    scale: 0.95,
-                                                                }}
-                                                                transition={{
-                                                                    duration: 0.15,
-                                                                }}
-                                                                className="rounded-lg border border-red-200 p-2 text-red-500 hover:bg-red-500 hover:text-white"
-                                                            >
-                                                                <Trash2
-                                                                    size={
-                                                                        17
-                                                                    }
-                                                                />
-                                                            </motion.button>
+                                                            </span>
+                                                        </td>
 
-                                                        </div>
-                                                    </td>
-                                                </motion.tr>
-                                            )
+                                                        {/* Batch */}
+                                                        <td
+                                                            className={`whitespace-nowrap px-4 py-4 text-sm sm:px-6 ${isDark
+                                                                ? "text-gray-400"
+                                                                : "text-gray-600"
+                                                                }`}
+                                                        >
+                                                            {student
+                                                                .studentProfile
+                                                                ?.batch
+                                                                ? student
+                                                                    .studentProfile
+                                                                    .batch
+                                                                : "N/A"}
+                                                        </td>
+
+                                                        {/* Semester */}
+                                                        <td
+                                                            className={`whitespace-nowrap px-4 py-4 text-sm sm:px-6 ${isDark
+                                                                ? "text-gray-400"
+                                                                : "text-gray-600"
+                                                                }`}
+                                                        >
+                                                            {isAlumni
+                                                                ? "Alumni"
+                                                                : student
+                                                                    .studentProfile
+                                                                    ?.semester
+                                                                    ? `Semester ${student.studentProfile.semester}`
+                                                                    : "N/A"}
+                                                        </td>
+
+                                                        {/* Email */}
+                                                        <td
+                                                            className={`px-4 py-4 text-sm sm:px-6 ${isDark
+                                                                ? "text-gray-400"
+                                                                : "text-gray-600"
+                                                                }`}
+                                                        >
+                                                            <span className="block max-w-[220px] truncate sm:max-w-none">
+                                                                {
+                                                                    student.email
+                                                                }
+                                                            </span>
+                                                        </td>
+
+                                                        {/* Actions */}
+                                                        <td className="px-4 py-4 sm:px-6">
+                                                            <div className="flex justify-center">
+                                                                {isAdmin && (
+                                                                    <motion.button
+                                                                        type="button"
+                                                                        onClick={() =>
+                                                                            handleDelete(
+                                                                                student
+                                                                            )
+                                                                        }
+                                                                        title="Delete student"
+                                                                        aria-label={`Delete ${student.name}`}
+                                                                        whileHover={{
+                                                                            scale: 1.05,
+                                                                        }}
+                                                                        whileTap={{
+                                                                            scale: 0.95,
+                                                                        }}
+                                                                        transition={{
+                                                                            duration: 0.15,
+                                                                        }}
+                                                                        className="rounded-lg border border-red-200 p-2 text-red-500 hover:bg-red-500 hover:text-white"
+                                                                    >
+                                                                        <Trash2
+                                                                            size={
+                                                                                17
+                                                                            }
+                                                                        />
+                                                                    </motion.button>
+                                                                )}
+                                                            </div>
+                                                        </td>
+                                                    </motion.tr>
+                                                );
+                                            }
                                         )
                                     )}
                                 </AnimatePresence>
@@ -586,7 +650,6 @@ function AdminStudents() {
                         </motion.p>
                     )}
                 </AnimatePresence>
-
             </div>
         </motion.section>
     );

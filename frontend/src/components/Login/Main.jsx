@@ -82,8 +82,15 @@ function Main() {
                     email,
                     password,
                     registerNumber,
-                    semester: Number(semester),
-                    batch: String(batch)
+                    semester:
+                        semester === "ALUMNI"
+                            ? null
+                            : Number(semester),
+                    batch: String(batch),
+                    status:
+                        semester === "ALUMNI"
+                            ? "ALUMNI"
+                            : "ACTIVE",
                 }
             );
 
@@ -236,9 +243,7 @@ function Main() {
                             <motion.select
                                 className="login-input"
                                 value={semester}
-                                onChange={(e) =>
-                                    setSemester(e.target.value)
-                                }
+                                onChange={(e) => setSemester(e.target.value)}
                                 required
                                 variants={formItemVariants}
                                 whileFocus={{
@@ -257,6 +262,10 @@ function Main() {
                                         Semester {semester}
                                     </option>
                                 ))}
+
+                                <option value="ALUMNI">
+                                    Alumni
+                                </option>
                             </motion.select>
 
                             <motion.select
