@@ -11,9 +11,13 @@ import {
     ExternalLink,
     Search,
     X,
+    ChevronDown,
 } from "lucide-react";
 
-import { motion, AnimatePresence } from "motion/react";
+import {
+    motion,
+    AnimatePresence,
+} from "motion/react";
 
 import { Link } from "react-router-dom";
 import { Context } from "../../Context/Context";
@@ -31,20 +35,28 @@ function AdminResources() {
     const {
         isDark,
         backendUrl,
+        program = [],
         resources,
         setResources,
-        semesters,
-        subjects,
+        semesters = [],
+        subjects = [],
         canManageResources,
     } = useContext(Context);
 
-    const [loading, setLoading] = useState(false);
+    const [deletingId, setDeletingId] =
+        useState(null);
 
     const [search, setSearch] = useState("");
+
+    const [selectedProgram, setSelectedProgram] =
+        useState("");
+
     const [selectedSemester, setSelectedSemester] =
         useState("");
+
     const [selectedSubject, setSelectedSubject] =
         useState("");
+
     const [selectedType, setSelectedType] =
         useState("");
 
@@ -53,6 +65,20 @@ function AdminResources() {
         "SYLLABUS",
         "PYQ",
     ];
+
+    /*
+     * Semesters belonging to selected program
+     */
+    const filteredSemesters = useMemo(() => {
+        if (!selectedProgram) {
+            return [];
+        }
+
+        return semesters.filter(
+            (semester) =>
+                semester.programId === selectedProgram
+        );
+    }, [selectedProgram, semesters]);
 
     /*
      * Subjects belonging to selected semester
@@ -65,8 +91,10 @@ function AdminResources() {
         return (
             subjects?.filter(
                 (subject) =>
-                    subject.semesterId === selectedSemester ||
-                    subject.semester?.id === selectedSemester
+                    subject.semesterId ===
+                    selectedSemester ||
+                    subject.semester?.id ===
+                    selectedSemester
             ) || []
         );
     }, [subjects, selectedSemester]);
@@ -80,19 +108,41 @@ function AdminResources() {
                 const searchValue =
                     search.toLowerCase().trim();
 
+                const resourceProgramId =
+                    resource.subject?.semester
+                        ?.programId ||
+                    resource.subject?.semester
+                        ?.program?.id ||
+                    "";
+
+                const resourceSemesterId =
+                    resource.subject?.semester?.id ||
+                    "";
+
+                const resourceSubjectId =
+                    resource.subjectId ||
+                    resource.subject?.id ||
+                    "";
+
                 const matchesSearch =
                     resource.title
                         ?.toLowerCase()
                         .includes(searchValue);
 
+                const matchesProgram =
+                    !selectedProgram ||
+                    resourceProgramId ===
+                    selectedProgram;
+
                 const matchesSemester =
                     !selectedSemester ||
-                    resource.subject?.semester?.id ===
+                    resourceSemesterId ===
                     selectedSemester;
 
                 const matchesSubject =
                     !selectedSubject ||
-                    resource.subjectId === selectedSubject;
+                    resourceSubjectId ===
+                    selectedSubject;
 
                 const matchesType =
                     !selectedType ||
@@ -100,6 +150,7 @@ function AdminResources() {
 
                 return (
                     matchesSearch &&
+                    matchesProgram &&
                     matchesSemester &&
                     matchesSubject &&
                     matchesType
@@ -109,14 +160,23 @@ function AdminResources() {
     }, [
         resources,
         search,
+        selectedProgram,
         selectedSemester,
         selectedSubject,
         selectedType,
     ]);
 
     /*
-     * When semester changes,
-     * reset selected subject.
+     * Program change
+     */
+    function handleProgramChange(e) {
+        setSelectedProgram(e.target.value);
+        setSelectedSemester("");
+        setSelectedSubject("");
+    }
+
+    /*
+     * Semester change
      */
     function handleSemesterChange(e) {
         setSelectedSemester(e.target.value);
@@ -128,6 +188,7 @@ function AdminResources() {
      */
     function clearFilters() {
         setSearch("");
+        setSelectedProgram("");
         setSelectedSemester("");
         setSelectedSubject("");
         setSelectedType("");
@@ -135,6 +196,7 @@ function AdminResources() {
 
     const hasFilters =
         search ||
+        selectedProgram ||
         selectedSemester ||
         selectedSubject ||
         selectedType;
@@ -147,10 +209,12 @@ function AdminResources() {
             "Are you sure you want to delete this resource?"
         );
 
-        if (!confirmed) return;
+        if (!confirmed) {
+            return;
+        }
 
         try {
-            setLoading(true);
+            setDeletingId(id);
 
             await api.delete(
                 `${backendUrl}/api/resources/${id}`
@@ -158,7 +222,8 @@ function AdminResources() {
 
             setResources((prevResources) =>
                 prevResources.filter(
-                    (resource) => resource.id !== id
+                    (resource) =>
+                        resource.id !== id
                 )
             );
         } catch (error) {
@@ -172,7 +237,7 @@ function AdminResources() {
                 "Failed to delete resource"
             );
         } finally {
-            setLoading(false);
+            setDeletingId(null);
         }
     }
 
@@ -244,7 +309,8 @@ function AdminResources() {
                                 <Plus size={18} />
                                 Add Resource
                             </Link>
-                        </motion.div>)}
+                        </motion.div>
+                    )}
                 </motion.div>
 
                 {/* Filters */}
@@ -285,7 +351,7 @@ function AdminResources() {
                                     : "text-gray-500"
                                     }`}
                             >
-                                Find resources by name,
+                                Find resources by program,
                                 semester, subject or type.
                             </p>
                         </div>
@@ -332,7 +398,7 @@ function AdminResources() {
                         variants={containerVariants}
                         initial="hidden"
                         animate="visible"
-                        className="grid grid-cols-1 gap-3 sm:gap-4 md:grid-cols-2 lg:grid-cols-4"
+                        className="grid grid-cols-1 gap-3 sm:gap-4 md:grid-cols-2 lg:grid-cols-5"
                     >
 
                         {/* Search */}
@@ -353,7 +419,9 @@ function AdminResources() {
                                 placeholder="Search resource..."
                                 value={search}
                                 onChange={(e) =>
-                                    setSearch(e.target.value)
+                                    setSearch(
+                                        e.target.value
+                                    )
                                 }
                                 whileFocus={{
                                     scale: 1.005,
@@ -368,41 +436,106 @@ function AdminResources() {
                             />
                         </motion.div>
 
-                        {/* Semester */}
-                        <motion.select
-                            variants={cardVariants}
-                            value={selectedSemester}
-                            onChange={handleSemesterChange}
-                            whileFocus={{
-                                scale: 1.005,
-                            }}
-                            transition={{
-                                duration: 0.2,
-                            }}
-                            className={`w-full rounded-lg border px-3 py-2.5 text-sm outline-none transition ${isDark
-                                ? "border-gray-700 bg-gray-800 text-white focus:border-gray-500"
-                                : "border-gray-200 bg-gray-50 text-gray-900 focus:border-gray-400"
-                                }`}
-                        >
-                            <option value="">
-                                All Semesters
-                            </option>
+                        {/* Program */}
+                        <div className="relative">
+                            <motion.select
+                                variants={cardVariants}
+                                value={selectedProgram}
+                                onChange={
+                                    handleProgramChange
+                                }
+                                whileFocus={{
+                                    scale: 1.005,
+                                }}
+                                transition={{
+                                    duration: 0.2,
+                                }}
+                                className={`w-full appearance-none rounded-lg border px-3 py-2.5 pr-9 text-sm outline-none transition ${isDark
+                                    ? "border-gray-700 bg-gray-800 text-white focus:border-gray-500"
+                                    : "border-gray-200 bg-gray-50 text-gray-900 focus:border-gray-400"
+                                    }`}
+                            >
+                                <option value="">
+                                    All Programs
+                                </option>
 
-                            {semesters?.map(
-                                (semester) => (
-                                    <option
-                                        key={semester.id}
-                                        value={semester.id}
-                                    >
-                                        Semester{" "}
-                                        {semester.number}
-                                    </option>
-                                )
-                            )}
-                        </motion.select>
+                                {program.map(
+                                    (item) => (
+                                        <option
+                                            key={item.id}
+                                            value={item.id}
+                                        >
+                                            {item.name}
+                                        </option>
+                                    )
+                                )}
+                            </motion.select>
+
+                            <ChevronDown
+                                size={17}
+                                className={`pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 ${isDark
+                                    ? "text-gray-500"
+                                    : "text-gray-400"
+                                    }`}
+                            />
+                        </div>
+
+                        {/* Semester */}
+                        <div className="relative">
+                            <motion.select
+                                variants={cardVariants}
+                                value={selectedSemester}
+                                onChange={
+                                    handleSemesterChange
+                                }
+                                disabled={
+                                    !selectedProgram
+                                }
+                                whileFocus={
+                                    selectedProgram
+                                        ? {
+                                            scale: 1.005,
+                                        }
+                                        : undefined
+                                }
+                                transition={{
+                                    duration: 0.2,
+                                }}
+                                className={`w-full appearance-none rounded-lg border px-3 py-2.5 pr-9 text-sm outline-none transition ${isDark
+                                    ? "border-gray-700 bg-gray-800 text-white focus:border-gray-500 disabled:bg-gray-900 disabled:text-gray-600"
+                                    : "border-gray-200 bg-gray-50 text-gray-900 focus:border-gray-400 disabled:bg-gray-100 disabled:text-gray-400"
+                                    } disabled:cursor-not-allowed`}
+                            >
+                                <option value="">
+                                    {selectedProgram
+                                        ? "All Semesters"
+                                        : "Select program first"}
+                                </option>
+
+                                {filteredSemesters.map(
+                                    (semester) => (
+                                        <option
+                                            key={semester.id}
+                                            value={semester.id}
+                                        >
+                                            Semester{" "}
+                                            {semester.number}
+                                        </option>
+                                    )
+                                )}
+                            </motion.select>
+
+                            <ChevronDown
+                                size={17}
+                                className={`pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 ${isDark
+                                    ? "text-gray-500"
+                                    : "text-gray-400"
+                                    }`}
+                            />
+                        </div>
 
                         {/* Subject */}
-                        {selectedSemester ? (
+                        <div className="relative">
                             <motion.select
                                 variants={cardVariants}
                                 value={selectedSubject}
@@ -411,19 +544,28 @@ function AdminResources() {
                                         e.target.value
                                     )
                                 }
-                                whileFocus={{
-                                    scale: 1.005,
-                                }}
+                                disabled={
+                                    !selectedSemester
+                                }
+                                whileFocus={
+                                    selectedSemester
+                                        ? {
+                                            scale: 1.005,
+                                        }
+                                        : undefined
+                                }
                                 transition={{
                                     duration: 0.2,
                                 }}
-                                className={`w-full rounded-lg border px-3 py-2.5 text-sm outline-none transition ${isDark
-                                    ? "border-gray-700 bg-gray-800 text-white focus:border-gray-500"
-                                    : "border-gray-200 bg-gray-50 text-gray-900 focus:border-gray-400"
-                                    }`}
+                                className={`w-full appearance-none rounded-lg border px-3 py-2.5 pr-9 text-sm outline-none transition ${isDark
+                                    ? "border-gray-700 bg-gray-800 text-white focus:border-gray-500 disabled:bg-gray-900 disabled:text-gray-600"
+                                    : "border-gray-200 bg-gray-50 text-gray-900 focus:border-gray-400 disabled:bg-gray-100 disabled:text-gray-400"
+                                    } disabled:cursor-not-allowed`}
                             >
                                 <option value="">
-                                    All Subjects
+                                    {selectedSemester
+                                        ? "All Subjects"
+                                        : "Select semester first"}
                                 </option>
 
                                 {filteredSubjects.map(
@@ -437,65 +579,64 @@ function AdminResources() {
                                     )
                                 )}
                             </motion.select>
-                        ) : (
-                            <motion.div
-                                key="semester-required"
-                                initial={{
-                                    opacity: 0,
-                                }}
-                                animate={{
-                                    opacity: 1,
-                                }}
-                                exit={{
-                                    opacity: 0,
-                                }}
-                                className={`flex min-h-[42px] items-center rounded-lg border px-3 py-2.5 text-sm ${isDark
-                                    ? "border-gray-800 bg-gray-800 text-gray-600"
-                                    : "border-gray-200 bg-gray-100 text-gray-400"
+
+                            <ChevronDown
+                                size={17}
+                                className={`pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 ${isDark
+                                    ? "text-gray-500"
+                                    : "text-gray-400"
                                     }`}
-                            >
-                                Select semester first
-                            </motion.div>
-                        )}
+                            />
+                        </div>
 
                         {/* Type */}
-                        <motion.select
-                            variants={cardVariants}
-                            value={selectedType}
-                            onChange={(e) =>
-                                setSelectedType(
-                                    e.target.value
-                                )
-                            }
-                            whileFocus={{
-                                scale: 1.005,
-                            }}
-                            transition={{
-                                duration: 0.2,
-                            }}
-                            className={`w-full rounded-lg border px-3 py-2.5 text-sm outline-none transition ${isDark
-                                ? "border-gray-700 bg-gray-800 text-white focus:border-gray-500"
-                                : "border-gray-200 bg-gray-50 text-gray-900 focus:border-gray-400"
-                                }`}
-                        >
-                            <option value="">
-                                All Types
-                            </option>
+                        <div className="relative">
+                            <motion.select
+                                variants={cardVariants}
+                                value={selectedType}
+                                onChange={(e) =>
+                                    setSelectedType(
+                                        e.target.value
+                                    )
+                                }
+                                whileFocus={{
+                                    scale: 1.005,
+                                }}
+                                transition={{
+                                    duration: 0.2,
+                                }}
+                                className={`w-full appearance-none rounded-lg border px-3 py-2.5 pr-9 text-sm outline-none transition ${isDark
+                                    ? "border-gray-700 bg-gray-800 text-white focus:border-gray-500"
+                                    : "border-gray-200 bg-gray-50 text-gray-900 focus:border-gray-400"
+                                    }`}
+                            >
+                                <option value="">
+                                    All Types
+                                </option>
 
-                            {resourceTypes.map(
-                                (type) => (
-                                    <option
-                                        key={type}
-                                        value={type}
-                                    >
-                                        {type.replaceAll(
-                                            "_",
-                                            " "
-                                        )}
-                                    </option>
-                                )
-                            )}
-                        </motion.select>
+                                {resourceTypes.map(
+                                    (type) => (
+                                        <option
+                                            key={type}
+                                            value={type}
+                                        >
+                                            {type.replaceAll(
+                                                "_",
+                                                " "
+                                            )}
+                                        </option>
+                                    )
+                                )}
+                            </motion.select>
+
+                            <ChevronDown
+                                size={17}
+                                className={`pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 ${isDark
+                                    ? "text-gray-500"
+                                    : "text-gray-400"
+                                    }`}
+                            />
+                        </div>
                     </motion.div>
 
                     {/* Result count */}
@@ -601,216 +742,235 @@ function AdminResources() {
                                         </motion.tr>
                                     ) : (
                                         filteredResources.map(
-                                            (resource) => (
-                                                <motion.tr
-                                                    key={
-                                                        resource.id
-                                                    }
-                                                    initial={{
-                                                        opacity: 0,
-                                                        y: 8,
-                                                    }}
-                                                    animate={{
-                                                        opacity: 1,
-                                                        y: 0,
-                                                    }}
-                                                    exit={{
-                                                        opacity: 0,
-                                                        y: -8,
-                                                    }}
-                                                    transition={{
-                                                        duration: 0.25,
-                                                        ease: "easeOut",
-                                                    }}
-                                                    className={`border-t transition-colors ${isDark
-                                                        ? "border-gray-800 hover:bg-gray-800"
-                                                        : "border-gray-200 hover:bg-gray-50"
-                                                        }`}
-                                                >
-                                                    {/* Resource */}
-                                                    <td className="max-w-[240px] px-4 py-4 sm:px-6">
-                                                        <div className="truncate text-sm font-medium">
-                                                            {
-                                                                resource.title
-                                                            }
-                                                        </div>
+                                            (resource) => {
+                                                const isDeleting =
+                                                    deletingId ===
+                                                    resource.id;
 
-                                                        <div
-                                                            className={`mt-1 text-xs ${isDark
-                                                                ? "text-gray-500"
-                                                                : "text-gray-400"
-                                                                }`}
-                                                        >
-                                                            {
-                                                                resource.type
-                                                            }
-                                                        </div>
-                                                    </td>
-
-                                                    {/* Subject */}
-                                                    <td
-                                                        className={`px-4 py-4 text-sm sm:px-6 ${isDark
-                                                            ? "text-gray-300"
-                                                            : "text-gray-700"
-                                                            }`}
-                                                    >
-                                                        {
-                                                            resource
-                                                                .subject
-                                                                ?.name ||
-                                                            "N/A"
+                                                return (
+                                                    <motion.tr
+                                                        key={
+                                                            resource.id
                                                         }
-                                                    </td>
-
-                                                    {/* Semester */}
-                                                    <td
-                                                        className={`px-4 py-4 text-sm sm:px-6 ${isDark
-                                                            ? "text-gray-300"
-                                                            : "text-gray-700"
+                                                        initial={{
+                                                            opacity: 0,
+                                                            y: 8,
+                                                        }}
+                                                        animate={{
+                                                            opacity: 1,
+                                                            y: 0,
+                                                        }}
+                                                        exit={{
+                                                            opacity: 0,
+                                                            y: -8,
+                                                        }}
+                                                        transition={{
+                                                            duration: 0.25,
+                                                            ease: "easeOut",
+                                                        }}
+                                                        className={`border-t transition-colors ${isDark
+                                                            ? "border-gray-800 hover:bg-gray-800"
+                                                            : "border-gray-200 hover:bg-gray-50"
                                                             }`}
                                                     >
-                                                        {resource
-                                                            .subject
-                                                            ?.semester
-                                                            ?.number
-                                                            ? `Semester ${resource.subject.semester.number}`
-                                                            : "N/A"}
-                                                    </td>
-
-                                                    {/* Added By */}
-                                                    <td
-                                                        className={`px-4 py-4 text-sm sm:px-6 ${isDark
-                                                            ? "text-gray-300"
-                                                            : "text-gray-700"
-                                                            }`}
-                                                    >
-                                                        {resource
-                                                            .uploadedBy
-                                                            ?.name ||
-                                                            "N/A"}
-                                                    </td>
-
-                                                    {/* File */}
-                                                    <td className="px-4 py-4 sm:px-6">
-                                                        {resource.fileUrl ? (
-                                                            <motion.a
-                                                                href={
-                                                                    resource.fileUrl
+                                                        {/* Resource */}
+                                                        <td className="max-w-[240px] px-4 py-4 sm:px-6">
+                                                            <div className="truncate text-sm font-medium">
+                                                                {
+                                                                    resource.title
                                                                 }
-                                                                target="_blank"
-                                                                rel="noreferrer"
-                                                                whileHover={{
-                                                                    x: 3,
-                                                                }}
-                                                                transition={{
-                                                                    duration: 0.2,
-                                                                }}
-                                                                className={`inline-flex items-center gap-2 whitespace-nowrap text-sm font-medium hover:underline ${isDark
-                                                                    ? "text-gray-300"
-                                                                    : "text-gray-700"
-                                                                    }`}
-                                                            >
-                                                                <ExternalLink
-                                                                    size={
-                                                                        16
-                                                                    }
-                                                                />
-                                                                Open File
-                                                            </motion.a>
-                                                        ) : (
-                                                            <span
-                                                                className={`text-sm ${isDark
-                                                                    ? "text-gray-600"
+                                                            </div>
+
+                                                            <div
+                                                                className={`mt-1 text-xs ${isDark
+                                                                    ? "text-gray-500"
                                                                     : "text-gray-400"
                                                                     }`}
                                                             >
-                                                                No file
-                                                            </span>
-                                                        )}
-                                                    </td>
+                                                                {
+                                                                    resource.type
+                                                                }
+                                                            </div>
+                                                        </td>
 
-                                                    {/* Actions */}
-                                                    <td className="px-4 py-4 sm:px-6">
-                                                        <div className="flex items-center gap-1.5 sm:gap-2">
+                                                        {/* Subject */}
+                                                        <td
+                                                            className={`px-4 py-4 text-sm sm:px-6 ${isDark
+                                                                ? "text-gray-300"
+                                                                : "text-gray-700"
+                                                                }`}
+                                                        >
+                                                            {resource
+                                                                .subject
+                                                                ?.name ||
+                                                                "N/A"}
+                                                        </td>
 
-                                                            {/* Edit */}
-                                                            {canManageResources && (
-                                                                <motion.div
+                                                        {/* Semester */}
+                                                        <td
+                                                            className={`px-4 py-4 text-sm sm:px-6 ${isDark
+                                                                ? "text-gray-300"
+                                                                : "text-gray-700"
+                                                                }`}
+                                                        >
+                                                            {resource
+                                                                .subject
+                                                                ?.semester
+                                                                ?.number
+                                                                ? `Semester ${resource.subject.semester.number}`
+                                                                : "N/A"}
+                                                        </td>
+
+                                                        {/* Added By */}
+                                                        <td
+                                                            className={`px-4 py-4 text-sm sm:px-6 ${isDark
+                                                                ? "text-gray-300"
+                                                                : "text-gray-700"
+                                                                }`}
+                                                        >
+                                                            {resource
+                                                                .uploadedBy
+                                                                ?.name ||
+                                                                "N/A"}
+                                                        </td>
+
+                                                        {/* File */}
+                                                        <td className="px-4 py-4 sm:px-6">
+                                                            {resource.fileUrl ? (
+                                                                <motion.a
+                                                                    href={
+                                                                        resource.fileUrl
+                                                                    }
+                                                                    target="_blank"
+                                                                    rel="noreferrer"
                                                                     whileHover={{
-                                                                        scale: 1.05,
-                                                                    }}
-                                                                    whileTap={{
-                                                                        scale: 0.95,
+                                                                        x: 3,
                                                                     }}
                                                                     transition={{
-                                                                        duration: 0.15,
+                                                                        duration: 0.2,
                                                                     }}
-                                                                >
-                                                                    <Link
-                                                                        to={`/admin/dashboard/resources/edit/${resource.id}`}
-                                                                        className={`block rounded-lg p-2 transition ${isDark
-                                                                            ? "text-gray-300 hover:bg-gray-700"
-                                                                            : "text-gray-600 hover:bg-gray-100"
-                                                                            }`}
-                                                                        title="Edit"
-                                                                        aria-label={`Edit ${resource.title}`}
-                                                                    >
-                                                                        <Edit
-                                                                            size={
-                                                                                17
-                                                                            }
-                                                                        />
-                                                                    </Link>
-                                                                </motion.div>
-                                                            )}
-
-                                                            {/* Delete */}
-                                                            {canManageResources && (
-                                                                <motion.button
-                                                                    type="button"
-                                                                    disabled={
-                                                                        loading
-                                                                    }
-                                                                    onClick={() =>
-                                                                        handleDelete(
-                                                                            resource.id
-                                                                        )
-                                                                    }
-                                                                    whileHover={
-                                                                        loading
-                                                                            ? undefined
-                                                                            : {
-                                                                                scale: 1.05,
-                                                                            }
-                                                                    }
-                                                                    whileTap={
-                                                                        loading
-                                                                            ? undefined
-                                                                            : {
-                                                                                scale: 0.95,
-                                                                            }
-                                                                    }
-                                                                    transition={{
-                                                                        duration: 0.15,
-                                                                    }}
-                                                                    className={`rounded-lg p-2 transition disabled:cursor-not-allowed disabled:opacity-40 ${isDark
-                                                                        ? "text-gray-400 hover:bg-gray-700"
-                                                                        : "text-gray-600 hover:bg-gray-100"
+                                                                    className={`inline-flex items-center gap-2 whitespace-nowrap text-sm font-medium hover:underline ${isDark
+                                                                        ? "text-gray-300"
+                                                                        : "text-gray-700"
                                                                         }`}
-                                                                    title="Delete"
-                                                                    aria-label={`Delete ${resource.title}`}
                                                                 >
-                                                                    <Trash2
+                                                                    <ExternalLink
                                                                         size={
-                                                                            17
+                                                                            16
                                                                         }
                                                                     />
-                                                                </motion.button>
+                                                                    Open File
+                                                                </motion.a>
+                                                            ) : (
+                                                                <span
+                                                                    className={`text-sm ${isDark
+                                                                        ? "text-gray-600"
+                                                                        : "text-gray-400"
+                                                                        }`}
+                                                                >
+                                                                    No file
+                                                                </span>
                                                             )}
-                                                        </div>
-                                                    </td>
-                                                </motion.tr>
-                                            )
+                                                        </td>
+
+                                                        {/* Actions */}
+                                                        <td className="px-4 py-4 sm:px-6">
+                                                            <div className="flex items-center gap-1.5 sm:gap-2">
+
+                                                                {/* Edit */}
+                                                                {canManageResources && (
+                                                                    <motion.div
+                                                                        whileHover={{
+                                                                            scale: isDeleting
+                                                                                ? 1
+                                                                                : 1.05,
+                                                                        }}
+                                                                        whileTap={{
+                                                                            scale: isDeleting
+                                                                                ? 1
+                                                                                : 0.95,
+                                                                        }}
+                                                                        transition={{
+                                                                            duration: 0.15,
+                                                                        }}
+                                                                    >
+                                                                        <Link
+                                                                            to={`/admin/dashboard/resources/edit/${resource.id}`}
+                                                                            className={`block rounded-lg p-2 transition ${isDark
+                                                                                ? "text-gray-300 hover:bg-gray-700"
+                                                                                : "text-gray-600 hover:bg-gray-100"
+                                                                                } ${isDeleting
+                                                                                    ? "pointer-events-none opacity-40"
+                                                                                    : ""
+                                                                                }`}
+                                                                            title="Edit"
+                                                                            aria-label={`Edit ${resource.title}`}
+                                                                        >
+                                                                            <Edit
+                                                                                size={
+                                                                                    17
+                                                                                }
+                                                                            />
+                                                                        </Link>
+                                                                    </motion.div>
+                                                                )}
+
+                                                                {/* Delete */}
+                                                                {canManageResources && (
+                                                                    <motion.button
+                                                                        type="button"
+                                                                        disabled={
+                                                                            deletingId !==
+                                                                            null
+                                                                        }
+                                                                        onClick={() =>
+                                                                            handleDelete(
+                                                                                resource.id
+                                                                            )
+                                                                        }
+                                                                        whileHover={
+                                                                            deletingId !==
+                                                                                null
+                                                                                ? undefined
+                                                                                : {
+                                                                                    scale: 1.05,
+                                                                                }
+                                                                        }
+                                                                        whileTap={
+                                                                            deletingId !==
+                                                                                null
+                                                                                ? undefined
+                                                                                : {
+                                                                                    scale: 0.95,
+                                                                                }
+                                                                        }
+                                                                        transition={{
+                                                                            duration: 0.15,
+                                                                        }}
+                                                                        className={`rounded-lg p-2 transition disabled:cursor-not-allowed disabled:opacity-40 ${isDark
+                                                                            ? "text-gray-400 hover:bg-gray-700"
+                                                                            : "text-gray-600 hover:bg-gray-100"
+                                                                            }`}
+                                                                        title="Delete"
+                                                                        aria-label={`Delete ${resource.title}`}
+                                                                    >
+                                                                        {isDeleting ? (
+                                                                            <span className="block h-[17px] w-[17px] animate-spin rounded-full border-2 border-current border-t-transparent" />
+                                                                        ) : (
+                                                                            <Trash2
+                                                                                size={
+                                                                                    17
+                                                                                }
+                                                                            />
+                                                                        )}
+                                                                    </motion.button>
+                                                                )}
+
+                                                            </div>
+                                                        </td>
+                                                    </motion.tr>
+                                                );
+                                            }
                                         )
                                     )}
                                 </AnimatePresence>

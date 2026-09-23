@@ -8,6 +8,7 @@ import React, {
 import {
     Link as LinkIcon,
     Save,
+    ChevronDown,
 } from "lucide-react";
 
 import {
@@ -31,12 +32,12 @@ import {
 function AdminEditResource() {
     const {
         backendUrl,
-        semesters,
-        subjects,
+        program = [],
+        semesters = [],
+        subjects = [],
         resources,
         setResources,
         isDark,
-        setIsLoading,
     } = useContext(Context);
 
     const { id } = useParams();
@@ -44,7 +45,13 @@ function AdminEditResource() {
 
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
-    const [semester, setSemester] = useState("");
+
+    const [selectedProgram, setSelectedProgram] =
+        useState("");
+
+    const [selectedSemester, setSelectedSemester] =
+        useState("");
+
     const [subject, setSubject] = useState("");
     const [type, setType] = useState("");
     const [fileUrl, setFileUrl] = useState("");
@@ -65,25 +72,35 @@ function AdminEditResource() {
      * Load resource into form
      */
     useEffect(() => {
-        if (!id || !resources) return;
+        if (!id || !resources) {
+            return;
+        }
 
         if (!resource) {
             setLoading(false);
             return;
         }
 
+        const resourceProgramId =
+            resource.subject?.semester?.programId ||
+            resource.subject?.semester?.program?.id ||
+            "";
+
+        const resourceSemesterId =
+            resource.subject?.semester?.id || "";
+
+        const resourceSubjectId =
+            resource.subjectId ||
+            resource.subject?.id ||
+            "";
+
         setTitle(resource.title || "");
         setDescription(resource.description || "");
 
-        setSemester(
-            resource.subject?.semester?.id || ""
-        );
+        setSelectedProgram(resourceProgramId);
+        setSelectedSemester(resourceSemesterId);
 
-        setSubject(
-            resource.subjectId ||
-            resource.subject?.id ||
-            ""
-        );
+        setSubject(resourceSubjectId);
 
         setType(resource.type || "");
         setFileUrl(resource.fileUrl || "");
@@ -92,39 +109,106 @@ function AdminEditResource() {
     }, [id, resources, resource]);
 
     /*
+     * Semesters belonging to selected program
+     */
+    const filteredSemesters = useMemo(() => {
+        if (!selectedProgram) {
+            return [];
+        }
+
+        return semesters.filter(
+            (semester) =>
+                semester.programId === selectedProgram
+        );
+    }, [selectedProgram, semesters]);
+
+    /*
      * Subjects belonging to selected semester
      */
     const subjectList = useMemo(() => {
-        if (!semester) {
+        if (!selectedSemester) {
             return [];
         }
 
         return (
             subjects?.filter(
                 (subject) =>
-                    subject.semesterId === semester
+                    subject.semesterId ===
+                    selectedSemester
             ) || []
         );
-    }, [subjects, semester]);
+    }, [subjects, selectedSemester]);
 
     /*
-     * When semester changes,
-     * make sure selected subject belongs to it.
+     * Make sure selected semester belongs
+     * to selected program.
      */
     useEffect(() => {
-        if (!semester || !subject) return;
+        if (!selectedProgram) {
+            if (selectedSemester) {
+                setSelectedSemester("");
+            }
+
+            if (subject) {
+                setSubject("");
+            }
+
+            return;
+        }
+
+        const semesterExists =
+            filteredSemesters.some(
+                (item) => item.id === selectedSemester
+            );
+
+        if (
+            selectedSemester &&
+            !semesterExists
+        ) {
+            setSelectedSemester("");
+            setSubject("");
+        }
+    }, [
+        selectedProgram,
+        filteredSemesters,
+        selectedSemester,
+        subject,
+    ]);
+
+    /*
+     * Make sure selected subject belongs
+     * to selected semester.
+     */
+    useEffect(() => {
+        if (!selectedSemester) {
+            if (subject) {
+                setSubject("");
+            }
+
+            return;
+        }
 
         const subjectExists = subjectList.some(
             (item) => item.id === subject
         );
 
-        if (!subjectExists) {
+        if (subject && !subjectExists) {
             setSubject("");
         }
-    }, [semester, subjectList, subject]);
+    }, [
+        selectedSemester,
+        subjectList,
+        subject,
+    ]);
+
+    function handleProgramChange(e) {
+        setSelectedProgram(e.target.value);
+        setSelectedSemester("");
+        setSubject("");
+    }
 
     function handleSemesterChange(e) {
-        setSemester(e.target.value);
+        setSelectedSemester(e.target.value);
         setSubject("");
     }
 
@@ -133,6 +217,21 @@ function AdminEditResource() {
 
         if (!id) {
             alert("Resource ID is missing");
+            return;
+        }
+
+        if (!selectedProgram) {
+            alert("Please select a program.");
+            return;
+        }
+
+        if (!selectedSemester) {
+            alert("Please select a semester.");
+            return;
+        }
+
+        if (!subject) {
+            alert("Please select a subject.");
             return;
         }
 
@@ -146,7 +245,6 @@ function AdminEditResource() {
         };
 
         try {
-            setIsLoading(true);
             setSaving(true);
 
             const response = await api.put(
@@ -182,7 +280,6 @@ function AdminEditResource() {
             );
         } finally {
             setSaving(false);
-            setIsLoading(false);
         }
     }
 
@@ -374,6 +471,7 @@ function AdminEditResource() {
                                     setTitle(e.target.value)
                                 }
                                 required
+                                disabled={saving}
                                 whileFocus={{
                                     scale: 1.005,
                                 }}
@@ -383,7 +481,7 @@ function AdminEditResource() {
                                 className={`w-full rounded-lg border px-3 py-3 text-sm outline-none transition sm:px-4 sm:text-base ${isDark
                                     ? "border-gray-700 bg-gray-800 text-white placeholder:text-gray-600 focus:border-gray-500"
                                     : "border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 focus:border-black"
-                                    }`}
+                                    } disabled:cursor-not-allowed disabled:opacity-60`}
                             />
                         </motion.div>
 
@@ -411,6 +509,7 @@ function AdminEditResource() {
                                         e.target.value
                                     )
                                 }
+                                disabled={saving}
                                 whileFocus={{
                                     scale: 1.005,
                                 }}
@@ -420,15 +519,73 @@ function AdminEditResource() {
                                 className={`w-full resize-none rounded-lg border px-3 py-3 text-sm leading-6 outline-none transition sm:px-4 sm:text-base ${isDark
                                     ? "border-gray-700 bg-gray-800 text-white placeholder:text-gray-600 focus:border-gray-500"
                                     : "border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 focus:border-black"
-                                    }`}
+                                    } disabled:cursor-not-allowed disabled:opacity-60`}
                             />
                         </motion.div>
 
-                        {/* Semester + Subject */}
+                        {/* Program + Semester */}
                         <motion.div
                             variants={cardVariants}
                             className="mb-5 grid grid-cols-1 gap-5 sm:mb-6 md:grid-cols-2"
                         >
+
+                            {/* Program */}
+                            <div>
+                                <label
+                                    htmlFor="resource-program"
+                                    className={`mb-2 block text-sm font-medium ${isDark
+                                        ? "text-gray-300"
+                                        : "text-gray-700"
+                                        }`}
+                                >
+                                    Program
+                                </label>
+
+                                <div className="relative">
+                                    <motion.select
+                                        id="resource-program"
+                                        value={selectedProgram}
+                                        onChange={
+                                            handleProgramChange
+                                        }
+                                        required
+                                        disabled={saving}
+                                        whileFocus={{
+                                            scale: 1.005,
+                                        }}
+                                        transition={{
+                                            duration: 0.2,
+                                        }}
+                                        className={`w-full appearance-none rounded-lg border px-3 py-3 pr-10 text-sm outline-none sm:px-4 sm:text-base ${isDark
+                                            ? "border-gray-700 bg-gray-800 text-white focus:border-gray-500"
+                                            : "border-gray-300 bg-white text-gray-900 focus:border-black"
+                                            } disabled:cursor-not-allowed disabled:opacity-60`}
+                                    >
+                                        <option value="">
+                                            Select program
+                                        </option>
+
+                                        {program.map(
+                                            (item) => (
+                                                <option
+                                                    key={item.id}
+                                                    value={item.id}
+                                                >
+                                                    {item.name}
+                                                </option>
+                                            )
+                                        )}
+                                    </motion.select>
+
+                                    <ChevronDown
+                                        size={18}
+                                        className={`pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 ${isDark
+                                            ? "text-gray-500"
+                                            : "text-gray-400"
+                                            }`}
+                                    />
+                                </div>
+                            </div>
 
                             {/* Semester */}
                             <div>
@@ -442,54 +599,80 @@ function AdminEditResource() {
                                     Semester
                                 </label>
 
-                                <motion.select
-                                    id="resource-semester"
-                                    value={semester}
-                                    onChange={
-                                        handleSemesterChange
-                                    }
-                                    required
-                                    whileFocus={{
-                                        scale: 1.005,
-                                    }}
-                                    transition={{
-                                        duration: 0.2,
-                                    }}
-                                    className={`w-full rounded-lg border px-3 py-3 text-sm outline-none sm:px-4 sm:text-base ${isDark
-                                        ? "border-gray-700 bg-gray-800 text-white focus:border-gray-500"
-                                        : "border-gray-300 bg-white text-gray-900 focus:border-black"
-                                        }`}
-                                >
-                                    <option value="">
-                                        Select semester
-                                    </option>
+                                <div className="relative">
+                                    <motion.select
+                                        id="resource-semester"
+                                        value={selectedSemester}
+                                        onChange={
+                                            handleSemesterChange
+                                        }
+                                        required
+                                        disabled={
+                                            !selectedProgram ||
+                                            saving
+                                        }
+                                        whileFocus={
+                                            selectedProgram &&
+                                                !saving
+                                                ? {
+                                                    scale: 1.005,
+                                                }
+                                                : undefined
+                                        }
+                                        transition={{
+                                            duration: 0.2,
+                                        }}
+                                        className={`w-full appearance-none rounded-lg border px-3 py-3 pr-10 text-sm outline-none sm:px-4 sm:text-base ${isDark
+                                            ? "border-gray-700 bg-gray-800 text-white focus:border-gray-500 disabled:bg-gray-900 disabled:text-gray-600"
+                                            : "border-gray-300 bg-white text-gray-900 focus:border-black disabled:bg-gray-100 disabled:text-gray-400"
+                                            } disabled:cursor-not-allowed`}
+                                    >
+                                        <option value="">
+                                            {selectedProgram
+                                                ? "Select semester"
+                                                : "Select program first"}
+                                        </option>
 
-                                    {semesters?.map(
-                                        (item) => (
-                                            <option
-                                                key={item.id}
-                                                value={item.id}
-                                            >
-                                                Semester{" "}
-                                                {item.number}
-                                            </option>
-                                        )
-                                    )}
-                                </motion.select>
+                                        {filteredSemesters.map(
+                                            (item) => (
+                                                <option
+                                                    key={item.id}
+                                                    value={item.id}
+                                                >
+                                                    Semester{" "}
+                                                    {item.number}
+                                                </option>
+                                            )
+                                        )}
+                                    </motion.select>
+
+                                    <ChevronDown
+                                        size={18}
+                                        className={`pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 ${isDark
+                                            ? "text-gray-500"
+                                            : "text-gray-400"
+                                            }`}
+                                    />
+                                </div>
                             </div>
+                        </motion.div>
 
-                            {/* Subject */}
-                            <div>
-                                <label
-                                    htmlFor="resource-subject"
-                                    className={`mb-2 block text-sm font-medium ${isDark
-                                        ? "text-gray-300"
-                                        : "text-gray-700"
-                                        }`}
-                                >
-                                    Subject
-                                </label>
+                        {/* Subject */}
+                        <motion.div
+                            variants={cardVariants}
+                            className="mb-5 sm:mb-6"
+                        >
+                            <label
+                                htmlFor="resource-subject"
+                                className={`mb-2 block text-sm font-medium ${isDark
+                                    ? "text-gray-300"
+                                    : "text-gray-700"
+                                    }`}
+                            >
+                                Subject
+                            </label>
 
+                            <div className="relative">
                                 <motion.select
                                     id="resource-subject"
                                     value={subject}
@@ -499,9 +682,13 @@ function AdminEditResource() {
                                         )
                                     }
                                     required
-                                    disabled={!semester}
+                                    disabled={
+                                        !selectedSemester ||
+                                        saving
+                                    }
                                     whileFocus={
-                                        semester
+                                        selectedSemester &&
+                                            !saving
                                             ? {
                                                 scale: 1.005,
                                             }
@@ -510,13 +697,13 @@ function AdminEditResource() {
                                     transition={{
                                         duration: 0.2,
                                     }}
-                                    className={`w-full rounded-lg border px-3 py-3 text-sm outline-none sm:px-4 sm:text-base ${isDark
-                                        ? "border-gray-700 bg-gray-800 text-white disabled:text-gray-600"
-                                        : "border-gray-300 bg-white text-gray-900 disabled:bg-gray-100 disabled:text-gray-400"
-                                        }`}
+                                    className={`w-full appearance-none rounded-lg border px-3 py-3 pr-10 text-sm outline-none sm:px-4 sm:text-base ${isDark
+                                        ? "border-gray-700 bg-gray-800 text-white focus:border-gray-500 disabled:bg-gray-900 disabled:text-gray-600"
+                                        : "border-gray-300 bg-white text-gray-900 focus:border-black disabled:bg-gray-100 disabled:text-gray-400"
+                                        } disabled:cursor-not-allowed`}
                                 >
                                     <option value="">
-                                        {semester
+                                        {selectedSemester
                                             ? "Select subject"
                                             : "Select semester first"}
                                     </option>
@@ -532,6 +719,14 @@ function AdminEditResource() {
                                         )
                                     )}
                                 </motion.select>
+
+                                <ChevronDown
+                                    size={18}
+                                    className={`pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 ${isDark
+                                        ? "text-gray-500"
+                                        : "text-gray-400"
+                                        }`}
+                                />
                             </div>
                         </motion.div>
 
@@ -557,6 +752,7 @@ function AdminEditResource() {
                                     setType(e.target.value)
                                 }
                                 required
+                                disabled={saving}
                                 whileFocus={{
                                     scale: 1.005,
                                 }}
@@ -566,7 +762,7 @@ function AdminEditResource() {
                                 className={`w-full rounded-lg border px-3 py-3 text-sm outline-none sm:px-4 sm:text-base ${isDark
                                     ? "border-gray-700 bg-gray-800 text-white focus:border-gray-500"
                                     : "border-gray-300 bg-white text-gray-900 focus:border-black"
-                                    }`}
+                                    } disabled:cursor-not-allowed disabled:opacity-60`}
                             >
                                 <option value="">
                                     Select type
@@ -632,10 +828,11 @@ function AdminEditResource() {
                                     }
                                     placeholder="https://drive.google.com/..."
                                     required
+                                    disabled={saving}
                                     className={`min-w-0 w-full bg-transparent px-2 py-3 text-sm outline-none sm:text-base ${isDark
                                         ? "text-white placeholder:text-gray-600"
                                         : "text-gray-900 placeholder:text-gray-400"
-                                        }`}
+                                        } disabled:cursor-not-allowed disabled:opacity-60`}
                                 />
                             </motion.div>
                         </motion.div>
@@ -650,10 +847,12 @@ function AdminEditResource() {
                         >
                             <motion.div
                                 whileHover={{
-                                    x: -2,
+                                    x: saving ? 0 : -2,
                                 }}
                                 whileTap={{
-                                    scale: 0.98,
+                                    scale: saving
+                                        ? 1
+                                        : 0.98,
                                 }}
                             >
                                 <Link
