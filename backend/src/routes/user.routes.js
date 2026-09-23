@@ -18,7 +18,7 @@ const router = express.Router();
 router.get(
     "/",
     authenticate,
-    authorize("ADMIN"),
+    authorize("ADMIN", "TEACHER"),
     getAllUsersController
 );
 

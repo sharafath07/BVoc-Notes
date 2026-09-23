@@ -6,11 +6,11 @@ import Loading from "./Loading";
 function ProtectedRoute({
     children,
     toUrl = "/login",
-    adminOnly = false,
+    allowedRoles = [],
 }) {
     const { token, user, authLoading } = useContext(Context);
 
-    // Don't redirect while restoring authentication
+    // Wait for authentication restoration
     if (authLoading) {
         return (
             <div className="min-h-screen flex items-center justify-center">
@@ -19,13 +19,16 @@ function ProtectedRoute({
         );
     }
 
-    // Not logged in
+    // Not authenticated
     if (!token || !user) {
         return <Navigate to={toUrl} replace />;
     }
 
-    // Admin-only route
-    if (adminOnly && user.role !== "ADMIN") {
+    // Check role
+    if (
+        allowedRoles.length > 0 &&
+        !allowedRoles.includes(user.role)
+    ) {
         return <Navigate to={toUrl} replace />;
     }
 

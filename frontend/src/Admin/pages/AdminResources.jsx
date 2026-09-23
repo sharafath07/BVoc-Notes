@@ -35,6 +35,7 @@ function AdminResources() {
         setResources,
         semesters,
         subjects,
+        canManageResources,
     } = useContext(Context);
 
     const [loading, setLoading] = useState(false);
@@ -227,22 +228,23 @@ function AdminResources() {
                         </motion.p>
                     </div>
 
-                    <motion.div
-                        variants={cardVariants}
-                        whileHover="hover"
-                        whileTap="tap"
-                    >
-                        <Link
-                            to="/admin/dashboard/resources/add"
-                            className={`flex w-full items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium transition sm:w-fit ${isDark
-                                ? "bg-white text-black hover:bg-gray-200"
-                                : "bg-black text-white hover:bg-gray-800"
-                                }`}
+                    {canManageResources && (
+                        <motion.div
+                            variants={cardVariants}
+                            whileHover="hover"
+                            whileTap="tap"
                         >
-                            <Plus size={18} />
-                            Add Resource
-                        </Link>
-                    </motion.div>
+                            <Link
+                                to="/admin/dashboard/resources/add"
+                                className={`flex w-full items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium transition sm:w-fit ${isDark
+                                    ? "bg-white text-black hover:bg-gray-200"
+                                    : "bg-black text-white hover:bg-gray-800"
+                                    }`}
+                            >
+                                <Plus size={18} />
+                                Add Resource
+                            </Link>
+                        </motion.div>)}
                 </motion.div>
 
                 {/* Filters */}
@@ -732,76 +734,79 @@ function AdminResources() {
                                                         <div className="flex items-center gap-1.5 sm:gap-2">
 
                                                             {/* Edit */}
-                                                            <motion.div
-                                                                whileHover={{
-                                                                    scale: 1.05,
-                                                                }}
-                                                                whileTap={{
-                                                                    scale: 0.95,
-                                                                }}
-                                                                transition={{
-                                                                    duration: 0.15,
-                                                                }}
-                                                            >
-                                                                <Link
-                                                                    to={`/admin/dashboard/resources/edit/${resource.id}`}
-                                                                    className={`block rounded-lg p-2 transition ${isDark
-                                                                        ? "text-gray-300 hover:bg-gray-700"
+                                                            {canManageResources && (
+                                                                <motion.div
+                                                                    whileHover={{
+                                                                        scale: 1.05,
+                                                                    }}
+                                                                    whileTap={{
+                                                                        scale: 0.95,
+                                                                    }}
+                                                                    transition={{
+                                                                        duration: 0.15,
+                                                                    }}
+                                                                >
+                                                                    <Link
+                                                                        to={`/admin/dashboard/resources/edit/${resource.id}`}
+                                                                        className={`block rounded-lg p-2 transition ${isDark
+                                                                            ? "text-gray-300 hover:bg-gray-700"
+                                                                            : "text-gray-600 hover:bg-gray-100"
+                                                                            }`}
+                                                                        title="Edit"
+                                                                        aria-label={`Edit ${resource.title}`}
+                                                                    >
+                                                                        <Edit
+                                                                            size={
+                                                                                17
+                                                                            }
+                                                                        />
+                                                                    </Link>
+                                                                </motion.div>
+                                                            )}
+
+                                                            {/* Delete */}
+                                                            {canManageResources && (
+                                                                <motion.button
+                                                                    type="button"
+                                                                    disabled={
+                                                                        loading
+                                                                    }
+                                                                    onClick={() =>
+                                                                        handleDelete(
+                                                                            resource.id
+                                                                        )
+                                                                    }
+                                                                    whileHover={
+                                                                        loading
+                                                                            ? undefined
+                                                                            : {
+                                                                                scale: 1.05,
+                                                                            }
+                                                                    }
+                                                                    whileTap={
+                                                                        loading
+                                                                            ? undefined
+                                                                            : {
+                                                                                scale: 0.95,
+                                                                            }
+                                                                    }
+                                                                    transition={{
+                                                                        duration: 0.15,
+                                                                    }}
+                                                                    className={`rounded-lg p-2 transition disabled:cursor-not-allowed disabled:opacity-40 ${isDark
+                                                                        ? "text-gray-400 hover:bg-gray-700"
                                                                         : "text-gray-600 hover:bg-gray-100"
                                                                         }`}
-                                                                    title="Edit"
-                                                                    aria-label={`Edit ${resource.title}`}
+                                                                    title="Delete"
+                                                                    aria-label={`Delete ${resource.title}`}
                                                                 >
-                                                                    <Edit
+                                                                    <Trash2
                                                                         size={
                                                                             17
                                                                         }
                                                                     />
-                                                                </Link>
-                                                            </motion.div>
-
-                                                            {/* Delete */}
-                                                            <motion.button
-                                                                type="button"
-                                                                disabled={
-                                                                    loading
-                                                                }
-                                                                onClick={() =>
-                                                                    handleDelete(
-                                                                        resource.id
-                                                                    )
-                                                                }
-                                                                whileHover={
-                                                                    loading
-                                                                        ? undefined
-                                                                        : {
-                                                                            scale: 1.05,
-                                                                        }
-                                                                }
-                                                                whileTap={
-                                                                    loading
-                                                                        ? undefined
-                                                                        : {
-                                                                            scale: 0.95,
-                                                                        }
-                                                                }
-                                                                transition={{
-                                                                    duration: 0.15,
-                                                                }}
-                                                                className={`rounded-lg p-2 transition disabled:cursor-not-allowed disabled:opacity-40 ${isDark
-                                                                    ? "text-gray-400 hover:bg-gray-700"
-                                                                    : "text-gray-600 hover:bg-gray-100"
-                                                                    }`}
-                                                                title="Delete"
-                                                                aria-label={`Delete ${resource.title}`}
-                                                            >
-                                                                <Trash2
-                                                                    size={
-                                                                        17
-                                                                    }
-                                                                />
-                                                            </motion.button>
-
+                                                                </motion.button>
+                                                            )}
                                                         </div>
                                                     </td>
                                                 </motion.tr>

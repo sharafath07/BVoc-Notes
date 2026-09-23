@@ -36,7 +36,7 @@ router.get(
 router.post(
     "/",
     authenticate,
-    authorize("ADMIN"),
+    authorize("ADMIN", "TEACHER"),
     createSubjectController
 );
 
@@ -45,7 +45,7 @@ router.post(
 router.put(
     "/:id",
     authenticate,
-    authorize("ADMIN"),
+    authorize("ADMIN", "TEACHER"),
     updateSubjectController
 );
 
@@ -54,7 +54,7 @@ router.put(
 router.delete(
     "/:id",
     authenticate,
-    authorize("ADMIN"),
+    authorize("ADMIN", "TEACHER"),
     deleteSubjectController
 );
 

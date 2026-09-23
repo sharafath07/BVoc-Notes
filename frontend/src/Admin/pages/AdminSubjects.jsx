@@ -35,6 +35,7 @@ function AdminSubjects() {
         semesters = [],
         subjects = [],
         setSubjects,
+        canManageSubjects,
     } = useContext(Context);
 
     const navigate = useNavigate();
@@ -260,26 +261,25 @@ function AdminSubjects() {
                             and semesters.
                         </p>
                     </motion.div>
-
-                    {/* Add Subject */}
-                    <motion.button
-                        type="button"
-                        onClick={() =>
-                            navigate(
-                                "/admin/dashboard/subjects/add"
-                            )
-                        }
-                        variants={buttonVariants}
-                        whileHover="hover"
-                        whileTap="tap"
-                        className={`flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-semibold transition sm:w-auto ${isDark
-                            ? "bg-white text-black hover:bg-gray-200"
-                            : "bg-black text-white hover:bg-gray-800"
-                            }`}
-                    >
-                        <Plus size={18} />
-                        Add Subject
-                    </motion.button>
+                    {canManageSubjects && (
+                        <motion.button
+                            type="button"
+                            onClick={() =>
+                                navigate(
+                                    "/admin/dashboard/subjects/add"
+                                )
+                            }
+                            variants={buttonVariants}
+                            whileHover="hover"
+                            whileTap="tap"
+                            className={`flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-semibold transition sm:w-auto ${isDark
+                                ? "bg-white text-black hover:bg-gray-200"
+                                : "bg-black text-white hover:bg-gray-800"
+                                }`}
+                        >
+                            <Plus size={18} />
+                            Add Subject
+                        </motion.button>)}
                 </motion.div>
 
                 {/* Filters */}
@@ -715,39 +715,40 @@ function AdminSubjects() {
                                                         </td>
 
                                                         {/* Delete */}
-                                                        <td className="px-6 py-4">
-                                                            <div className="flex justify-end">
-                                                                <motion.button
-                                                                    type="button"
-                                                                    onClick={() =>
-                                                                        handleDeleteSubject(
-                                                                            subject
-                                                                        )
-                                                                    }
-                                                                    disabled={
-                                                                        deletingId ===
-                                                                        subject.id
-                                                                    }
-                                                                    whileHover={{
-                                                                        scale: 1.06,
-                                                                    }}
-                                                                    whileTap={{
-                                                                        scale: 0.92,
-                                                                    }}
-                                                                    transition={{
-                                                                        duration: 0.15,
-                                                                    }}
-                                                                    className="rounded-lg p-2 text-red-500 transition hover:bg-red-500/10 disabled:cursor-not-allowed disabled:opacity-50"
-                                                                    title="Delete subject"
-                                                                >
-                                                                    <Trash2
-                                                                        size={
-                                                                            18
+                                                        {canManageSubjects && (
+                                                            <td className="px-6 py-4">
+                                                                <div className="flex justify-end">
+                                                                    <motion.button
+                                                                        type="button"
+                                                                        onClick={() =>
+                                                                            handleDeleteSubject(
+                                                                                subject
+                                                                            )
                                                                         }
-                                                                    />
-                                                                </motion.button>
-                                                            </div>
-                                                        </td>
+                                                                        disabled={
+                                                                            deletingId ===
+                                                                            subject.id
+                                                                        }
+                                                                        whileHover={{
+                                                                            scale: 1.06,
+                                                                        }}
+                                                                        whileTap={{
+                                                                            scale: 0.92,
+                                                                        }}
+                                                                        transition={{
+                                                                            duration: 0.15,
+                                                                        }}
+                                                                        className="rounded-lg p-2 text-red-500 transition hover:bg-red-500/10 disabled:cursor-not-allowed disabled:opacity-50"
+                                                                        title="Delete subject"
+                                                                    >
+                                                                        <Trash2
+                                                                            size={
+                                                                                18
+                                                                            }
+                                                                        />
+                                                                    </motion.button>
+                                                                </div>
+                                                            </td>)}
                                                     </motion.tr>
                                                 );
                                             }

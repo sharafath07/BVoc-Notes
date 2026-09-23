@@ -10,6 +10,7 @@ import semesterRoutes from './routes/semester.routes.js'
 import subjectRoutes from './routes/subject.routes.js'
 import userRoutes from './routes/user.routes.js'
 import programRoutes from "./routes/program.routes.js";
+import teacherRoutes from "./routes/teacher.routes.js";
 
 const app = express();
 
@@ -39,6 +40,7 @@ app.use("/api/semesters", semesterRoutes);
 app.use("/api/subjects", subjectRoutes);
 app.use("/api/users", userRoutes)
 app.use("/api/programs", programRoutes);
+app.use("/api/teachers", teacherRoutes);
 
 app.listen(env.PORT, () => {
     console.log(`API running on http://localhost:${env.PORT}`);

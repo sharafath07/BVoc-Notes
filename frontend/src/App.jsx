@@ -20,6 +20,7 @@ import AdminNavbar from './Admin/components/AdminNavbar';
 import AdminStudents from './Admin/pages/AdminStudents';
 import AdminFaculties from './Admin/pages/AdminFaculties';
 import AdminResources from './Admin/pages/AdminResources';
+import AdminAddFaculties from "./Admin/pages/AdminAddFaculties";
 
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminAddResources from './Admin/pages/AdminAddResource';
@@ -49,19 +50,20 @@ function App() {
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/faculty" element={<Faculty />} />
-        <Route path="/resources" element={<ProtectedRoute toUrl="/login"><Resources /></ProtectedRoute>} />
-        <Route path="/chat" element={<ProtectedRoute toUrl="/login"><Chat /></ProtectedRoute>} />
+        <Route path="/resources" element={<ProtectedRoute allowedRoles={["STUDENT", "ADMIN", "TEACHER"]}><Resources /></ProtectedRoute>} />
+        <Route path="/chat" element={<ProtectedRoute allowedRoles={["STUDENT", "ADMIN", "TEACHER"]}><Chat /></ProtectedRoute>} />
         <Route path="/login" element={<Login />} />
 
         <Route path="/admin/login" element={<AdminLogin />} />
-        <Route path="/admin/dashboard" element={<ProtectedRoute toUrl="/admin/login" adminOnly={true}><AdminDashboard /></ProtectedRoute>} />
-        <Route path="/admin/dashboard/students" element={<ProtectedRoute toUrl="/admin/login" adminOnly={true}><AdminStudents /></ProtectedRoute>} />
-        <Route path="/admin/dashboard/faculties" element={<ProtectedRoute toUrl="/admin/login" adminOnly={true}><AdminFaculties /></ProtectedRoute>} />
-        <Route path="/admin/dashboard/resources" element={<ProtectedRoute toUrl="/admin/login" adminOnly={true}><AdminResources /></ProtectedRoute>} />
-        <Route path="/admin/dashboard/resources/add" element={<ProtectedRoute toUrl="/admin/login" adminOnly={true}><AdminAddResources /></ProtectedRoute>} />
-        <Route path="/admin/dashboard/resources/edit/:id" element={<ProtectedRoute toUrl='/admin/login' adminOnly={true}><AdminEditResource /></ProtectedRoute>} />
-        <Route path="/admin/dashboard/subjects" element={<ProtectedRoute toUrl="/admin/login" adminOnly={true}><AdminSubjects /></ProtectedRoute>} />
-        <Route path="/admin/dashboard/subjects/add" element={<ProtectedRoute toUrl="/admin/login" adminOnly={true}><AdminAddSubject /></ProtectedRoute>} />
+        <Route path="/admin/dashboard" element={<ProtectedRoute allowedRoles={["ADMIN", "TEACHER"]} toUrl="/admin/login"  ><AdminDashboard /></ProtectedRoute>} />
+        <Route path="/admin/dashboard/students" element={<ProtectedRoute allowedRoles={["ADMIN", "TEACHER"]} toUrl="/admin/login"  ><AdminStudents /></ProtectedRoute>} />
+        <Route path="/admin/dashboard/faculties" element={<ProtectedRoute allowedRoles={["ADMIN", "TEACHER"]} toUrl="/admin/login"  ><AdminFaculties /></ProtectedRoute>} />
+        <Route path="/admin/dashboard/resources" element={<ProtectedRoute allowedRoles={["ADMIN", "TEACHER"]} toUrl="/admin/login"  ><AdminResources /></ProtectedRoute>} />
+        <Route path="/admin/dashboard/resources/add" element={<ProtectedRoute allowedRoles={["ADMIN", "TEACHER"]} toUrl="/admin/login"  ><AdminAddResources /></ProtectedRoute>} />
+        <Route path="/admin/dashboard/resources/edit/:id" element={<ProtectedRoute allowedRoles={["ADMIN", "TEACHER"]} toUrl='/admin/login'  ><AdminEditResource /></ProtectedRoute>} />
+        <Route path="/admin/dashboard/subjects" element={<ProtectedRoute allowedRoles={["ADMIN", "TEACHER"]} toUrl="/admin/login"  ><AdminSubjects /></ProtectedRoute>} />
+        <Route path="/admin/dashboard/subjects/add" element={<ProtectedRoute allowedRoles={["ADMIN", "TEACHER"]} toUrl="/admin/login"  ><AdminAddSubject /></ProtectedRoute>} />
+        <Route path="/admin/dashboard/faculties/register" element={<ProtectedRoute allowedRoles={["ADMIN"]} toUrl="/admin/login"  ><AdminAddFaculties /></ProtectedRoute>} />
 
       </Routes>
       {!hideNavbarRoutes.includes(location.pathname) && <Footer />}

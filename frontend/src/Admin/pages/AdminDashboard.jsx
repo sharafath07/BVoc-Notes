@@ -31,7 +31,7 @@ function AdminDashboard() {
     useEffect(() => {
         if (!user) return;
 
-        if (user.role !== "ADMIN") {
+        if (user.role !== "ADMIN" && user.role !== "TEACHER") {
             navigate("/", { replace: true });
         }
     }, [user, navigate]);
