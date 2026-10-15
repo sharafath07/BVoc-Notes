@@ -3,6 +3,8 @@ import React, {
     createContext,
     useEffect,
     useMemo,
+    useCallback,
+    useRef,
 } from "react";
 
 import getUsers from "./User";
@@ -12,37 +14,25 @@ import getSubjects from "./Subject";
 import getResources from "./Resource";
 import getProgram from "./Program";
 
-
 export const Context = createContext();
-
 
 function ContextProvider({ children }) {
     const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
-
-    /* ---------------------------------------------------------------------- */
-    /*                               AUTH STATE                               */
-    /* ---------------------------------------------------------------------- */
+    /* AUTH STATE */
 
     const [token, setToken] = useState(
-        localStorage.getItem("token") || null
+        () => localStorage.getItem("token") || null
     );
 
     const [user, setUser] = useState(null);
-
     const [authLoading, setAuthLoading] = useState(true);
 
-
-    /* ---------------------------------------------------------------------- */
-    /*                              UI STATE                                  */
-    /* ---------------------------------------------------------------------- */
+    /* UI STATE */
 
     const [isDark, setIsDark] = useState(false);
 
-
-    /* ---------------------------------------------------------------------- */
-    /*                             APP DATA                                   */
-    /* ---------------------------------------------------------------------- */
+    /* APPLICATION DATA */
 
     const [program, setProgram] = useState([]);
     const [students, setStudents] = useState([]);
@@ -51,294 +41,337 @@ function ContextProvider({ children }) {
     const [semesters, setSemesters] = useState([]);
     const [resources, setResources] = useState([]);
 
-
-    /* ---------------------------------------------------------------------- */
-    /*                              LOADING                                   */
-    /* ---------------------------------------------------------------------- */
+    /* LOADING STATES */
 
     const [isLoading, setIsLoading] = useState(false);
+    const [resourcesLoading, setResourcesLoading] = useState(false);
+    const [usersLoading, setUsersLoading] = useState(false);
 
+    /* CACHE / REQUEST STATE */
 
-    /* ---------------------------------------------------------------------- */
-    /*                            ROLE HELPERS                                */
-    /* ---------------------------------------------------------------------- */
+    const [resourcesLoaded, setResourcesLoaded] = useState(false);
+    const [usersLoaded, setUsersLoaded] = useState(false);
+
+    const resourcesRequestRef = useRef(null);
+    const usersRequestRef = useRef(null);
+
+    /* ROLE HELPERS */
 
     const isAdmin = user?.role === "ADMIN";
-
     const isTeacher = user?.role === "TEACHER";
-
     const isStudent = user?.role === "STUDENT";
 
+    const canManageSubjects = isAdmin || isTeacher;
+    const canManageResources = isAdmin || isTeacher;
+    const canManageStudents = isAdmin;
+    const canManageFaculty = isAdmin;
 
-    /*
-     * Subjects
-     *
-     * ADMIN  → can manage
-     * TEACHER → can manage
-     */
-
-    const canManageSubjects =
-        isAdmin || isTeacher;
-
-
-    /*
-     * Resources
-     *
-     * ADMIN  → can manage
-     * TEACHER → can manage
-     */
-
-    const canManageResources =
-        isAdmin || isTeacher;
-
-
-    /*
-     * Students
-     *
-     * ADMIN → can manage
-     * TEACHER → view only
-     */
-
-    const canManageStudents =
-        isAdmin;
-
-
-    /*
-     * Faculties
-     *
-     * ADMIN → can manage
-     * TEACHER → view only
-     */
-
-    const canManageFaculty =
-        isAdmin;
-
-
-    /* ---------------------------------------------------------------------- */
-    /*                         LOAD APPLICATION DATA                          */
-    /* ---------------------------------------------------------------------- */
+    /* LOAD INITIAL ACADEMIC DATA */
 
     useEffect(() => {
-        if (!user) return;
+        if (!user) {
+            setProgram([]);
+            setSemesters([]);
+            setSubjects([]);
+            setResources([]);
+            setStudents([]);
+            setFaculty([]);
 
+            setResourcesLoaded(false);
+            setUsersLoaded(false);
 
-        const loadData = async () => {
+            resourcesRequestRef.current = null;
+            usersRequestRef.current = null;
+
+            return;
+        }
+
+        let cancelled = false;
+
+        const loadInitialData = async () => {
             try {
-                setIsLoading(true);
-
-
                 const [
                     semestersData,
                     subjectsData,
-                    resourcesData,
                     programData,
                 ] = await Promise.all([
                     getSemesters(backendUrl),
                     getSubjects(backendUrl),
-                    getResources(backendUrl),
                     getProgram(backendUrl),
                 ]);
 
+                if (cancelled) return;
 
                 setSemesters(semestersData || []);
                 setSubjects(subjectsData || []);
-                setResources(resourcesData || []);
                 setProgram(programData || []);
-
-
-                /*
-                 * Users are only required for the admin dashboard
-                 * because teachers can fetch students/faculty lists
-                 * directly from their respective pages.
-                 */
-                if (isAdmin || isTeacher) {
-                    const usersData =
-                        await getUsers(backendUrl);
-
-
-                    setStudents(
-                        usersData?.filter(
-                            (item) =>
-                                item.role === "STUDENT"
-                        ) || []
-                    );
-
-
-                    setFaculty(
-                        usersData?.filter(
-                            (item) =>
-                                item.role === "TEACHER"
-                        ) || []
-                    );
-                } else {
-                    setStudents([]);
-                    setFaculty([]);
-                }
             } catch (error) {
-                console.error(
-                    "Context data loading error:",
-                    error
-                );
-
-                /*
-                 * Don't show an alert for every failed background
-                 * request. Individual pages can handle their own
-                 * API errors.
-                 */
-            } finally {
-                setIsLoading(false);
+                if (!cancelled) {
+                    console.error(
+                        "Initial data loading error:",
+                        error
+                    );
+                }
             }
         };
 
+        loadInitialData();
 
-        loadData();
-    }, [user, backendUrl, isAdmin]);
+        return () => {
+            cancelled = true;
+        };
+    }, [user, backendUrl]);
 
-
-    /* ---------------------------------------------------------------------- */
-    /*                         RESTORE AUTHENTICATION                         */
-    /* ---------------------------------------------------------------------- */
+    /* RESTORE AUTHENTICATION */
 
     useEffect(() => {
-        const restoreAuth = async () => {
-            const savedToken =
-                localStorage.getItem("token");
+        let cancelled = false;
 
+        const restoreAuth = async () => {
+            const savedToken = localStorage.getItem("token");
 
             if (!savedToken) {
+                setToken(null);
+                setUser(null);
                 setAuthLoading(false);
                 return;
             }
 
-
             try {
                 setIsLoading(true);
 
-
                 const response = await api.get(
-                    `${backendUrl}/api/auth/me`,
+                    `${backendUrl} /api/auth / me`,
                     {
                         headers: {
-                            Authorization:
-                                `Bearer ${savedToken}`,
+                            Authorization: `Bearer ${savedToken} `,
                         },
                     }
                 );
 
+                if (cancelled) return;
 
-                if (response.data.success) {
+                if (response.data?.success && response.data.user) {
                     setToken(savedToken);
                     setUser(response.data.user);
                 } else {
                     localStorage.removeItem("token");
-
                     setToken(null);
                     setUser(null);
                 }
             } catch (error) {
+                if (cancelled) return;
+
                 console.error(
                     "Failed to restore authentication:",
                     error
                 );
 
-
-                localStorage.removeItem("token");
-
-                setToken(null);
-                setUser(null);
+                if (error.response?.status === 401) {
+                    localStorage.removeItem("token");
+                    setToken(null);
+                    setUser(null);
+                } else {
+                    // Preserve the saved token on temporary failures.
+                    // Authentication could not be verified, however.
+                    setToken(savedToken);
+                    setUser(null);
+                }
             } finally {
-                setAuthLoading(false);
-                setIsLoading(false);
+                if (!cancelled) {
+                    setAuthLoading(false);
+                    setIsLoading(false);
+                }
             }
         };
 
-
         restoreAuth();
+
+        return () => {
+            cancelled = true;
+        };
     }, [backendUrl]);
 
+    /* FETCH RESOURCES ON DEMAND */
 
-    /* ---------------------------------------------------------------------- */
-    /*                            CONTEXT VALUE                               */
-    /* ---------------------------------------------------------------------- */
+    const fetchResources = useCallback(async (force = false) => {
+        if (!user) return [];
 
-    const value = useMemo(
-        () => ({
-            /* Authentication */
-            token,
-            setToken,
-            user,
-            setUser,
-            authLoading,
+        if (!force && resourcesLoaded) {
+            return resources;
+        }
 
-            /* Roles */
-            isAdmin,
-            isTeacher,
-            isStudent,
+        // Reuse an in-flight request rather than sending another.
+        if (resourcesRequestRef.current) {
+            return resourcesRequestRef.current;
+        }
 
-            /* Permissions */
-            canManageSubjects,
-            canManageResources,
-            canManageStudents,
-            canManageFaculty,
+        setResourcesLoading(true);
 
-            /* Theme */
-            isDark,
-            setIsDark,
+        const request = (async () => {
+            try {
+                const data = await getResources(backendUrl);
+                const result = data || [];
 
-            /* Backend */
-            backendUrl,
+                setResources(result);
+                setResourcesLoaded(true);
 
-            /* Application data */
-            program,
-            setProgram,
+                return result;
+            } catch (error) {
+                console.error("Failed to load resources:", error);
+                throw error;
+            } finally {
+                resourcesRequestRef.current = null;
+                setResourcesLoading(false);
+            }
+        })();
 
-            semesters,
-            setSemesters,
+        resourcesRequestRef.current = request;
 
-            subjects,
-            setSubjects,
+        return request;
+    }, [user, backendUrl, resourcesLoaded, resources]);
 
-            resources,
-            setResources,
+    /* FETCH USERS ON DEMAND */
 
-            students,
-            setStudents,
+    const fetchUsers = useCallback(async (force = false) => {
+        if (!user || (!isAdmin && !isTeacher)) {
+            return [];
+        }
 
-            faculty,
-            setFaculty,
+        if (!force && usersLoaded) {
+            return [...students, ...faculty];
+        }
 
-            /* Loading */
-            isLoading,
-            setIsLoading,
-        }),
-        [
-            token,
-            user,
-            authLoading,
+        if (usersRequestRef.current) {
+            return usersRequestRef.current;
+        }
 
-            isAdmin,
-            isTeacher,
-            isStudent,
+        setUsersLoading(true);
 
-            canManageSubjects,
-            canManageResources,
-            canManageStudents,
-            canManageFaculty,
+        const request = (async () => {
+            try {
+                const data = await getUsers(backendUrl);
+                const allUsers = data || [];
 
-            isDark,
-            backendUrl,
+                setStudents(
+                    allUsers.filter(
+                        (item) => item.role === "STUDENT"
+                    )
+                );
 
-            program,
-            semesters,
-            subjects,
-            resources,
-            students,
-            faculty,
+                setFaculty(
+                    allUsers.filter(
+                        (item) => item.role === "TEACHER"
+                    )
+                );
 
-            isLoading,
-        ]
-    );
+                setUsersLoaded(true);
 
+                return allUsers;
+            } catch (error) {
+                console.error("Failed to load users:", error);
+                throw error;
+            } finally {
+                usersRequestRef.current = null;
+                setUsersLoading(false);
+            }
+        })();
+
+        usersRequestRef.current = request;
+
+        return request;
+    }, [
+        user,
+        isAdmin,
+        isTeacher,
+        backendUrl,
+        usersLoaded,
+        students,
+        faculty,
+    ]);
+
+    /* CONTEXT VALUE */
+
+    const value = useMemo(() => ({
+        // Authentication
+        token,
+        setToken,
+        user,
+        setUser,
+        authLoading,
+
+        // Roles
+        isAdmin,
+        isTeacher,
+        isStudent,
+
+        // Permissions
+        canManageSubjects,
+        canManageResources,
+        canManageStudents,
+        canManageFaculty,
+
+        // Theme
+        isDark,
+        setIsDark,
+
+        // Backend
+        backendUrl,
+
+        // Academic data
+        program,
+        setProgram,
+        semesters,
+        setSemesters,
+        subjects,
+        setSubjects,
+
+        // Resources
+        resources,
+        setResources,
+        fetchResources,
+        resourcesLoading,
+        resourcesLoaded,
+
+        // Users
+        students,
+        setStudents,
+        faculty,
+        setFaculty,
+        fetchUsers,
+        usersLoading,
+        usersLoaded,
+
+        // General loading
+        isLoading,
+        setIsLoading,
+    }), [
+        token,
+        user,
+        authLoading,
+        isAdmin,
+        isTeacher,
+        isStudent,
+        canManageSubjects,
+        canManageResources,
+        canManageStudents,
+        canManageFaculty,
+        isDark,
+        backendUrl,
+        program,
+        semesters,
+        subjects,
+        resources,
+        fetchResources,
+        resourcesLoading,
+        resourcesLoaded,
+        students,
+        faculty,
+        fetchUsers,
+        usersLoading,
+        usersLoaded,
+        isLoading,
+    ]);
 
     return (
         <Context.Provider value={value}>
@@ -346,6 +379,5 @@ function ContextProvider({ children }) {
         </Context.Provider>
     );
 }
-
 
 export default ContextProvider;

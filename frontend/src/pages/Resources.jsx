@@ -2,6 +2,7 @@ import React, {
     useContext,
     useMemo,
     useState,
+    useEffect,
 } from "react";
 import { motion, AnimatePresence } from "motion/react";
 
@@ -25,12 +26,21 @@ function Resource() {
         semesters = [],
         subjects = [],
         program = [],
+        fetchResources,
+        resourcesLoading,
     } = useContext(Context);
 
     const [selectedProgram, setSelectedProgram] = useState(null);
     const [selectedSemester, setSelectedSemester] = useState(null);
     const [selectedSubject, setSelectedSubject] = useState(null);
     const [selectedType, setSelectedType] = useState(null);
+
+    useEffect(() => {
+        fetchResources().catch(() => {
+            // Display a page-specific error if needed.
+        });
+    }, [fetchResources]);
+
 
     const programSemesters = useMemo(() => {
         if (!selectedProgram) return [];
@@ -403,6 +413,7 @@ function Resource() {
                                     semester={selectedSemester}
                                     isDark={isDark}
                                     onBack={resetType}
+                                    resourcesLoading={resourcesLoading}
                                 />
                             </motion.div>
                         )}

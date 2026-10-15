@@ -20,6 +20,7 @@ function ResourceCard({
     semester,
     isDark,
     onBack,
+    resourcesLoading,
 }) {
     const getDriveFileId = (url) => {
         const match = url?.match(/\/d\/([^/]+)/);
@@ -117,50 +118,37 @@ function ResourceCard({
             {/* Resources */}
 
             <AnimatePresence mode="wait">
-                {resources.length === 0 ? (
+                {resourcesLoading && resources.length === 0 ? (
                     <motion.div
-                        key="empty"
-                        initial={{
-                            opacity: 0,
-                            y: 15,
-                        }}
-                        animate={{
-                            opacity: 1,
-                            y: 0,
-                        }}
-                        exit={{
-                            opacity: 0,
-                            y: -10,
-                        }}
-                        transition={{
-                            duration: 0.3,
-                        }}
-                        className={`rounded-2xl border p-8 text-center sm:p-12 ${isDark
+                        key="loading"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        className={`rounded-2xl border p-8 text-center ${isDark
                             ? "border-gray-800 bg-gray-900"
                             : "border-gray-200 bg-white shadow-md"
                             }`}
                     >
-                        <motion.div
-                            initial={{
-                                opacity: 0,
-                                scale: 0.8,
-                            }}
-                            animate={{
-                                opacity: 1,
-                                scale: 1,
-                            }}
-                            transition={{
-                                duration: 0.3,
-                                delay: 0.1,
-                            }}
-                        >
-                            <FileText
-                                size={40}
-                                className="mx-auto mb-4 text-gray-400"
-                            />
-                        </motion.div>
+                        <p className="text-sm text-gray-500">
+                            Loading resources...
+                        </p>
+                    </motion.div>
+                ) : resources.length === 0 ? (
+                    <motion.div
+                        key="empty"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className={`rounded-2xl border p-8 text-center ${isDark
+                            ? "border-gray-800 bg-gray-900"
+                            : "border-gray-200 bg-white shadow-md"
+                            }`}
+                    >
+                        <FileText
+                            size={40}
+                            className="mx-auto mb-4 text-gray-400"
+                        />
 
-                        <h3 className="text-lg font-semibold sm:text-xl">
+                        <h3 className="text-lg font-semibold">
                             No resources available
                         </h3>
 
