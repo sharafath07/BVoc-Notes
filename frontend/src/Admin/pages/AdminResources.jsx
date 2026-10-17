@@ -2,6 +2,7 @@ import React, {
     useContext,
     useMemo,
     useState,
+    useEffect,
 } from "react";
 
 import {
@@ -27,7 +28,6 @@ import {
     pageVariants,
     containerVariants,
     cardVariants,
-    buttonVariants,
     fadeVariants,
 } from "../../animations";
 
@@ -36,8 +36,10 @@ function AdminResources() {
         isDark,
         backendUrl,
         program = [],
-        resources,
         setResources,
+        resources = [],
+        fetchResources,
+        resourcesLoading,
         semesters = [],
         subjects = [],
         canManageResources,
@@ -66,6 +68,12 @@ function AdminResources() {
         "PYQ",
     ];
 
+    useEffect(() => {
+        fetchResources().catch((error) => {
+            console.error("Failed to fetch resources:", error);
+        });
+    }, [fetchResources]);
+
     /*
      * Semesters belonging to selected program
      */
@@ -76,7 +84,8 @@ function AdminResources() {
 
         return semesters.filter(
             (semester) =>
-                semester.programId === selectedProgram
+                String(semester.programId ?? semester.program?.id ?? "") ===
+                String(selectedProgram)
         );
     }, [selectedProgram, semesters]);
 
@@ -91,10 +100,8 @@ function AdminResources() {
         return (
             subjects?.filter(
                 (subject) =>
-                    subject.semesterId ===
-                    selectedSemester ||
-                    subject.semester?.id ===
-                    selectedSemester
+                    String(subject.semesterId ?? subject.semester?.id ?? "") ===
+                    String(selectedSemester)
             ) || []
         );
     }, [subjects, selectedSemester]);
@@ -108,21 +115,22 @@ function AdminResources() {
                 const searchValue =
                     search.toLowerCase().trim();
 
-                const resourceProgramId =
-                    resource.subject?.semester
-                        ?.programId ||
-                    resource.subject?.semester
-                        ?.program?.id ||
-                    "";
+                const resourceProgramId = String(
+                    resource.subject?.semester?.programId ??
+                    resource.subject?.semester?.program?.id ??
+                    ""
+                );
 
-                const resourceSemesterId =
-                    resource.subject?.semester?.id ||
-                    "";
+                const resourceSemesterId = String(
+                    resource.semesterId ??
+                    resource.subject?.semesterId ??
+                    resource.subject?.semester?.id ??
+                    ""
+                );
 
-                const resourceSubjectId =
-                    resource.subjectId ||
-                    resource.subject?.id ||
-                    "";
+                const resourceSubjectId = String(
+                    resource.subjectId ?? resource.subject?.id ?? ""
+                );
 
                 const matchesSearch =
                     resource.title
@@ -131,18 +139,15 @@ function AdminResources() {
 
                 const matchesProgram =
                     !selectedProgram ||
-                    resourceProgramId ===
-                    selectedProgram;
+                    resourceProgramId === String(selectedProgram);
 
                 const matchesSemester =
                     !selectedSemester ||
-                    resourceSemesterId ===
-                    selectedSemester;
+                    resourceSemesterId === String(selectedSemester);
 
                 const matchesSubject =
                     !selectedSubject ||
-                    resourceSubjectId ===
-                    selectedSubject;
+                    resourceSubjectId === String(selectedSubject);
 
                 const matchesType =
                     !selectedType ||
@@ -194,12 +199,13 @@ function AdminResources() {
         setSelectedType("");
     }
 
-    const hasFilters =
+    const hasFilters = Boolean(
         search ||
         selectedProgram ||
         selectedSemester ||
         selectedSubject ||
-        selectedType;
+        selectedType
+    );
 
     /*
      * Delete resource
@@ -722,7 +728,16 @@ function AdminResources() {
 
                             <tbody>
                                 <AnimatePresence mode="popLayout">
-                                    {filteredResources.length === 0 ? (
+                                    {resourcesLoading && resources.length === 0 ? (
+                                        <motion.tr key="loading">
+                                            <td
+                                                colSpan={6}
+                                                className={`px-4 py-10 text-center text-sm sm:px-6 sm:py-12 ${isDark ? "text-gray-500" : "text-gray-400"}`}
+                                            >
+                                                Loading resources...
+                                            </td>
+                                        </motion.tr>
+                                    ) : filteredResources.length === 0 ? (
                                         <motion.tr
                                             key="empty"
                                             variants={fadeVariants}

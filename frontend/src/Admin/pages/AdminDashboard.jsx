@@ -23,10 +23,28 @@ function AdminDashboard() {
         students,
         faculty,
         user,
-        resources,
+        resources = [],
+        fetchResources,
+        resourcesLoading,
+        fetchUsers,
+        usersLoading,
+        authLoading,
     } = useContext(Context);
 
     const navigate = useNavigate();
+
+    useEffect(() => {
+        if (authLoading || !user) return;
+        if (user.role !== "ADMIN" && user.role !== "TEACHER") return;
+
+        fetchResources().catch((error) => {
+            console.error("Failed to fetch resources:", error);
+        });
+
+        fetchUsers().catch((error) => {
+            console.error("Failed to fetch dashboard users:", error);
+        });
+    }, [authLoading, user, fetchResources, fetchUsers]);
 
     useEffect(() => {
         if (!user) return;
@@ -58,21 +76,21 @@ function AdminDashboard() {
     const statistics = [
         {
             title: "Students",
-            count: students?.length || 0,
+            count: usersLoading ? "…" : (students?.length || 0),
             description: "Registered students",
             icon: GraduationCap,
             path: "/admin/dashboard/students",
         },
         {
             title: "Faculty",
-            count: faculty?.length || 0,
+            count: usersLoading ? "…" : (faculty?.length || 0),
             description: "Faculty members",
             icon: Users,
             path: "/admin/dashboard/faculties",
         },
         {
             title: "Resources",
-            count: resources?.length || 0,
+            count: resourcesLoading ? "…" : (resources?.length || 0),
             description: "Total resources",
             icon: BookOpen,
             path: "/admin/dashboard/resources",
@@ -82,26 +100,38 @@ function AdminDashboard() {
     const resourceTypes = [
         {
             title: "Notes",
-            count: resourceCounts.NOTES,
+            count: resourcesLoading ? "…" : resourceCounts.NOTES,
             description: "Study notes and materials",
             icon: BookOpen,
             path: "/admin/dashboard/resources",
         },
         {
             title: "Syllabus",
-            count: resourceCounts.SYLLABUS,
+            count: resourcesLoading ? "…" : resourceCounts.SYLLABUS,
             description: "Subject syllabus",
             icon: FileText,
             path: "/admin/dashboard/resources",
         },
         {
             title: "Previous Year Questions",
-            count: resourceCounts.PYQ,
+            count: resourcesLoading ? "…" : resourceCounts.PYQ,
             description: "Previous year question papers",
             icon: ClipboardList,
             path: "/admin/dashboard/resources",
         },
     ];
+
+    if (authLoading) {
+        return (
+            <section className={`flex min-h-screen items-center justify-center px-4 ${isDark ? "bg-gray-950 text-white" : "bg-gray-50 text-gray-900"}`}>
+                <p className="text-sm text-gray-500">Loading dashboard...</p>
+            </section>
+        );
+    }
+
+    if (!user || (user.role !== "ADMIN" && user.role !== "TEACHER")) {
+        return null;
+    }
 
     return (
         <motion.section
@@ -455,7 +485,7 @@ function AdminDashboard() {
                                 }}
                                 className="mt-1 text-xl font-bold sm:text-2xl"
                             >
-                                {students?.length || 0}
+                                {usersLoading ? "…" : (students?.length || 0)}
                             </motion.p>
                         </motion.div>
 
@@ -485,7 +515,7 @@ function AdminDashboard() {
                                 }}
                                 className="mt-1 text-xl font-bold sm:text-2xl"
                             >
-                                {faculty?.length || 0}
+                                {usersLoading ? "…" : (faculty?.length || 0)}
                             </motion.p>
                         </motion.div>
 
@@ -515,7 +545,7 @@ function AdminDashboard() {
                                 }}
                                 className="mt-1 text-xl font-bold sm:text-2xl"
                             >
-                                {resourceCounts.NOTES}
+                                {resourcesLoading ? "…" : resourceCounts.NOTES}
                             </motion.p>
                         </motion.div>
 
@@ -545,7 +575,7 @@ function AdminDashboard() {
                                 }}
                                 className="mt-1 text-xl font-bold sm:text-2xl"
                             >
-                                {resourceCounts.PYQ}
+                                {resourcesLoading ? "…" : resourceCounts.PYQ}
                             </motion.p>
                         </motion.div>
 

@@ -105,6 +105,31 @@ function ContextProvider({ children }) {
                 setSemesters(semestersData || []);
                 setSubjects(subjectsData || []);
                 setProgram(programData || []);
+
+                if (isAdmin || isTeacher) {
+                    const usersData =
+                        await getUsers(backendUrl);
+
+
+                    setStudents(
+                        usersData?.filter(
+                            (item) =>
+                                item.role === "STUDENT"
+                        ) || []
+                    );
+
+
+                    setFaculty(
+                        usersData?.filter(
+                            (item) =>
+                                item.role === "TEACHER"
+                        ) || []
+                    );
+                } else {
+                    setStudents([]);
+                    setFaculty([]);
+                }
+
             } catch (error) {
                 if (!cancelled) {
                     console.error(

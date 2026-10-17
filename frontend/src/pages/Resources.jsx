@@ -37,7 +37,10 @@ function Resource() {
 
     useEffect(() => {
         fetchResources().catch(() => {
-            // Display a page-specific error if needed.
+            console.error(
+                "Failed to fetch resources:",
+                error
+            );
         });
     }, [fetchResources]);
 
