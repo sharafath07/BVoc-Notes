@@ -141,7 +141,7 @@ function ContextProvider({ children }) {
                 setIsLoading(true);
 
                 const response = await api.get(
-                    `${backendUrl} /api/auth / me`,
+                    `${backendUrl}/api/auth/me`,
                     {
                         headers: {
                             Authorization: `Bearer ${savedToken} `,
