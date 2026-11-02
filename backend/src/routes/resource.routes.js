@@ -23,13 +23,13 @@ router.get(
 
 router.get(
     "/:id",
-    authenticate,
+    // authenticate,
     getResourceController
 );
 
 router.post(
     "/",
-    authenticate,
+    // authenticate,
     authorize("ADMIN", "TEACHER"),
     createResourceController
 );

@@ -20,7 +20,7 @@ const router = express.Router();
 // GET semesters
 router.get(
     "/",
-    authenticate,
+    // authenticate,
     getSemestersController
 );
 
@@ -37,7 +37,7 @@ router.get(
 // GET subjects by semester
 router.get(
     "/:semesterId/subjects",
-    authenticate,
+    // authenticate,
     getSubjectsBySemesterController
 );
 
