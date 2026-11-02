@@ -222,7 +222,7 @@ function ContextProvider({ children }) {
     /* FETCH RESOURCES ON DEMAND */
 
     const fetchResources = useCallback(async (force = false) => {
-        if (!user) return [];
+        // if (!user) return [];
 
         if (!force && resourcesLoaded) {
             return resources;

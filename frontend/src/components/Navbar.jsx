@@ -205,16 +205,14 @@ function Navbar() {
                         </NavLink>
                     </motion.div>
 
-                    {token && (
-                        <motion.div variants={navItemVariants}>
-                            <NavLink
-                                to="/resources"
-                                className={navLinkClass}
-                            >
-                                Resources
-                            </NavLink>
-                        </motion.div>
-                    )}
+                    <motion.div variants={navItemVariants}>
+                        <NavLink
+                            to="/resources"
+                            className={navLinkClass}
+                        >
+                            Resources
+                        </NavLink>
+                    </motion.div>
 
                     <motion.div variants={navItemVariants}>
                         <NavLink
