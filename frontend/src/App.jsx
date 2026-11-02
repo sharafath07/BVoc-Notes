@@ -50,7 +50,7 @@ function App() {
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/faculty" element={<Faculty />} />
-        <Route path="/resources" element={<ProtectedRoute allowedRoles={["STUDENT", "ADMIN", "TEACHER"]}><Resources /></ProtectedRoute>} />
+        <Route path="/resources" element={<Resources />} />
         <Route path="/chat" element={<ProtectedRoute allowedRoles={["STUDENT", "ADMIN", "TEACHER"]}><Chat /></ProtectedRoute>} />
         <Route path="/login" element={<Login />} />
 
