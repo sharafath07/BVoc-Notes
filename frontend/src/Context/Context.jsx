@@ -94,10 +94,12 @@ function ContextProvider({ children }) {
                     semestersData,
                     subjectsData,
                     programData,
+                    resourcesData,
                 ] = await Promise.all([
                     getSemesters(backendUrl),
                     getSubjects(backendUrl),
                     getProgram(backendUrl),
+                    getResources(backendUrl),
                 ]);
 
                 if (cancelled) return;
