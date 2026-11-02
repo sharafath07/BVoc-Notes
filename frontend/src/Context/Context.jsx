@@ -69,22 +69,22 @@ function ContextProvider({ children }) {
     /* LOAD INITIAL ACADEMIC DATA */
 
     useEffect(() => {
-        if (!user) {
-            setProgram([]);
-            setSemesters([]);
-            setSubjects([]);
-            setResources([]);
-            setStudents([]);
-            setFaculty([]);
+        // if (!user) {
+        //     setProgram([]);
+        //     setSemesters([]);
+        //     setSubjects([]);
+        //     setResources([]);
+        //     setStudents([]);
+        //     setFaculty([]);
 
-            setResourcesLoaded(false);
-            setUsersLoaded(false);
+        //     setResourcesLoaded(false);
+        //     setUsersLoaded(false);
 
-            resourcesRequestRef.current = null;
-            usersRequestRef.current = null;
+        //     resourcesRequestRef.current = null;
+        //     usersRequestRef.current = null;
 
-            return;
-        }
+        //     return;
+        // }
 
         let cancelled = false;
 
@@ -107,6 +107,7 @@ function ContextProvider({ children }) {
                 setSemesters(semestersData || []);
                 setSubjects(subjectsData || []);
                 setProgram(programData || []);
+                setResources(resourcesData || []);
 
                 if (isAdmin || isTeacher) {
                     const usersData =

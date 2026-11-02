@@ -37,7 +37,7 @@ function Resource() {
 
     useEffect(() => {
         fetchResources().catch(() => {
-            console.error(
+            console.log(
                 "Failed to fetch resources:",
                 error
             );
