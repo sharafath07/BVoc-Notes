@@ -511,24 +511,24 @@ function Navbar() {
                                 </NavLink>
                             </motion.div>
 
-                            {token && (
-                                <motion.div
-                                    variants={mobileItemVariants}
+
+                            <motion.div
+                                variants={mobileItemVariants}
+                            >
+                                <NavLink
+                                    to="/resources"
+                                    onClick={closeMenu}
+                                    className={`block border-b py-3 ${isDark
+                                        ? 'border-gray-800'
+                                        : 'border-gray-200'
+                                        } ${navLinkClass({
+                                            isActive: false,
+                                        })}`}
                                 >
-                                    <NavLink
-                                        to="/resources"
-                                        onClick={closeMenu}
-                                        className={`block border-b py-3 ${isDark
-                                            ? 'border-gray-800'
-                                            : 'border-gray-200'
-                                            } ${navLinkClass({
-                                                isActive: false,
-                                            })}`}
-                                    >
-                                        Resources
-                                    </NavLink>
-                                </motion.div>
-                            )}
+                                    Resources
+                                </NavLink>
+                            </motion.div>
+
 
                             <motion.div variants={mobileItemVariants}>
                                 <NavLink
