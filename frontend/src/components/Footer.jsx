@@ -397,6 +397,21 @@ function Footer() {
                         © {new Date().getFullYear()} BVOC SD. All rights reserved.
                     </p>
 
+
+                    <p>
+                        Made for students, with{" "}
+                        <span className="text-red-500">♥</span> by{" "}
+                        <a
+                            href="https://sharafath-two.vercel.app/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="hover:text-white underline underline-offset-2 transition-colors duration-200 "
+                        >
+                            Sharafath V.
+                        </a>
+                    </p>
+
+
                     <motion.button
                         type="button"
                         onClick={scrollToTop}
