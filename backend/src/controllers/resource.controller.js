@@ -1,12 +1,25 @@
 import {
     createResource,
     getResources,
+    getResourceAvailability,
     getResourceById,
     updateResource,
     deleteResource,
 } from "../services/resource.service.js";
 
 import { createResourceSchema } from "../validator/resource.validator.js";
+
+const cardsQuery = createResourceSchema.pick({ subjectId: true, type: true });
+
+export async function getResourceAvailabilityController(_req, res) {
+    try {
+        const availability = await getResourceAvailability();
+        return res.json({ success: true, availability });
+    } catch (error) {
+        console.error("Failed to load resource availability:", error);
+        return res.status(500).json({ success: false, message: "Resource availability could not be loaded." });
+    }
+}
 
 export async function createResourceController(req, res) {
     try {
@@ -38,14 +51,25 @@ export async function getResourcesController(req, res) {
             programId,
             subjectId,
             type,
+            view,
         } = req.query;
+
+        const cardsOnly = view === "cards";
+        if (cardsOnly && !cardsQuery.safeParse({ subjectId, type }).success) {
+            return res.status(400).json({
+                success: false,
+                message: "Select a valid subject and resource type.",
+            });
+        }
 
         const resources = await getResources({
             programId,
             subjectId,
             type,
+            cardsOnly,
         });
 
+        if (cardsOnly) res.set("Cache-Control", "private, max-age=30");
         res.status(200).json({
             success: true,
             resources,

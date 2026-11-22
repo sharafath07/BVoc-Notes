@@ -10,6 +10,8 @@ model User {
   id             String          @id @default(cuid())
   name           String
   email          String          @unique
+  username       String?         @unique
+  profileImageUrl String?
   passwordHash   String
   role           UserRole
   createdAt      DateTime        @default(now())
@@ -18,19 +20,46 @@ model User {
   resources      Resource[]
   studentProfile StudentProfile?
   teacherProfile TeacherProfile?
+  chatMessages   ChatMessage[]
+  chatRooms      ChatRoom[]
 
   @@index([role])
 }
 
-model StudentProfile {
-  id             String        @id @default(cuid())
-  userId         String        @unique
-  registerNumber String        @unique
-  batch          String?
-  semester       Int?
-  status         StudentStatus @default(ACTIVE)
+model ChatRoom {
+  id          String   @id @default(cuid())
+  name        String
+  audienceKey String
+  createdById String?
+  createdAt   DateTime @default(now())
+  createdBy   User?    @relation(fields: [createdById], references: [id], onDelete: SetNull)
 
-  user           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@unique([audienceKey, name])
+  @@index([createdById])
+}
+
+model ChatMessage {
+  id        String   @id @default(cuid())
+  roomKey   String
+  body      String
+  authorId  String?
+  createdAt DateTime @default(now())
+  author    User?    @relation(fields: [authorId], references: [id], onDelete: SetNull)
+
+  @@index([roomKey, createdAt, id])
+  @@index([authorId])
+}
+
+model StudentProfile {
+  id                   String        @id @default(cuid())
+  userId               String        @unique
+  registerNumber       String        @unique
+  batch                String?
+  semester             Int?
+  status               StudentStatus @default(ACTIVE)
+  semesterProgressedAt DateTime      @default(now()) @db.Timestamptz(3)
+
+  user                 User          @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model TeacherProfile {

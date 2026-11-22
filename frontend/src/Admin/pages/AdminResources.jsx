@@ -690,7 +690,7 @@ function AdminResources() {
                         }`}
                 >
                     <div className="overflow-x-auto">
-                        <table className="w-full min-w-[950px] text-left">
+                        <table className="department-mobile-table w-full min-w-[950px] text-left" aria-label="Resources">
 
                             <thead
                                 className={
@@ -789,7 +789,7 @@ function AdminResources() {
                                                             }`}
                                                     >
                                                         {/* Resource */}
-                                                        <td className="max-w-[240px] px-4 py-4 sm:px-6">
+                                                        <td className="department-table-title max-w-[240px] px-4 py-4 sm:px-6">
                                                             <div className="truncate text-sm font-medium">
                                                                 {
                                                                     resource.title
@@ -810,6 +810,7 @@ function AdminResources() {
 
                                                         {/* Subject */}
                                                         <td
+                                                            data-label="Subject"
                                                             className={`px-4 py-4 text-sm sm:px-6 ${isDark
                                                                 ? "text-gray-300"
                                                                 : "text-gray-700"
@@ -823,6 +824,7 @@ function AdminResources() {
 
                                                         {/* Semester */}
                                                         <td
+                                                            data-label="Semester"
                                                             className={`px-4 py-4 text-sm sm:px-6 ${isDark
                                                                 ? "text-gray-300"
                                                                 : "text-gray-700"
@@ -838,6 +840,7 @@ function AdminResources() {
 
                                                         {/* Added By */}
                                                         <td
+                                                            data-label="Added by"
                                                             className={`px-4 py-4 text-sm sm:px-6 ${isDark
                                                                 ? "text-gray-300"
                                                                 : "text-gray-700"
@@ -850,7 +853,7 @@ function AdminResources() {
                                                         </td>
 
                                                         {/* File */}
-                                                        <td className="px-4 py-4 sm:px-6">
+                                                        <td data-label="File" className="px-4 py-4 sm:px-6">
                                                             {resource.fileUrl ? (
                                                                 <motion.a
                                                                     href={
@@ -889,7 +892,7 @@ function AdminResources() {
                                                         </td>
 
                                                         {/* Actions */}
-                                                        <td className="px-4 py-4 sm:px-6">
+                                                        <td data-label="Actions" className="px-4 py-4 sm:px-6">
                                                             <div className="flex items-center gap-1.5 sm:gap-2">
 
                                                                 {/* Edit */}

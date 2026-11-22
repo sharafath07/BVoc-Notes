@@ -6,6 +6,7 @@ import React, {
     useCallback,
     useRef,
 } from "react";
+import { useLocation } from "react-router-dom";
 
 import getUsers from "./User";
 import api from "../api/axios";
@@ -18,6 +19,8 @@ export const Context = createContext();
 
 function ContextProvider({ children }) {
     const backendUrl = import.meta.env.VITE_BACKEND_URL;
+    const { pathname } = useLocation();
+    const needsAcademicData = pathname.startsWith("/admin/dashboard");
 
     /* AUTH STATE */
 
@@ -69,86 +72,39 @@ function ContextProvider({ children }) {
     /* LOAD INITIAL ACADEMIC DATA */
 
     useEffect(() => {
-        // if (!user) {
-        //     setProgram([]);
-        //     setSemesters([]);
-        //     setSubjects([]);
-        //     setResources([]);
-        //     setStudents([]);
-        //     setFaculty([]);
-
-        //     setResourcesLoaded(false);
-        //     setUsersLoaded(false);
-
-        //     resourcesRequestRef.current = null;
-        //     usersRequestRef.current = null;
-
-        //     return;
-        // }
-
+        if (!needsAcademicData) return;
         let cancelled = false;
-
-        const loadInitialData = async () => {
-            try {
-                const [
-                    semestersData,
-                    subjectsData,
-                    programData,
-                    resourcesData,
-                ] = await Promise.all([
-                    getSemesters(backendUrl),
-                    getSubjects(backendUrl),
-                    getProgram(backendUrl),
-                    getResources(backendUrl),
-                ]);
-
-                if (cancelled) return;
-
-                setSemesters(semestersData || []);
-                setSubjects(subjectsData || []);
-                setProgram(programData || []);
-                setResources(resourcesData || []);
-
-                if (isAdmin || isTeacher) {
-                    const usersData =
-                        await getUsers(backendUrl);
-
-
-                    setStudents(
-                        usersData?.filter(
-                            (item) =>
-                                item.role === "STUDENT"
-                        ) || []
-                    );
-
-
-                    setFaculty(
-                        usersData?.filter(
-                            (item) =>
-                                item.role === "TEACHER"
-                        ) || []
-                    );
-                } else {
-                    setStudents([]);
-                    setFaculty([]);
-                }
-
-            } catch (error) {
-                if (!cancelled) {
-                    console.error(
-                        "Initial data loading error:",
-                        error
-                    );
-                }
-            }
-        };
-
-        loadInitialData();
+        getProgram(backendUrl).then((data) => {
+            if (!cancelled) setProgram(data || []);
+        });
+        getSemesters(backendUrl).then((data) => {
+            if (!cancelled) setSemesters(data || []);
+        });
+        getSubjects(backendUrl).then((data) => {
+            if (!cancelled) setSubjects(data || []);
+        });
 
         return () => {
             cancelled = true;
         };
-    }, [user, backendUrl]);
+    }, [backendUrl, needsAcademicData]);
+
+    useEffect(() => {
+        if (!isAdmin && !isTeacher) {
+            setStudents([]);
+            setFaculty([]);
+            return;
+        }
+
+        let cancelled = false;
+        getUsers(backendUrl).then((users = []) => {
+            if (cancelled) return;
+            setStudents(users.filter(({ role }) => role === "STUDENT"));
+            setFaculty(users.filter(({ role }) => role === "TEACHER"));
+        });
+
+        return () => { cancelled = true; };
+    }, [user, isAdmin, isTeacher, backendUrl]);
 
     /* RESTORE AUTHENTICATION */
 
@@ -223,8 +179,6 @@ function ContextProvider({ children }) {
     /* FETCH RESOURCES ON DEMAND */
 
     const fetchResources = useCallback(async (force = false) => {
-        // if (!user) return [];
-
         if (!force && resourcesLoaded) {
             return resources;
         }
@@ -257,7 +211,7 @@ function ContextProvider({ children }) {
         resourcesRequestRef.current = request;
 
         return request;
-    }, [user, backendUrl, resourcesLoaded, resources]);
+    }, [backendUrl, resourcesLoaded, resources]);
 
     /* FETCH USERS ON DEMAND */
 

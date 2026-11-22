@@ -1,5 +1,20 @@
 import prisma from "../lib/prisma.js";
 
+export function getResourceAvailability() {
+    return prisma.$queryRaw`
+        SELECT program.id AS "programId", program.name AS "programName",
+               semester.id AS "semesterId", semester.number AS "semesterNumber",
+               subject.id AS "subjectId", subject.name AS "subjectName",
+               array_agg(DISTINCT resource.type::text) AS types
+        FROM "Resource" AS resource
+        JOIN "Subject" AS subject ON subject.id = resource."subjectId"
+        JOIN "Semester" AS semester ON semester.id = subject."semesterId"
+        JOIN "Program" AS program ON program.id = semester."programId"
+        GROUP BY program.id, semester.id, subject.id
+        ORDER BY program.name, semester.number, subject.name
+    `;
+}
+
 export async function createResource(data, userId) {
     const subject = await prisma.subject.findUnique({
         where: {
@@ -23,7 +38,15 @@ export async function createResource(data, userId) {
         },
     });
 }
-export async function getResources({ subjectId, type }) {
+export async function getResources({ subjectId, type, cardsOnly = false }) {
+    if (cardsOnly) {
+        return prisma.resource.findMany({
+            where: { subjectId, type },
+            select: { id: true, title: true, description: true, type: true, fileUrl: true },
+            orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+        });
+    }
+
     return prisma.resource.findMany({
         where: {
             ...(subjectId && {

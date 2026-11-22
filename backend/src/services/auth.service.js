@@ -4,24 +4,22 @@ import jwt from "jsonwebtoken";
 import prisma from "../lib/prisma.js";
 import { env } from "../config/env.js";
 
-export async function loginUser(email, password) {
-    const normalizedEmail = email.trim().toLowerCase();
+export class LoginError extends Error {}
+
+export async function loginUser(identifier, password) {
+    const normalizedIdentifier = identifier.trim().toLowerCase();
+    const byEmail = normalizedIdentifier.includes("@");
 
     const user = await prisma.user.findUnique({
-        where: {
-            email: normalizedEmail,
-        },
-        include: {
-            studentProfile: true,
-        },
+        where: byEmail ? { email: normalizedIdentifier } : { username: normalizedIdentifier, role: "STUDENT" },
     });
 
     if (!user) {
-        throw new Error("Invalid email or password");
+        throw new LoginError("Invalid username, email or password.");
     }
 
     if (user.status !== "ACTIVE") {
-        throw new Error("Your account is not active");
+        throw new LoginError("Your account is not active");
     }
 
     const passwordMatches = await bcrypt.compare(
@@ -30,7 +28,7 @@ export async function loginUser(email, password) {
     );
 
     if (!passwordMatches) {
-        throw new Error("Invalid email or password");
+        throw new LoginError("Invalid username, email or password.");
     }
 
     const token = jwt.sign(
@@ -51,6 +49,8 @@ export async function loginUser(email, password) {
             id: user.id,
             name: user.name,
             email: user.email,
+            username: user.username,
+            profileImageUrl: user.profileImageUrl,
             role: user.role,
         },
     };

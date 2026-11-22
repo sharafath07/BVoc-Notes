@@ -7,6 +7,7 @@ import {
 } from "../controllers/auth.controller.js";
 
 import { registerStudentController } from "../controllers/student-registration.controller.js";
+import { updateProfileController } from "../controllers/profile.controller.js";
 
 import { authenticate, authorize } from "../middleware/auth.middleware.js";
 
@@ -19,5 +20,6 @@ router.post("/login", login);
 router.post("/logout", logout);
 
 router.get("/me", authenticate, getMe);
+router.patch("/me", authenticate, authorize("STUDENT", "TEACHER"), updateProfileController);
 
 export default router;

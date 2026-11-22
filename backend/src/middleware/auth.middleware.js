@@ -26,6 +26,8 @@ export async function authenticate(req, res, next) {
                 id: true,
                 name: true,
                 email: true,
+                username: true,
+                profileImageUrl: true,
                 role: true,
             },
         });
@@ -38,6 +40,7 @@ export async function authenticate(req, res, next) {
         }
 
         req.user = user;
+        req.authExpiresAt = decoded.exp * 1000;
 
         next();
     } catch (error) {

@@ -11,7 +11,7 @@ function Login() {
                 duration: 0.45,
                 ease: "easeOut",
             }}
-            className="flex min-h-screen w-full items-center justify-center bg-[#f3f4f6]"
+            className="flex w-full items-center justify-center"
         >
             <Main />
         </motion.div>

@@ -79,7 +79,7 @@ function AdminLogin() {
                 duration: 0.45,
                 ease: "easeOut",
             }}
-            className="flex min-h-screen w-full items-center justify-center bg-white px-4 py-6 sm:px-6 md:px-8"
+            className="login-page-shell flex w-full items-center justify-center px-4 py-6 sm:px-6 md:px-8"
         >
             <motion.div
                 initial={{
@@ -97,7 +97,7 @@ function AdminLogin() {
                     delay: 0.08,
                     ease: "easeOut",
                 }}
-                className="w-full max-w-md rounded-xl bg-[#3F3F41] p-5 text-center text-white shadow-xl sm:p-7 md:max-w-lg md:p-8"
+                className="department-staff-login w-full max-w-md rounded-xl p-5 text-center shadow-xl sm:p-7 md:max-w-lg md:p-8"
             >
 
                 {/* Header */}
@@ -108,16 +108,16 @@ function AdminLogin() {
                 >
                     <motion.h1
                         variants={cardVariants}
-                        className="text-2xl font-bold text-blue-700 underline sm:text-3xl"
+                        className="font-caacupe text-3xl font-semibold sm:text-4xl"
                     >
-                        Admin Portal
+                        Staff sign in
                     </motion.h1>
 
                     <motion.h3
                         variants={cardVariants}
                         className="mt-1 text-sm opacity-60 sm:text-base"
                     >
-                        B.Voc SD Space
+                        Department of Software Development
                     </motion.h3>
                 </motion.div>
 
