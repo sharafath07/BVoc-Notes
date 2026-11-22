@@ -145,6 +145,7 @@ function AdminAddResource() {
 
         try {
             setIsSubmitting(true);
+            console.log(localStorage.getItem("token"));
 
             const response = await api.post(
                 `${backendUrl}/api/resources/`,
