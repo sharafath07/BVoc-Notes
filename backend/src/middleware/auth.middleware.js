@@ -39,6 +39,7 @@ export async function authenticate(req, res, next) {
         }
 
         req.user = user;
+        req.authExpiresAt = decoded.exp * 1000;
 
         next();
     } catch (error) {

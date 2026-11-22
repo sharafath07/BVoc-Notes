@@ -19,8 +19,34 @@ model User {
   resources      Resource[]
   studentProfile StudentProfile?
   teacherProfile TeacherProfile?
+  chatMessages   ChatMessage[]
+  chatRooms      ChatRoom[]
 
   @@index([role])
+}
+
+model ChatRoom {
+  id          String   @id @default(cuid())
+  name        String
+  audienceKey String
+  createdById String?
+  createdAt   DateTime @default(now())
+  createdBy   User?    @relation(fields: [createdById], references: [id], onDelete: SetNull)
+
+  @@unique([audienceKey, name])
+  @@index([createdById])
+}
+
+model ChatMessage {
+  id        String   @id @default(cuid())
+  roomKey   String
+  body      String
+  authorId  String?
+  createdAt DateTime @default(now())
+  author    User?    @relation(fields: [authorId], references: [id], onDelete: SetNull)
+
+  @@index([roomKey, createdAt, id])
+  @@index([authorId])
 }
 
 model StudentProfile {
