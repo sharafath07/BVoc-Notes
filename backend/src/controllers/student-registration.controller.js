@@ -1,7 +1,9 @@
 import { z } from "zod";
+import { usernameSchema } from "../validator/account.validator.js";
 
 import {
     registerStudent,
+    RegistrationConflictError,
 } from "../services/student-registration.service.js";
 
 const studentRegistrationSchema = z
@@ -16,6 +18,8 @@ const studentRegistrationSchema = z
             .string()
             .trim()
             .email("Please provide a valid email"),
+
+        username: usernameSchema,
 
         password: z
             .string()
@@ -72,11 +76,13 @@ export async function registerStudentController(
     next
 ) {
     try {
-        const data =
-            studentRegistrationSchema.parse(req.body);
+        const parsed = studentRegistrationSchema.safeParse(req.body);
+        if (!parsed.success) {
+            return res.status(400).json({ success: false, message: parsed.error.issues[0].message });
+        }
 
         const result =
-            await registerStudent(data);
+            await registerStudent(parsed.data);
 
         // Set authentication cookie
         res.cookie("accessToken", result.token, {
@@ -93,6 +99,16 @@ export async function registerStudentController(
             token: result.token,
         });
     } catch (error) {
+        if (error instanceof RegistrationConflictError) {
+            return res.status(409).json({ success: false, message: error.message });
+        }
+        if (error.code === "P2002") {
+            const constraint = error.meta?.driverAdapterError?.cause?.constraint;
+            const fields = error.meta?.target ?? constraint?.fields;
+            const usernameTaken = fields?.includes("username") || constraint?.index === "User_username_key";
+            const message = usernameTaken ? "That username is already taken." : "An account already uses these registration details.";
+            return res.status(409).json({ success: false, message });
+        }
         next(error);
     }
 }

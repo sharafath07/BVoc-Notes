@@ -6,9 +6,12 @@ import { env } from "../config/env.js";
 
 const SALT_ROUNDS = 12;
 
+export class RegistrationConflictError extends Error {}
+
 export async function registerStudent({
     name,
     email,
+    username,
     password,
     registerNumber,
     semester,
@@ -20,6 +23,7 @@ export async function registerStudent({
     const normalizedEmail = email
         .trim()
         .toLowerCase();
+    const normalizedUsername = username.trim().toLowerCase();
 
     const normalizedRegisterNumber = registerNumber
         .trim()
@@ -51,31 +55,15 @@ export async function registerStudent({
         );
     }
 
-    // Check email uniqueness
-    const existingUser = await prisma.user.findUnique({
-        where: {
-            email: normalizedEmail,
-        },
-    });
-
-    if (existingUser) {
-        throw new Error(
-            "An account with this email already exists"
-        );
-    }
-
-    // Check register number uniqueness
-    const existingStudentProfile =
-        await prisma.studentProfile.findUnique({
-            where: {
-                registerNumber: normalizedRegisterNumber,
-            },
-        });
-
+    const [existingUsername, existingEmail, existingStudentProfile] = await Promise.all([
+        prisma.user.findUnique({ where: { username: normalizedUsername }, select: { id: true } }),
+        prisma.user.findUnique({ where: { email: normalizedEmail }, select: { id: true } }),
+        prisma.studentProfile.findUnique({ where: { registerNumber: normalizedRegisterNumber }, select: { id: true } }),
+    ]);
+    if (existingUsername) throw new RegistrationConflictError("That username is already taken.");
+    if (existingEmail) throw new RegistrationConflictError("An account with this email already exists.");
     if (existingStudentProfile) {
-        throw new Error(
-            "This registration number is already registered"
-        );
+        throw new RegistrationConflictError("This registration number is already registered.");
     }
 
     // Hash password
@@ -91,6 +79,7 @@ export async function registerStudent({
                 data: {
                     name: normalizedName,
                     email: normalizedEmail,
+                    username: normalizedUsername,
                     passwordHash,
                     role: "STUDENT",
                 },
@@ -130,6 +119,7 @@ export async function registerStudent({
             id: user.id,
             name: user.name,
             email: user.email,
+            username: user.username,
             role: user.role,
             registerNumber: normalizedRegisterNumber,
         },

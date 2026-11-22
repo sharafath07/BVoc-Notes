@@ -7,14 +7,18 @@ import { motion, AnimatePresence } from 'motion/react';
 import api from '../../api/axios.js';
 
 function Main() {
-    const [isSignIn, setIsSignIn] = useState(true);
+    const [showSignUp, setShowSignUp] = useState(false);
     const [name, setName] = useState('');
     const [registerNumber, setRegisterNumber] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [email, setEmail] = useState('');
+    const [username, setUsername] = useState('');
+    const [identifier, setIdentifier] = useState('');
     const [password, setPassword] = useState('');
     const [semester, setSemester] = useState('');
     const [batch, setBatch] = useState('');
+    const [loginError, setLoginError] = useState('');
+    const [registrationError, setRegistrationError] = useState('');
 
     const { backendUrl, setToken, setUser, setIsLoading } = useContext(Context);
     const navigate = useNavigate();
@@ -31,13 +35,14 @@ function Main() {
 
     async function handleSignIn(e) {
         e.preventDefault();
+        setLoginError('');
 
         try {
             setIsLoading(true);
             const response = await api.post(
                 `${backendUrl}/api/auth/login`,
                 {
-                    email,
+                    identifier: identifier.trim(),
                     password
                 }
             );
@@ -61,7 +66,7 @@ function Main() {
         } catch (error) {
             console.error('Login failed:', error);
 
-            alert(
+            setLoginError(
                 error.response?.data?.message ||
                 'Login Failed'
             );
@@ -72,6 +77,7 @@ function Main() {
 
     async function handleSignUp(e) {
         e.preventDefault();
+        setRegistrationError('');
 
         try {
             setIsLoading(true);
@@ -80,6 +86,7 @@ function Main() {
                 {
                     name,
                     email,
+                    username: username.trim(),
                     password,
                     registerNumber,
                     semester:
@@ -109,7 +116,7 @@ function Main() {
         } catch (error) {
             console.error('SignUp Failed:', error);
 
-            alert(
+            setRegistrationError(
                 error.response?.data?.message ||
                 'SignUp failed'
             );
@@ -176,7 +183,7 @@ function Main() {
     return (
         <div className="login-page">
             <div
-                className={`my-auto login-container ${isSignIn ? 'right-panel-active' : ''
+                className={`my-auto login-container ${showSignUp ? 'right-panel-active' : ''
                     }`}
                 id="container"
             >
@@ -185,7 +192,7 @@ function Main() {
                     SIGN UP
                 ========================= */}
 
-                <div className="form-container sign-up-container">
+                <div className="form-container sign-up-container" inert={!showSignUp}>
                     <form
                         className="login-form"
                         onSubmit={handleSignUp}
@@ -207,7 +214,7 @@ function Main() {
                                 className="login-span"
                                 variants={formItemVariants}
                             >
-                                or use your email for registration
+                                Choose a username for your student account.
                             </motion.span>
 
                             <motion.input
@@ -238,6 +245,25 @@ function Main() {
                                 whileFocus={{
                                     scale: 1.01
                                 }}
+                            />
+
+                            <motion.input
+                                className="login-input"
+                                type="text"
+                                name="username"
+                                aria-label="Username"
+                                placeholder="Username"
+                                title="Use 3–24 letters, numbers, or underscores."
+                                autoComplete="username"
+                                autoCapitalize="none"
+                                spellCheck={false}
+                                minLength={3}
+                                maxLength={24}
+                                pattern="[A-Za-z0-9_]{3,24}"
+                                value={username}
+                                onChange={(e) => setUsername(e.target.value)}
+                                required
+                                variants={formItemVariants}
                             />
 
                             <motion.select
@@ -377,6 +403,7 @@ function Main() {
                                 </motion.button>
                             </motion.div>
 
+                            {registrationError && <p className="login-error" role="alert">{registrationError}</p>}
                             <motion.button
                                 type="submit"
                                 className="btn"
@@ -394,9 +421,7 @@ function Main() {
                             <motion.button
                                 type="button"
                                 className="mobile-switch"
-                                onClick={() =>
-                                    setIsSignIn(!isSignIn)
-                                }
+                                onClick={() => setShowSignUp(false)}
                                 variants={formItemVariants}
                                 whileTap={{
                                     scale: 0.97
@@ -414,7 +439,7 @@ function Main() {
                     SIGN IN
                 ========================= */}
 
-                <div className="form-container sign-in-container">
+                <div className="form-container sign-in-container" inert={showSignUp}>
                     <form
                         className="login-form"
                         onSubmit={handleSignIn}
@@ -436,16 +461,22 @@ function Main() {
                                 className="login-span"
                                 variants={formItemVariants}
                             >
-                                or use your account
+                                Use your username or email.
                             </motion.span>
 
                             <motion.input
                                 className="login-input"
-                                type="email"
-                                placeholder="Email"
-                                value={email}
+                                type="text"
+                                name="identifier"
+                                aria-label="Username or email"
+                                placeholder="Username or email"
+                                autoComplete="username"
+                                autoCapitalize="none"
+                                spellCheck={false}
+                                maxLength={254}
+                                value={identifier}
                                 onChange={(e) =>
-                                    setEmail(e.target.value)
+                                    setIdentifier(e.target.value)
                                 }
                                 required
                                 variants={formItemVariants}
@@ -522,6 +553,7 @@ function Main() {
                                 </motion.button>
                             </motion.div>
 
+                            {loginError && <p className="login-error" role="alert">{loginError}</p>}
                             <motion.button
                                 type="submit"
                                 className="btn"
@@ -539,9 +571,7 @@ function Main() {
                             <motion.button
                                 type="button"
                                 className="mobile-switch"
-                                onClick={() =>
-                                    setIsSignIn(!isSignIn)
-                                }
+                                onClick={() => setShowSignUp(true)}
                                 variants={formItemVariants}
                                 whileTap={{
                                     scale: 0.97
@@ -564,7 +594,7 @@ function Main() {
 
                         {/* LEFT */}
 
-                        <div className="overlay-panel overlay-left">
+                        <div className="overlay-panel overlay-left" inert={!showSignUp}>
                             <motion.div
                                 className="flex flex-col items-center"
                                 variants={overlayVariants}
@@ -589,9 +619,7 @@ function Main() {
                                 <motion.button
                                     type="button"
                                     className="btn ghost"
-                                    onClick={() =>
-                                        setIsSignIn(!isSignIn)
-                                    }
+                                    onClick={() => setShowSignUp(false)}
                                     variants={formItemVariants}
                                     whileHover={{
                                         scale: 1.04
@@ -608,7 +636,7 @@ function Main() {
 
                         {/* RIGHT */}
 
-                        <div className="overlay-panel overlay-right">
+                        <div className="overlay-panel overlay-right" inert={showSignUp}>
                             <motion.div
                                 className="flex flex-col items-center"
                                 variants={overlayVariants}
@@ -632,9 +660,7 @@ function Main() {
 
                                 <motion.button
                                     type="button"
-                                    onClick={() =>
-                                        setIsSignIn(!isSignIn)
-                                    }
+                                    onClick={() => setShowSignUp(true)}
                                     className="btn ghost"
                                     variants={formItemVariants}
                                     whileHover={{
