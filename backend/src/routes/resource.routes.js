@@ -32,7 +32,7 @@ router.get(
 
 router.post(
     "/",
-    // authenticate,
+    authenticate,
     authorize("ADMIN", "TEACHER"),
     createResourceController
 );
