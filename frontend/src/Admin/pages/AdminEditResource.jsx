@@ -35,7 +35,6 @@ function AdminEditResource() {
         program = [],
         semesters = [],
         subjects = [],
-        resources,
         setResources,
         isDark,
     } = useContext(Context);
@@ -59,54 +58,36 @@ function AdminEditResource() {
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
 
-    /*
-     * Find resource from Context
-     */
-    const resource = useMemo(() => {
-        return resources?.find(
-            (resource) => resource.id === id
-        );
-    }, [resources, id]);
+    const [resource, setResource] = useState(null);
+    const [loadError, setLoadError] = useState("");
 
-    /*
-     * Load resource into form
-     */
     useEffect(() => {
-        if (!id || !resources) {
-            return;
-        }
-
-        if (!resource) {
-            setLoading(false);
-            return;
-        }
-
-        const resourceProgramId =
-            resource.subject?.semester?.programId ||
-            resource.subject?.semester?.program?.id ||
-            "";
-
-        const resourceSemesterId =
-            resource.subject?.semester?.id || "";
-
-        const resourceSubjectId =
-            resource.subjectId ||
-            resource.subject?.id ||
-            "";
-
-        setTitle(resource.title || "");
-        setDescription(resource.description || "");
-
-        setSelectedProgram(resourceProgramId);
-        setSelectedSemester(resourceSemesterId);
-
-        setSubject(resourceSubjectId);
-
-        setType(resource.type || "");
-        setFileUrl(resource.fileUrl || "");
-
-        setLoading(false);
-    }, [id, resources, resource]);
+        const controller = new AbortController();
+        setLoading(true);
+        setLoadError("");
+        api.get(`${backendUrl}/api/resources/${encodeURIComponent(id)}`, { signal: controller.signal })
+            .then(({ data }) => {
+                if (controller.signal.aborted) return;
+                const { resource } = data;
+                setResource(resource);
+                setTitle(resource.title || "");
+                setDescription(resource.description || "");
+                setSelectedProgram(resource.subject?.semester?.programId || "");
+                setSelectedSemester(resource.subject?.semester?.id || "");
+                setSubject(resource.subjectId || "");
+                setType(resource.type || "");
+                setFileUrl(resource.fileUrl || "");
+            })
+            .catch((error) => {
+                if (controller.signal.aborted) return;
+                setResource(null);
+                setLoadError(error.response?.data?.message || "Could not load this resource.");
+            })
+            .finally(() => {
+                if (!controller.signal.aborted) setLoading(false);
+            });
+        return () => controller.abort();
+    }, [backendUrl, id]);
 
     /*
      * Semesters belonging to selected program
@@ -351,7 +332,7 @@ function AdminEditResource() {
                         animate="visible"
                         className="text-2xl font-bold sm:text-3xl"
                     >
-                        Resource not found
+                        {loadError}
                     </motion.h1>
 
                     <motion.div

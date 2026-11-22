@@ -21,6 +21,8 @@ function ResourceCard({
     isDark,
     onBack,
     resourcesLoading,
+    resourcesError,
+    onRetry,
 }) {
     const getDriveFileId = (url) => {
         const match = url?.match(/\/d\/([^/]+)/);
@@ -57,7 +59,10 @@ function ResourceCard({
         if (type === "NOTES") return "Notes";
         if (type === "SYLLABUS") return "Syllabus";
         if (type === "PYQ") return "Previous Year Questions";
-
+        if (type === "QUESTION_BANK") return "Question Bank";
+        if (type === "LAB") return "Lab";
+        if (type === "ASSIGNMENT") return "Assignments";
+        if (type === "STUDY_MATERIAL") return "Study Material";
         return type;
     };
 
@@ -133,6 +138,13 @@ function ResourceCard({
                             Loading resources...
                         </p>
                     </motion.div>
+                ) : resourcesError ? (
+                    <div key="error" role="alert" className="rounded-2xl border border-gray-400/30 p-8 text-center">
+                        <p>{resourcesError}</p>
+                        <button type="button" onClick={onRetry} className="mt-3 text-sm font-semibold underline">
+                            Try again
+                        </button>
+                    </div>
                 ) : resources.length === 0 ? (
                     <motion.div
                         key="empty"

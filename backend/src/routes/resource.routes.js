@@ -3,6 +3,7 @@ import express from "express";
 import {
     createResourceController,
     getResourcesController,
+    getResourceAvailabilityController,
     getResourceController,
     updateResourceController,
     deleteResourceController,
@@ -14,6 +15,8 @@ import {
 } from "../middleware/auth.middleware.js";
 
 const router = express.Router();
+
+router.get("/availability", getResourceAvailabilityController);
 
 router.get(
     "/",

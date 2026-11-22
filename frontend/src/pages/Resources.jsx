@@ -7,6 +7,7 @@ import React, {
 import { motion, AnimatePresence } from "motion/react";
 
 import { Context } from "../Context/Context";
+import { getResourceAvailability, getResourceCards } from "../Context/Resource";
 
 import ProgramBox from "../components/Resources/ProgramBox";
 import SemesterBox from "../components/Resources/SemesterBox";
@@ -14,68 +15,68 @@ import SubjectBox from "../components/Resources/SubjectBox";
 import ResourceTypeBox from "../components/Resources/ResourceTypeBox";
 import ResourceCard from "../components/Resources/ResourceCard";
 
-import {
-    cardVariants,
-    containerVariants,
-} from "../animations";
-
 function Resource() {
-    const {
-        isDark,
-        resources = [],
-        semesters = [],
-        subjects = [],
-        program = [],
-        fetchResources,
-        resourcesLoading,
-    } = useContext(Context);
+    const { isDark, backendUrl } = useContext(Context);
 
+    const [availability, setAvailability] = useState(null);
+    const [availabilityError, setAvailabilityError] = useState("");
+    const [availabilityAttempt, setAvailabilityAttempt] = useState(0);
     const [selectedProgram, setSelectedProgram] = useState(null);
     const [selectedSemester, setSelectedSemester] = useState(null);
     const [selectedSubject, setSelectedSubject] = useState(null);
     const [selectedType, setSelectedType] = useState(null);
+    const [result, setResult] = useState(null);
+    const [attempt, setAttempt] = useState(0);
+    const subjectId = selectedSubject?.id;
+    const requestKey = `${subjectId}:${selectedType}:${attempt}`;
+    const activeResult = result?.key === requestKey ? result : null;
 
     useEffect(() => {
-        fetchResources().catch(() => {
-            console.log(
-                "Failed to fetch resources:",
-                error
-            );
-        });
-    }, [fetchResources]);
+        const controller = new AbortController();
+        getResourceAvailability(backendUrl, controller.signal)
+            .then((rows) => {
+                if (!controller.signal.aborted) setAvailability(rows);
+            })
+            .catch(() => {
+                if (!controller.signal.aborted) setAvailabilityError("Resource options could not be loaded.");
+            });
+        return () => controller.abort();
+    }, [backendUrl, availabilityAttempt]);
 
+    useEffect(() => {
+        if (!subjectId || !selectedType) return;
+        const controller = new AbortController();
+        getResourceCards(backendUrl, subjectId, selectedType, controller.signal)
+            .then((resources) => {
+                if (!controller.signal.aborted) setResult({ key: requestKey, resources });
+            })
+            .catch((error) => {
+                if (!controller.signal.aborted) {
+                    setResult({
+                        key: requestKey,
+                        error: error.response?.data?.message || "Resources could not be loaded.",
+                    });
+                }
+            });
+        return () => controller.abort();
+    }, [backendUrl, subjectId, selectedType, requestKey]);
+
+
+    const programs = useMemo(() => [...new Map((availability ?? []).map(({ programId, programName }) =>
+        [programId, { id: programId, name: programName }]
+    )).values()], [availability]);
 
     const programSemesters = useMemo(() => {
-        if (!selectedProgram) return [];
+        const rows = (availability ?? []).filter(({ programId }) => programId === selectedProgram?.id);
+        return [...new Map(rows.map(({ semesterId, semesterNumber }) =>
+            [semesterId, { id: semesterId, number: semesterNumber }]
+        )).values()];
+    }, [availability, selectedProgram]);
 
-        return semesters.filter(
-            (semester) =>
-                semester.programId === selectedProgram.id
-        );
-    }, [selectedProgram, semesters]);
-
-    const semesterSubjects = useMemo(() => {
-        if (!selectedSemester) return [];
-
-        return subjects.filter(
-            (subject) =>
-                subject.semesterId === selectedSemester.id
-        );
-    }, [selectedSemester, subjects]);
-
-    const subjectResources = useMemo(() => {
-        if (!selectedSubject || !selectedType) return [];
-
-        return resources.filter(
-            (resource) =>
-                resource.subjectId === selectedSubject.id &&
-                resource.type === selectedType
-        );
-    }, [
-        selectedSubject,
-        selectedType,
-        resources,
-    ]);
+    const semesterSubjects = useMemo(() => (availability ?? [])
+        .filter(({ semesterId }) => semesterId === selectedSemester?.id)
+        .map(({ subjectId, subjectName, types }) => ({ id: subjectId, name: subjectName, types })),
+    [availability, selectedSemester]);
 
     const handleProgramSelect = (program) => {
         setSelectedProgram(program);
@@ -96,6 +97,7 @@ function Resource() {
     };
 
     const handleTypeSelect = (type) => {
+        setAttempt((current) => current + 1);
         setSelectedType(type);
     };
 
@@ -129,43 +131,7 @@ function Resource() {
                 }`}
         >
             <div className="mx-auto w-full max-w-7xl">
-
-                {/* Header */}
-                <motion.div
-                    className="mb-8 sm:mb-12"
-                    variants={containerVariants}
-                    initial="hidden"
-                    animate="visible"
-                >
-                    <motion.p
-                        variants={cardVariants}
-                        className={`mb-2 text-xs font-semibold uppercase tracking-[0.15em] sm:mb-3 sm:text-sm sm:tracking-[0.2em] ${isDark
-                            ? "text-gray-500"
-                            : "text-gray-400"
-                            }`}
-                    >
-                        Learning Materials
-                    </motion.p>
-
-                    <motion.h1
-                        variants={cardVariants}
-                        className="text-3xl font-bold sm:text-4xl md:text-5xl"
-                    >
-                        Resources
-                    </motion.h1>
-
-                    <motion.p
-                        variants={cardVariants}
-                        className={`mt-3 max-w-2xl text-sm leading-6 sm:mt-4 sm:text-base sm:leading-7 ${isDark
-                            ? "text-gray-400"
-                            : "text-gray-600"
-                            }`}
-                    >
-                        Select your semester, subject, and resource
-                        type to find the study materials you need.
-                    </motion.p>
-                </motion.div>
-
+                <h1 className="mb-6 text-3xl font-bold sm:text-4xl">Academic resources</h1>
 
                 {/* Breadcrumb */}
                 <AnimatePresence mode="wait">
@@ -284,11 +250,23 @@ function Resource() {
                                     ease: "easeOut",
                                 }}
                             >
-                                <ProgramBox
-                                    programs={program}
-                                    isDark={isDark}
-                                    onSelect={handleProgramSelect}
-                                />
+                                {availabilityError ? (
+                                    <div role="alert" className="py-8 text-center">
+                                        <p>{availabilityError}</p>
+                                        <button type="button" className="mt-3 font-semibold underline" onClick={() => {
+                                            setAvailabilityError("");
+                                            setAvailabilityAttempt((current) => current + 1);
+                                        }}>
+                                            Try again
+                                        </button>
+                                    </div>
+                                ) : !availability || !programs.length ? (
+                                    <p role="status" className="py-8 text-center">
+                                        {availability ? "No resources have been published yet." : "Loading resource options…"}
+                                    </p>
+                                ) : (
+                                    <ProgramBox programs={programs} isDark={isDark} onSelect={handleProgramSelect} />
+                                )}
                             </motion.div>
                         )}
 
@@ -410,13 +388,15 @@ function Resource() {
                                 }}
                             >
                                 <ResourceCard
-                                    resources={subjectResources}
+                                    resources={activeResult?.resources ?? []}
                                     type={selectedType}
                                     subject={selectedSubject}
                                     semester={selectedSemester}
                                     isDark={isDark}
                                     onBack={resetType}
-                                    resourcesLoading={resourcesLoading}
+                                    resourcesLoading={!activeResult}
+                                    resourcesError={activeResult?.error}
+                                    onRetry={() => setAttempt((current) => current + 1)}
                                 />
                             </motion.div>
                         )}

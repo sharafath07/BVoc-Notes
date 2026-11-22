@@ -4,6 +4,7 @@ import {
     FileText,
     ClipboardList,
     ArrowLeft,
+    FlaskConical,
 } from "lucide-react";
 import { motion } from "motion/react";
 import {
@@ -36,6 +37,30 @@ function ResourceTypeBox({
             title: "Previous Year Questions",
             description: "Previous year question papers",
             icon: ClipboardList,
+        },
+        {
+            type: "QUESTION_BANK",
+            title: "Question Bank",
+            description: "Practice questions for revision",
+            icon: ClipboardList,
+        },
+        {
+            type: "LAB",
+            title: "Lab",
+            description: "Practical exercises and lab guides",
+            icon: FlaskConical,
+        },
+        {
+            type: "ASSIGNMENT",
+            title: "Assignments",
+            description: "Coursework and assignment briefs",
+            icon: ClipboardList,
+        },
+        {
+            type: "STUDY_MATERIAL",
+            title: "Study Material",
+            description: "Additional readings and reference material",
+            icon: BookOpen,
         },
     ];
 
@@ -99,7 +124,7 @@ function ResourceTypeBox({
                 initial="hidden"
                 animate="visible"
             >
-                {resourceTypes.map((item) => {
+                {resourceTypes.filter(({ type }) => subject.types.includes(type)).map((item) => {
                     const Icon = item.icon;
 
                     return (

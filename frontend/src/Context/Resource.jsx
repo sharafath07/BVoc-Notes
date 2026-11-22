@@ -1,20 +1,22 @@
 import api from "../api/axios.js"
+import axios from "axios";
 
 async function getResources(backendUrl) {
+    const { data } = await api.get(`${backendUrl}/api/resources`);
+    return data.resources;
+}
 
-    try {
-        const response = await api.get(`${backendUrl}/api/resources`)
+export async function getResourceAvailability(backendUrl, signal) {
+    const { data } = await axios.get(`${backendUrl}/api/resources/availability`, { signal });
+    return data.availability;
+}
 
-        if (response.data.success) {
-            return (response.data.resources);
-        }
-    } catch (error) {
-        console.error("Get Resources:", error)
-
-        alert(
-            error.response?.data?.message || "Get Resources failed"
-        )
-    }
+export async function getResourceCards(backendUrl, subjectId, type, signal) {
+    const { data } = await axios.get(`${backendUrl}/api/resources`, {
+        params: { subjectId, type, view: "cards" },
+        signal,
+    });
+    return data.resources;
 }
 
 export default getResources;
