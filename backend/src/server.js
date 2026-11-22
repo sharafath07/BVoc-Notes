@@ -11,6 +11,7 @@ import subjectRoutes from './routes/subject.routes.js'
 import userRoutes from './routes/user.routes.js'
 import programRoutes from "./routes/program.routes.js";
 import teacherRoutes from "./routes/teacher.routes.js";
+import { startSemesterProgression } from "./services/semester-progression.service.js";
 
 const app = express();
 
@@ -44,4 +45,5 @@ app.use("/api/teachers", teacherRoutes);
 
 app.listen(env.PORT, () => {
     console.log(`API running on http://localhost:${env.PORT}`);
+    startSemesterProgression();
 });

@@ -23,14 +23,15 @@ model User {
 }
 
 model StudentProfile {
-  id             String        @id @default(cuid())
-  userId         String        @unique
-  registerNumber String        @unique
-  batch          String?
-  semester       Int?
-  status         StudentStatus @default(ACTIVE)
+  id                   String        @id @default(cuid())
+  userId               String        @unique
+  registerNumber       String        @unique
+  batch                String?
+  semester             Int?
+  status               StudentStatus @default(ACTIVE)
+  semesterProgressedAt DateTime      @default(now()) @db.Timestamptz(3)
 
-  user           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user                 User          @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model TeacherProfile {

@@ -13,6 +13,7 @@ export async function getAllUsers() {
                 select: {
                     registerNumber: true,
                     semester: true,
+                    status: true,
                     batch: true,
                 },
             },

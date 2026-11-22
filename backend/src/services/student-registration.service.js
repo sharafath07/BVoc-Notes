@@ -13,6 +13,7 @@ export async function registerStudent({
     registerNumber,
     semester,
     batch,
+    status,
 }) {
     const normalizedName = name.trim();
 
@@ -26,13 +27,14 @@ export async function registerStudent({
 
     const normalizedBatch = String(batch).trim();
 
-    const normalizedSemester = Number(semester);
+    const normalizedSemester = status === "ALUMNI" ? null : Number(semester);
 
     // Validate semester
     if (
-        !Number.isInteger(normalizedSemester) ||
-        normalizedSemester < 1 ||
-        normalizedSemester > 8
+        status !== "ALUMNI" &&
+        (!Number.isInteger(normalizedSemester) ||
+            normalizedSemester < 1 ||
+            normalizedSemester > 8)
     ) {
         throw new Error("Invalid semester");
     }
@@ -101,6 +103,7 @@ export async function registerStudent({
                         normalizedRegisterNumber,
                     batch: normalizedBatch,
                     semester: normalizedSemester,
+                    status,
                 },
             });
 
