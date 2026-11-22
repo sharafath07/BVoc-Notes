@@ -100,6 +100,12 @@ button:disabled { cursor: not-allowed; }
 .department-staff-link:hover { text-decoration: underline; }
 .department-icon { display: inline-grid; place-items: center; width: 2.65rem; height: 2.65rem; border: 1px solid var(--line); border-radius: .5rem; }
 .department-icon:hover { background: var(--tint); }
+.department-account-menu { position: relative; }
+.department-account-toggle { display: flex; width: auto; gap: .38rem; padding-inline: .4rem; cursor: pointer; list-style: none; }
+.department-account-toggle::-webkit-details-marker { display: none; }
+.department-account-options { position: absolute; z-index: 2; right: 0; top: calc(100% + .4rem); min-width: 9.5rem; padding: .3rem; background: var(--surface); border: 1px solid var(--line); border-radius: .55rem; box-shadow: 0 8px 24px var(--shadow-raised); }
+.department-account-options > * { display: block; width: 100%; padding: .6rem .75rem; text-align: left; font-size: .9rem; border-radius: .35rem; }
+.department-account-options > :hover { background: var(--tint); }
 .department-menu-toggle { display: none; }
 .department-nav-error { position: absolute; top: calc(100% + .4rem); right: 0; width: max-content; max-width: min(20rem, 85vw); padding: .6rem .8rem; background: var(--surface); border: 1px solid var(--line); border-radius: .4rem; }
 .department-button {
@@ -256,6 +262,18 @@ button:disabled { cursor: not-allowed; }
 .department-form input, .department-form textarea { border: 1px solid var(--line); border-radius: .45rem; padding: .7rem .8rem; background: var(--page); width: 100%; min-width: 0; font-size: 1rem; font-weight: 400; }
 .department-form textarea { resize: vertical; }
 .department-form button { justify-self: start; }
+.profile-avatar { display: inline-grid; flex: 0 0 auto; width: 1.8rem; height: 1.8rem; place-items: center; overflow: hidden; border-radius: 100%; background: var(--tint); color: var(--accent-ink); font-size: .7rem; font-weight: 700; line-height: 1; }
+.profile-avatar img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.profile-avatar-large { width: 4rem; height: 4rem; font-size: 1.45rem; }
+.profile-layout { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; align-items: start; }
+.profile-layout h2 { font-size: 1.3rem; font-weight: 700; overflow-wrap: anywhere; }
+.profile-identity { display: flex; gap: .75rem; align-items: center; }
+.profile-identity p { margin-top: .15rem; }
+.department-card .profile-error { color: #b42318; }
+.department-dark .department-card .profile-error { color: #ffac9e; }
+.department-card .profile-success { color: var(--accent-ink); }
+.department-profile-link { display: inline-flex; align-items: center; gap: .5rem; color: var(--accent-ink); font-size: .9rem; font-weight: 700; }
+.department-profile-link:hover { text-decoration: underline; }
 
 .department-footer { background: var(--inverse); color: var(--on-inverse); padding-block: 2.5rem 1rem; }
 .department-footer .department-mark { color: var(--on-inverse); background: var(--accent); }
@@ -311,6 +329,7 @@ button:disabled { cursor: not-allowed; }
     .department-navigation nav a { padding: .8rem .6rem; }
     .department-nav-actions { padding-top: .55rem; border-top: 1px solid var(--line); }
     .department-nav-error { position: static; }
+    .department-account-options { position: static; margin-top: .4rem; box-shadow: none; }
 }
 @keyframes department-menu-in { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
 
@@ -330,6 +349,7 @@ button:disabled { cursor: not-allowed; }
     .department-container { width: calc(100% - 2rem); }
     .department-navigation { padding-inline: 1rem; }
     .department-hero-grid, .department-programme-grid, .department-article-grid, .department-contact-grid, .department-directory { grid-template-columns: minmax(0, 1fr); }
+    .profile-layout { grid-template-columns: minmax(0, 1fr); }
     .department-hero-grid { gap: 1.7rem; }
     .department-campus img { aspect-ratio: 1.6; }
     .faculty-directory-grid, .faculty-card-lead { grid-template-columns: minmax(0, 1fr); }

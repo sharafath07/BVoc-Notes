@@ -120,6 +120,7 @@ export async function registerStudent({
             name: user.name,
             email: user.email,
             username: user.username,
+            profileImageUrl: user.profileImageUrl,
             role: user.role,
             registerNumber: normalizedRegisterNumber,
         },

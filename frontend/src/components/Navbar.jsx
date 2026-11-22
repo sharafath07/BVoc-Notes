@@ -1,8 +1,9 @@
 import { useContext, useEffect, useRef, useState } from "react";
-import { CodeXml, Menu, Moon, Sun, X } from "lucide-react";
+import { CodeXml, Menu, Moon, Settings, Sun, X } from "lucide-react";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { Context } from "../Context/Context";
 import api from "../api/axios";
+import ProfileAvatar from "./ProfileAvatar";
 
 const publicLinks = [
     ["Home", "/"], ["About", "/about"], ["Faculty", "/faculty"],
@@ -20,12 +21,14 @@ export default function Navbar({ staff = false }) {
     const [signingOut, setSigningOut] = useState(false);
     const [error, setError] = useState("");
     const menuToggle = useRef(null);
+    const accountMenu = useRef(null);
     const location = useLocation();
     const navigate = useNavigate();
 
     useEffect(() => {
         setOpen(false);
         setError("");
+        if (accountMenu.current) accountMenu.current.open = false;
     }, [location.pathname]);
 
     async function signOut() {
@@ -37,6 +40,7 @@ export default function Navbar({ staff = false }) {
             setToken(null);
             setUser(null);
             setOpen(false);
+            if (accountMenu.current) accountMenu.current.open = false;
             navigate("/");
         } catch (err) {
             setError(err.response?.data?.message || "Could not sign out. Try again.");
@@ -48,7 +52,10 @@ export default function Navbar({ staff = false }) {
     return (
         <header className="department-header" onKeyDown={(event) => {
             if (event.key !== "Escape") return;
-            if (open) {
+            if (accountMenu.current?.open) {
+                accountMenu.current.open = false;
+                accountMenu.current.querySelector("summary")?.focus();
+            } else if (open) {
                 setOpen(false);
                 menuToggle.current?.focus();
             }
@@ -77,7 +84,21 @@ export default function Navbar({ staff = false }) {
                         <button type="button" className="department-icon" aria-label={isDark ? "Use light theme" : "Use dark theme"} onClick={() => setIsDark(!isDark)}>
                             {isDark ? <Sun size={18} /> : <Moon size={18} />}
                         </button>
-                        {token ? (
+                        {token && ["STUDENT", "TEACHER"].includes(user?.role) ? (
+                            <details ref={accountMenu} className="department-account-menu">
+                                <summary className="department-icon department-account-toggle" aria-label="Account settings">
+                                    <ProfileAvatar user={user} />
+                                    <Settings size={16} aria-hidden="true" />
+                                </summary>
+                                <div className="department-account-options">
+                                    <Link to="/profile" onClick={() => {
+                                        accountMenu.current.open = false;
+                                        setOpen(false);
+                                    }}>Profile</Link>
+                                    <button type="button" onClick={signOut} disabled={signingOut}>{signingOut ? "Signing out…" : "Sign out"}</button>
+                                </div>
+                            </details>
+                        ) : token ? (
                             <button type="button" className="department-button" onClick={signOut} disabled={signingOut}>{signingOut ? "Signing out…" : "Sign out"}</button>
                         ) : (
                             <Link to={staff ? "/admin/login" : "/login"} className="department-button" onClick={() => setOpen(false)}>Sign in</Link>

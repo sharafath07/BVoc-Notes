@@ -125,7 +125,7 @@ const publicMessage = {
     id: true,
     body: true,
     createdAt: true,
-    author: { select: { id: true, name: true } },
+    author: { select: { id: true, name: true, profileImageUrl: true } },
 };
 
 export async function getChatMessages(roomKey) {

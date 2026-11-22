@@ -1,6 +1,8 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import { Hash, Send, Trash2 } from "lucide-react";
 import { DepartmentHeading } from "../components/DepartmentPage";
+import ProfileAvatar from "../components/ProfileAvatar";
+import { Link } from "react-router-dom";
 import { Context } from "../Context/Context";
 import api from "../api/axios";
 
@@ -158,6 +160,7 @@ function ChatRoom({ room, chatUrl, token, userId, isDark, canModerate }) {
                     return (
                         <article key={message.id} className={`max-w-[90%] sm:max-w-[75%] ${own ? "self-end" : "self-start"}`}>
                             <div className={`mb-1 flex flex-wrap items-center gap-x-2 text-xs ${muted} ${own ? "justify-end" : ""}`}>
+                                <ProfileAvatar user={message.author} />
                                 <span className="font-semibold">{own ? "You" : message.author?.name || "Former member"}</span>
                                 <time dateTime={message.createdAt}>{timeFormat.format(new Date(message.createdAt))}</time>
                                 {canModerate && (
@@ -275,6 +278,12 @@ export default function Chat() {
         <DepartmentHeading title="Community chat" description="Talk with your batch, teachers and the alumni community." />
         <main className={`min-h-screen px-4 pb-12 pt-24 font-roboto sm:px-6 ${isDark ? "bg-gray-950 text-gray-100" : "bg-gray-50 text-gray-900"}`}>
             <div className="mx-auto max-w-6xl">
+                {!canModerate && (
+                    <Link to="/profile" className="department-profile-link mb-4">
+                        <ProfileAvatar user={user} />
+                        Edit profile
+                    </Link>
+                )}
                 {canCreate && showCreate && (
                     <form onSubmit={handleCreateRoom} className={`mb-4 flex flex-wrap items-end gap-3 rounded-xl border p-4 ${border}`}>
                         <label className="flex min-w-40 flex-1 flex-col gap-1 text-sm">

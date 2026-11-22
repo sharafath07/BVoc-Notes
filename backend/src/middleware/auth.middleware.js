@@ -27,6 +27,7 @@ export async function authenticate(req, res, next) {
                 name: true,
                 email: true,
                 username: true,
+                profileImageUrl: true,
                 role: true,
             },
         });

@@ -50,6 +50,7 @@ export async function loginUser(identifier, password) {
             name: user.name,
             email: user.email,
             username: user.username,
+            profileImageUrl: user.profileImageUrl,
             role: user.role,
         },
     };

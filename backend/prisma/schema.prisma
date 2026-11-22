@@ -11,6 +11,7 @@ model User {
   name           String
   email          String          @unique
   username       String?         @unique
+  profileImageUrl String?
   passwordHash   String
   role           UserRole
   createdAt      DateTime        @default(now())

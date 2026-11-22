@@ -17,6 +17,7 @@ const Contact = lazy(() => import('./pages/Contact'));
 const Faculty = lazy(() => import('./pages/Faculty'));
 const Chat = lazy(() => import('./pages/Chat'));
 const Login = lazy(() => import('./pages/Login'));
+const Profile = lazy(() => import('./pages/Profile'));
 const AdminDashboard = lazy(() => import('./Admin/pages/AdminDashboard'));
 const AdminLogin = lazy(() => import('./Admin/pages/AdminLogin'));
 const AdminStudents = lazy(() => import('./Admin/pages/AdminStudents'));
@@ -55,6 +56,7 @@ function App() {
         <Route path="/resources" element={<Resources />} />
         <Route path="/chat" element={<ProtectedRoute allowedRoles={["STUDENT", "ADMIN", "TEACHER"]}><Chat /></ProtectedRoute>} />
         <Route path="/login" element={<Login />} />
+        <Route path="/profile" element={<ProtectedRoute allowedRoles={["STUDENT", "TEACHER"]}><Profile /></ProtectedRoute>} />
 
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="/admin/dashboard" element={<ProtectedRoute allowedRoles={["ADMIN", "TEACHER"]} toUrl="/admin/login"  ><AdminDashboard /></ProtectedRoute>} />
