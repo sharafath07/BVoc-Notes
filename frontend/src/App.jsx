@@ -1,50 +1,52 @@
-import React, { useContext } from 'react'
+import React, { lazy, Suspense, useContext, useEffect } from 'react'
 import { Routes, Route, useLocation } from 'react-router-dom'
+import { MotionConfig } from 'motion/react'
 
 import Loading from './components/Loading'
 import { Context } from './Context/Context'
 
 import Navbar from './components/Navbar'
 import Home from './pages/Home'
-import About from './pages/About';
-import Resources from './pages/Resources';
-import Contact from './pages/Contact'
-import Faculty from './pages/Faculty'
 import Footer from "./components/Footer"
-import Chat from './pages/Chat';
-import Login from './pages/Login';
-
-import AdminDashboard from './Admin/pages/AdminDashboard';
-import AdminLogin from './Admin/pages/AdminLogin';
-import AdminNavbar from './Admin/components/AdminNavbar';
-import AdminStudents from './Admin/pages/AdminStudents';
-import AdminFaculties from './Admin/pages/AdminFaculties';
-import AdminResources from './Admin/pages/AdminResources';
-import AdminAddFaculties from "./Admin/pages/AdminAddFaculties";
 
 import ProtectedRoute from './components/ProtectedRoute';
-import AdminAddResources from './Admin/pages/AdminAddResource';
-import AdminEditResource from './Admin/pages/AdminEditResource';
-import AdminSubjects from './Admin/pages/AdminSubjects';
-import AdminAddSubject from './Admin/pages/AdminAddSubject';
+
+const About = lazy(() => import('./pages/About'));
+const Resources = lazy(() => import('./pages/Resources'));
+const Contact = lazy(() => import('./pages/Contact'));
+const Faculty = lazy(() => import('./pages/Faculty'));
+const Chat = lazy(() => import('./pages/Chat'));
+const Login = lazy(() => import('./pages/Login'));
+const AdminDashboard = lazy(() => import('./Admin/pages/AdminDashboard'));
+const AdminLogin = lazy(() => import('./Admin/pages/AdminLogin'));
+const AdminStudents = lazy(() => import('./Admin/pages/AdminStudents'));
+const AdminFaculties = lazy(() => import('./Admin/pages/AdminFaculties'));
+const AdminResources = lazy(() => import('./Admin/pages/AdminResources'));
+const AdminAddFaculties = lazy(() => import('./Admin/pages/AdminAddFaculties'));
+const AdminAddResources = lazy(() => import('./Admin/pages/AdminAddResource'));
+const AdminEditResource = lazy(() => import('./Admin/pages/AdminEditResource'));
+const AdminSubjects = lazy(() => import('./Admin/pages/AdminSubjects'));
+const AdminAddSubject = lazy(() => import('./Admin/pages/AdminAddSubject'));
 
 function App() {
-  const { isLoading } = useContext(Context);
-  const location = useLocation();
+  const { isDark, isLoading } = useContext(Context);
+  const { pathname } = useLocation();
+  const login = pathname === "/login" || pathname === "/admin/login";
+  const staff = pathname.startsWith("/admin/dashboard");
+  const workspace = staff || pathname === "/resources" || pathname === "/chat";
 
-  const hideNavbarRoutes = [
-    "/admin/login",
-    "/login"
-  ];
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "instant" });
+  }, [pathname]);
 
   return (
-    <>
-      {
-        !hideNavbarRoutes.includes(
-          location.pathname
-        ) ? (!location.pathname.startsWith('/admin') ? <Navbar /> : <AdminNavbar />) : <></>
-      }
+    <MotionConfig reducedMotion="user">
+    <div className={`department-site ${isDark ? "department-dark" : ""}`}>
+      <a href="#route-content" className="department-skip">Skip to content</a>
+      <Navbar staff={staff} />
       {isLoading && <Loading />}
+      <div id="route-content" tabIndex={-1} className={`department-route ${workspace ? "department-workspace" : ""} ${login ? "department-auth" : ""}`}>
+      <Suspense fallback={<p className="department-container department-route-loading" role="status">Loading page…</p>}>
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
@@ -66,8 +68,11 @@ function App() {
         <Route path="/admin/dashboard/faculties/register" element={<ProtectedRoute allowedRoles={["ADMIN"]} toUrl="/admin/login"  ><AdminAddFaculties /></ProtectedRoute>} />
 
       </Routes>
-      {!hideNavbarRoutes.includes(location.pathname) && <Footer />}
-    </>
+      </Suspense>
+      </div>
+      {!login && <Footer />}
+    </div>
+    </MotionConfig>
   )
 }
 

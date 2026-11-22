@@ -382,7 +382,7 @@ function AdminStudents() {
                         }`}
                 >
                     <div className="overflow-x-auto">
-                        <table className="w-full min-w-[760px] text-left">
+                        <table className="department-mobile-table w-full min-w-[760px] text-left" aria-label="Students">
                             {/* Table Header */}
                             <thead
                                 className={
@@ -510,6 +510,7 @@ function AdminStudents() {
                                                     >
                                                         {/* Register Number */}
                                                         <td
+                                                            data-label="Register number"
                                                             className={`whitespace-nowrap px-4 py-4 text-sm font-medium sm:px-6 ${isDark
                                                                 ? "text-white"
                                                                 : "text-gray-900"
@@ -523,6 +524,7 @@ function AdminStudents() {
 
                                                         {/* Name */}
                                                         <td
+                                                            data-label="Name"
                                                             className={`px-4 py-4 text-sm sm:px-6 ${isDark
                                                                 ? "text-gray-200"
                                                                 : "text-gray-700"
@@ -537,6 +539,7 @@ function AdminStudents() {
 
                                                         {/* Batch */}
                                                         <td
+                                                            data-label="Batch"
                                                             className={`whitespace-nowrap px-4 py-4 text-sm sm:px-6 ${isDark
                                                                 ? "text-gray-400"
                                                                 : "text-gray-600"
@@ -553,6 +556,7 @@ function AdminStudents() {
 
                                                         {/* Semester */}
                                                         <td
+                                                            data-label="Semester"
                                                             className={`whitespace-nowrap px-4 py-4 text-sm sm:px-6 ${isDark
                                                                 ? "text-gray-400"
                                                                 : "text-gray-600"
@@ -569,6 +573,7 @@ function AdminStudents() {
 
                                                         {/* Email */}
                                                         <td
+                                                            data-label="Email"
                                                             className={`px-4 py-4 text-sm sm:px-6 ${isDark
                                                                 ? "text-gray-400"
                                                                 : "text-gray-600"
@@ -582,7 +587,7 @@ function AdminStudents() {
                                                         </td>
 
                                                         {/* Actions */}
-                                                        <td className="px-4 py-4 sm:px-6">
+                                                        <td data-label="Actions" className="px-4 py-4 sm:px-6">
                                                             <div className="flex justify-center">
                                                                 {isAdmin && (
                                                                     <motion.button

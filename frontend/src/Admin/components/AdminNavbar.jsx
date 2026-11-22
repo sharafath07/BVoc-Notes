@@ -80,6 +80,10 @@ function AdminNavbar() {
             name: "Resources",
             path: "/admin/dashboard/resources",
         },
+        {
+            name: "Chat",
+            path: "/chat",
+        },
     ];
 
     return (

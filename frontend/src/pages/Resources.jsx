@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from "motion/react";
 
 import { Context } from "../Context/Context";
 import { getResourceAvailability, getResourceCards } from "../Context/Resource";
+import { DepartmentHeading } from "../components/DepartmentPage";
 
 import ProgramBox from "../components/Resources/ProgramBox";
 import SemesterBox from "../components/Resources/SemesterBox";
@@ -124,6 +125,8 @@ function Resource() {
     };
 
     return (
+        <>
+        <DepartmentHeading title="Academic resources" description="Browse study materials by programme, semester, subject and resource type." />
         <section
             className={`min-h-screen w-full px-4 py-20 font-roboto transition-colors duration-300 sm:px-6 sm:py-24 md:px-8 lg:px-10 ${isDark
                 ? "bg-gray-950 text-white"
@@ -131,7 +134,6 @@ function Resource() {
                 }`}
         >
             <div className="mx-auto w-full max-w-7xl">
-                <h1 className="mb-6 text-3xl font-bold sm:text-4xl">Academic resources</h1>
 
                 {/* Breadcrumb */}
                 <AnimatePresence mode="wait">
@@ -406,6 +408,7 @@ function Resource() {
 
             </div>
         </section>
+        </>
     );
 }
 
