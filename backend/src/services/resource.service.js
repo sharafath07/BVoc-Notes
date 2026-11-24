@@ -1,6 +1,30 @@
 import prisma from "../lib/prisma.js";
 
+const availabilityTtl = 30_000;
+let availabilityCache;
+
+export function invalidateResourceAvailability() {
+    availabilityCache = undefined;
+}
+
 export function getResourceAvailability() {
+    if (availabilityCache && Date.now() < availabilityCache.expiresAt) {
+        return availabilityCache.result;
+    }
+
+    const entry = { expiresAt: Infinity };
+    availabilityCache = entry;
+    entry.result = queryResourceAvailability().then((rows) => {
+        entry.expiresAt = Date.now() + availabilityTtl;
+        return rows;
+    }).catch((error) => {
+        if (availabilityCache === entry) invalidateResourceAvailability();
+        throw error;
+    });
+    return entry.result;
+}
+
+async function queryResourceAvailability() {
     return prisma.$queryRaw`
         SELECT program.id AS "programId", program.name AS "programName",
                semester.id AS "semesterId", semester.number AS "semesterNumber",
@@ -26,7 +50,7 @@ export async function createResource(data, userId) {
         throw new Error("Subject not found");
     }
 
-    return prisma.resource.create({
+    const resource = await prisma.resource.create({
         data: {
             title: data.title,
             description: data.description,
@@ -37,6 +61,8 @@ export async function createResource(data, userId) {
             uploadedById: userId,
         },
     });
+    invalidateResourceAvailability();
+    return resource;
 }
 export async function getResources({ subjectId, type, cardsOnly = false }) {
     if (cardsOnly) {
@@ -158,6 +184,7 @@ export async function updateResource(id, data) {
         },
     });
 
+    invalidateResourceAvailability();
     return updatedResource;
 }
 
@@ -172,9 +199,11 @@ export async function deleteResource(id) {
         throw new Error("Resource not found");
     }
 
-    return prisma.resource.delete({
+    const deletedResource = await prisma.resource.delete({
         where: {
             id,
         },
     });
+    invalidateResourceAvailability();
+    return deletedResource;
 }

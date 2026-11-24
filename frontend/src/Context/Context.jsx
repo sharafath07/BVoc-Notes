@@ -2,6 +2,7 @@ import React, {
     useState,
     createContext,
     useEffect,
+    useEffectEvent,
     useMemo,
     useCallback,
     useRef,
@@ -9,7 +10,7 @@ import React, {
 import { useLocation } from "react-router-dom";
 
 import getUsers from "./User";
-import api from "../api/axios";
+import { getPageData } from "../api/axios";
 import getSemesters from "./Semester";
 import getSubjects from "./Subject";
 import getResources from "./Resource";
@@ -46,14 +47,16 @@ function ContextProvider({ children }) {
 
     /* LOADING STATES */
 
-    const [isLoading, setIsLoading] = useState(false);
+    const [initialLoading, setInitialLoading] = useState(true);
+    const [actionLoading, setIsLoading] = useState(false);
+    const isLoading = initialLoading || actionLoading;
     const [resourcesLoading, setResourcesLoading] = useState(false);
     const [usersLoading, setUsersLoading] = useState(false);
 
     /* CACHE / REQUEST STATE */
 
     const [resourcesLoaded, setResourcesLoaded] = useState(false);
-    const [usersLoaded, setUsersLoaded] = useState(false);
+    const [usersLoadedFor, setUsersLoadedFor] = useState(null);
 
     const resourcesRequestRef = useRef(null);
     const usersRequestRef = useRef(null);
@@ -63,6 +66,8 @@ function ContextProvider({ children }) {
     const isAdmin = user?.role === "ADMIN";
     const isTeacher = user?.role === "TEACHER";
     const isStudent = user?.role === "STUDENT";
+    const userId = user?.id;
+    const usersLoaded = Boolean(userId && usersLoadedFor === userId);
 
     const canManageSubjects = isAdmin || isTeacher;
     const canManageResources = isAdmin || isTeacher;
@@ -89,27 +94,10 @@ function ContextProvider({ children }) {
         };
     }, [backendUrl, needsAcademicData]);
 
-    useEffect(() => {
-        if (!isAdmin && !isTeacher) {
-            setStudents([]);
-            setFaculty([]);
-            return;
-        }
-
-        let cancelled = false;
-        getUsers(backendUrl).then((users = []) => {
-            if (cancelled) return;
-            setStudents(users.filter(({ role }) => role === "STUDENT"));
-            setFaculty(users.filter(({ role }) => role === "TEACHER"));
-        });
-
-        return () => { cancelled = true; };
-    }, [user, isAdmin, isTeacher, backendUrl]);
-
     /* RESTORE AUTHENTICATION */
 
     useEffect(() => {
-        let cancelled = false;
+        const controller = new AbortController();
 
         const restoreAuth = async () => {
             const savedToken = localStorage.getItem("token");
@@ -121,19 +109,20 @@ function ContextProvider({ children }) {
                 return;
             }
 
-            try {
-                setIsLoading(true);
+            const isCurrentSession = () => !controller.signal.aborted && localStorage.getItem("token") === savedToken;
 
-                const response = await api.get(
+            try {
+                const response = await getPageData(
                     `${backendUrl}/api/auth/me`,
                     {
+                        signal: controller.signal,
                         headers: {
-                            Authorization: `Bearer ${savedToken} `,
+                            Authorization: `Bearer ${savedToken}`,
                         },
                     }
                 );
 
-                if (cancelled) return;
+                if (!isCurrentSession()) return;
 
                 if (response.data?.success && response.data.user) {
                     setToken(savedToken);
@@ -144,7 +133,7 @@ function ContextProvider({ children }) {
                     setUser(null);
                 }
             } catch (error) {
-                if (cancelled) return;
+                if (!isCurrentSession()) return;
 
                 console.error(
                     "Failed to restore authentication:",
@@ -162,18 +151,15 @@ function ContextProvider({ children }) {
                     setUser(null);
                 }
             } finally {
-                if (!cancelled) {
+                if (!controller.signal.aborted) {
                     setAuthLoading(false);
-                    setIsLoading(false);
                 }
             }
         };
 
         restoreAuth();
 
-        return () => {
-            cancelled = true;
-        };
+        return () => controller.abort();
     }, [backendUrl]);
 
     /* FETCH RESOURCES ON DEMAND */
@@ -216,7 +202,7 @@ function ContextProvider({ children }) {
     /* FETCH USERS ON DEMAND */
 
     const fetchUsers = useCallback(async (force = false) => {
-        if (!user || (!isAdmin && !isTeacher)) {
+        if (!userId || (!isAdmin && !isTeacher)) {
             return [];
         }
 
@@ -224,16 +210,19 @@ function ContextProvider({ children }) {
             return [...students, ...faculty];
         }
 
-        if (usersRequestRef.current) {
-            return usersRequestRef.current;
+        if (usersRequestRef.current?.userId === userId) {
+            return usersRequestRef.current.promise;
         }
 
         setUsersLoading(true);
 
-        const request = (async () => {
+        const request = { userId, promise: null };
+        usersRequestRef.current = request;
+        request.promise = (async () => {
             try {
                 const data = await getUsers(backendUrl);
                 const allUsers = data || [];
+                if (usersRequestRef.current !== request) return allUsers;
 
                 setStudents(
                     allUsers.filter(
@@ -247,23 +236,23 @@ function ContextProvider({ children }) {
                     )
                 );
 
-                setUsersLoaded(true);
+                setUsersLoadedFor(userId);
 
                 return allUsers;
             } catch (error) {
                 console.error("Failed to load users:", error);
                 throw error;
             } finally {
-                usersRequestRef.current = null;
-                setUsersLoading(false);
+                if (usersRequestRef.current === request) {
+                    usersRequestRef.current = null;
+                    setUsersLoading(false);
+                }
             }
         })();
 
-        usersRequestRef.current = request;
-
-        return request;
+        return request.promise;
     }, [
-        user,
+        userId,
         isAdmin,
         isTeacher,
         backendUrl,
@@ -271,6 +260,29 @@ function ContextProvider({ children }) {
         students,
         faculty,
     ]);
+
+    const preloadStaffUsers = useEffectEvent((isCancelled) => {
+        void fetchUsers().catch((error) => {
+            if (!isCancelled()) alert(error.response?.data?.message || "Could not load users.");
+        });
+    });
+    const onDashboard = pathname === "/admin/dashboard";
+
+    useEffect(() => {
+        if (!isAdmin && !isTeacher) {
+            usersRequestRef.current = null;
+            setStudents([]);
+            setFaculty([]);
+            setUsersLoadedFor(null);
+            setUsersLoading(false);
+            return;
+        }
+        if (onDashboard) return;
+
+        let cancelled = false;
+        preloadStaffUsers(() => cancelled);
+        return () => { cancelled = true; };
+    }, [userId, isAdmin, isTeacher, onDashboard, backendUrl]);
 
     /* CONTEXT VALUE */
 
@@ -325,6 +337,8 @@ function ContextProvider({ children }) {
         usersLoaded,
 
         // General loading
+        initialLoading,
+        setInitialLoading,
         isLoading,
         setIsLoading,
     }), [
@@ -352,6 +366,7 @@ function ContextProvider({ children }) {
         fetchUsers,
         usersLoading,
         usersLoaded,
+        initialLoading,
         isLoading,
     ]);
 

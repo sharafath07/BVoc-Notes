@@ -1,9 +1,9 @@
-import api from "../api/axios.js"
+import { getPageData } from "../api/axios.js"
 
 async function getSemesters(backendUrl) {
 
     try {
-        const response = await api.get(`${backendUrl}/api/semesters`)
+        const response = await getPageData(`${backendUrl}/api/semesters`)
 
         if (response.data.success) {
             return (response.data.semesters)

@@ -4,7 +4,7 @@ import { DepartmentHeading } from "../components/DepartmentPage";
 import ProfileAvatar from "../components/ProfileAvatar";
 import { Link } from "react-router-dom";
 import { Context } from "../Context/Context";
-import api from "../api/axios";
+import api, { getPageData } from "../api/axios";
 
 const timeFormat = new Intl.DateTimeFormat(undefined, { dateStyle: "medium", timeStyle: "short" });
 
@@ -229,7 +229,7 @@ export default function Chat() {
 
     useEffect(() => {
         const controller = new AbortController();
-        api.get(`${chatUrl}/rooms`, { signal: controller.signal })
+        getPageData(`${chatUrl}/rooms`, { signal: controller.signal })
             .then(({ data }) => {
                 if (!controller.signal.aborted) setRooms(data.rooms);
             })

@@ -4,16 +4,7 @@ import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { Context } from "../Context/Context";
 import api from "../api/axios";
 import ProfileAvatar from "./ProfileAvatar";
-
-const publicLinks = [
-    ["Home", "/"], ["About", "/about"], ["Faculty", "/faculty"],
-    ["Resources", "/resources"], ["Community", "/chat"], ["Contact", "/contact"],
-];
-const staffLinks = [
-    ["Overview", "/admin/dashboard"], ["Students", "/admin/dashboard/students"],
-    ["Faculty", "/admin/dashboard/faculties"], ["Subjects", "/admin/dashboard/subjects"],
-    ["Resources", "/admin/dashboard/resources"], ["Community", "/chat"],
-];
+import { publicLinks, staffLinks } from "./navigationLinks";
 
 export default function Navbar({ staff = false }) {
     const { token, user, isDark, setIsDark, setToken, setUser, backendUrl } = useContext(Context);

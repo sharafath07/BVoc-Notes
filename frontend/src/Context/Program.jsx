@@ -1,9 +1,9 @@
-import api from "../api/axios.js"
+import { getPageData } from "../api/axios.js"
 
 async function getPrograms(backendUrl) {
 
     try {
-        const response = await api.get(`${backendUrl}/api/programs`)
+        const response = await getPageData(`${backendUrl}/api/programs`)
 
         if (response.data.success) {
             return (response.data.programs)

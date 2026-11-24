@@ -8,13 +8,13 @@ function ProtectedRoute({
     toUrl = "/login",
     allowedRoles = [],
 }) {
-    const { token, user, authLoading } = useContext(Context);
+    const { token, user, authLoading, isLoading } = useContext(Context);
 
     // Wait for authentication restoration
     if (authLoading) {
         return (
             <div className="min-h-screen flex items-center justify-center">
-                <Loading />
+                {!isLoading && <Loading />}
             </div>
         );
     }

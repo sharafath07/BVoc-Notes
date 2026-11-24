@@ -12,12 +12,15 @@ import { createResourceSchema } from "../validator/resource.validator.js";
 const cardsQuery = createResourceSchema.pick({ subjectId: true, type: true });
 
 export async function getResourceAvailabilityController(_req, res) {
+    const startedAt = performance.now();
     try {
         const availability = await getResourceAvailability();
+        res.set("Cache-Control", "public, max-age=15, s-maxage=30");
+        res.set("Server-Timing", `availability;dur=${(performance.now() - startedAt).toFixed(1)}`);
         return res.json({ success: true, availability });
     } catch (error) {
         console.error("Failed to load resource availability:", error);
-        return res.status(500).json({ success: false, message: "Resource availability could not be loaded." });
+        return res.set("Cache-Control", "no-store").status(500).json({ success: false, message: "Resource availability could not be loaded." });
     }
 }
 

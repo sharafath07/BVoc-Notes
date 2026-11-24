@@ -134,13 +134,11 @@ function ResourceCard({
                             : "border-gray-200 bg-white shadow-md"
                             }`}
                     >
-                        <p className="text-sm text-gray-500">
-                            Loading resources...
-                        </p>
+                        <p role="status" className="load-elapsed">Loading resources…</p>
                     </motion.div>
                 ) : resourcesError ? (
-                    <div key="error" role="alert" className="rounded-2xl border border-gray-400/30 p-8 text-center">
-                        <p>{resourcesError}</p>
+                    <div key="error" className="rounded-2xl border border-gray-400/30 p-8 text-center">
+                        <p role="alert">{resourcesError}</p>
                         <button type="button" onClick={onRetry} className="mt-3 text-sm font-semibold underline">
                             Try again
                         </button>

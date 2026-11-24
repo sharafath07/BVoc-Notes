@@ -3,9 +3,8 @@ import { useContext } from "react";
 import { Link } from "react-router-dom";
 import { Context } from "../Context/Context";
 import ScrollReveal from "../components/ScrollReveal";
+import CampusPhoto from "../components/CampusPhoto";
 import { admissionsUrl, semesterCount } from "../content/softwareDevelopment";
-import campus from "../assets/campus.jpg";
-import campusMobile from "../assets/campus-mobile.jpg";
 
 const destinations = [
     { title: "Academic resources", description: "Notes, syllabi, lab material and past papers.", url: "/resources", icon: BookOpen },
@@ -30,7 +29,7 @@ export default function Home() {
                         </div>
                     </div>
                     <figure className="department-campus">
-                        <img src={campus} srcSet={`${campusMobile} 720w, ${campus} 1680w`} sizes="(max-width: 760px) calc(100vw - 2rem), 54vw" alt="Farook College campus and landscaped gardens" width="1680" height="1260" fetchPriority="high" />
+                        <CampusPhoto alt="Farook College campus and landscaped gardens" desktopWidth={54} priority />
                         <figcaption>Farook College campus <span>Kozhikode, Kerala</span></figcaption>
                     </figure>
                 </div>

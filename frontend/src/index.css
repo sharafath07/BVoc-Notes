@@ -1,4 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Source+Serif+4:wght@400;500;600&display=swap');
 @import "tailwindcss";
 
 @theme {
@@ -8,6 +7,17 @@
     --color-indigo-500: #67578e;
     --color-indigo-600: #463c78;
     --color-indigo-700: #352e61;
+    --animate-terminal-type: terminal-type 2.5s steps(5, end) infinite;
+    --animate-terminal-cursor: terminal-cursor 2.5s steps(5, end) infinite;
+
+    @keyframes terminal-type {
+        0%, 15%, 100% { stroke-dashoffset: 1; }
+        65%, 90% { stroke-dashoffset: 0; }
+    }
+    @keyframes terminal-cursor {
+        0%, 15%, 100% { transform: translateX(0); }
+        65%, 90% { transform: translateX(32px); }
+    }
 }
 
 :root { font-family: "DM Sans", system-ui, sans-serif; }
@@ -58,6 +68,11 @@ button:disabled { cursor: not-allowed; }
 .department-container { width: min(100% - 3rem, 76rem); margin-inline: auto; }
 .department-route { flex: 1; min-width: 0; scroll-margin-top: 6rem; }
 .department-route-loading { padding-block: 5rem; color: var(--muted); }
+.scroll-reveal[data-reveal="pending"] { opacity: 0; transform: translateY(14px); }
+.scroll-reveal[data-reveal="entered"] { animation: scroll-reveal-in .32s ease-out var(--scroll-delay, 0s) both; }
+.scroll-reveal:focus-within { opacity: 1; transform: none; animation: none; }
+@keyframes scroll-reveal-in { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+.load-elapsed { color: var(--muted); font-size: .875rem; font-variant-numeric: tabular-nums; }
 .department-skip { position: fixed; z-index: 120; top: .5rem; left: .5rem; transform: translateY(-150%); padding: .7rem 1rem; background: var(--surface); border-radius: .4rem; }
 .department-skip:focus { transform: translateY(0); }
 
@@ -371,4 +386,5 @@ button:disabled { cursor: not-allowed; }
 }
 @media (prefers-reduced-motion: reduce) {
     .department-site *, .department-site *::before, .department-site *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+    .scroll-reveal[data-reveal] { opacity: 1; transform: none; animation: none; }
 }
