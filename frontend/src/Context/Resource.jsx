@@ -1,13 +1,13 @@
-import api from "../api/axios.js"
+import { getPageData } from "../api/axios.js"
 import axios from "axios";
 
 async function getResources(backendUrl) {
-    const { data } = await api.get(`${backendUrl}/api/resources`);
+    const { data } = await getPageData(`${backendUrl}/api/resources`);
     return data.resources;
 }
 
 export async function getResourceAvailability(backendUrl, signal) {
-    const { data } = await axios.get(`${backendUrl}/api/resources/availability`, { signal });
+    const { data } = await getPageData(`${backendUrl}/api/resources/availability`, { signal }, axios);
     return data.availability;
 }
 

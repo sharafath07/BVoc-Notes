@@ -20,7 +20,7 @@ import {
 import { motion } from "motion/react";
 
 import { Context } from "../../Context/Context";
-import api from "../../api/axios";
+import api, { getPageData } from "../../api/axios";
 
 import {
     pageVariants,
@@ -65,7 +65,7 @@ function AdminEditResource() {
         const controller = new AbortController();
         setLoading(true);
         setLoadError("");
-        api.get(`${backendUrl}/api/resources/${encodeURIComponent(id)}`, { signal: controller.signal })
+        getPageData(`${backendUrl}/api/resources/${encodeURIComponent(id)}`, { signal: controller.signal })
             .then(({ data }) => {
                 if (controller.signal.aborted) return;
                 const { resource } = data;

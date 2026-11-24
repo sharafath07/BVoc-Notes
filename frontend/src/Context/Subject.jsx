@@ -1,9 +1,9 @@
-import api from "../api/axios.js"
+import { getPageData } from "../api/axios.js"
 
 async function getSubjects(backendUrl) {
 
     try {
-        const response = await api.get(`${backendUrl}/api/subjects`)
+        const response = await getPageData(`${backendUrl}/api/subjects`)
 
         if (response.data.success) {
             return (response.data.subjects)

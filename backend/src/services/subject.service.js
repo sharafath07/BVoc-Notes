@@ -1,4 +1,5 @@
 import prisma from "../lib/prisma.js";
+import { invalidateResourceAvailability } from "./resource.service.js";
 
 // Get all subjects
 export async function getAllSubjects() {
@@ -84,7 +85,7 @@ export async function updateSubject(id, data) {
     }
 
     try {
-        return await prisma.subject.update({
+        const updatedSubject = await prisma.subject.update({
             where: {
                 id,
             },
@@ -107,6 +108,8 @@ export async function updateSubject(id, data) {
                 },
             },
         });
+        invalidateResourceAvailability();
+        return updatedSubject;
     } catch (error) {
         if (error.code === "P2002") {
             throw new Error(
@@ -129,11 +132,13 @@ export async function deleteSubject(id) {
         throw new Error("Subject not found");
     }
 
-    return await prisma.subject.delete({
+    const deletedSubject = await prisma.subject.delete({
         where: {
             id,
         },
     });
+    invalidateResourceAvailability();
+    return deletedSubject;
 }
 
 export async function createSubject(name, semesterId) {

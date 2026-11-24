@@ -22,7 +22,7 @@ import {
 import { motion, AnimatePresence } from "motion/react";
 import { useNavigate } from "react-router-dom";
 
-import api from "../../api/axios";
+import api, { getPageData } from "../../api/axios";
 import { Context } from "../../Context/Context";
 
 
@@ -131,7 +131,7 @@ function AdminFaculties() {
             setLoading(true);
             setError("");
 
-            const response = await api.get(`${backendUrl}/api/teachers`);
+            const response = await getPageData(`${backendUrl}/api/teachers`);
 
             setTeachers(response.data.teachers || []);
         } catch (error) {

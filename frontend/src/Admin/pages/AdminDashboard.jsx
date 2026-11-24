@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo } from "react";
+import React, { useContext, useEffect, useEffectEvent, useMemo, useState } from "react";
 import {
     Users,
     GraduationCap,
@@ -10,6 +10,7 @@ import {
 import { motion } from "motion/react";
 import { useNavigate } from "react-router-dom";
 import { Context } from "../../Context/Context";
+import { logLoadTime } from "../../utils/logLoadTime";
 import {
     pageVariants,
     containerVariants,
@@ -26,25 +27,42 @@ function AdminDashboard() {
         resources = [],
         fetchResources,
         resourcesLoading,
+        resourcesLoaded,
         fetchUsers,
         usersLoading,
+        usersLoaded,
         authLoading,
     } = useContext(Context);
 
     const navigate = useNavigate();
+    const [attempt, setAttempt] = useState(0);
+    const [load, setLoad] = useState(null);
+    const canView = user?.role === "ADMIN" || user?.role === "TEACHER";
+    const loadKey = JSON.stringify([user?.id, user?.role, attempt]);
+    const currentLoad = load?.key === loadKey ? load : null;
+
+    const loadDashboard = useEffectEvent(async (key, signal) => {
+        if (resourcesLoaded && usersLoaded && !resourcesLoading && !usersLoading) {
+            console.log("[Dashboard data] Loaded from cache");
+            setLoad({ key, status: "cached" });
+            return;
+        }
+
+        const startedAt = performance.now();
+        setLoad({ key, status: "loading" });
+        const results = await Promise.allSettled([fetchResources(), fetchUsers()]);
+        if (signal.aborted) return;
+        const failed = results.some(({ status }) => status === "rejected");
+        logLoadTime("Dashboard data", startedAt, failed);
+        setLoad({ key, status: failed ? "error" : "complete" });
+    });
 
     useEffect(() => {
-        if (authLoading || !user) return;
-        if (user.role !== "ADMIN" && user.role !== "TEACHER") return;
-
-        fetchResources().catch((error) => {
-            console.error("Failed to fetch resources:", error);
-        });
-
-        fetchUsers().catch((error) => {
-            console.error("Failed to fetch dashboard users:", error);
-        });
-    }, [authLoading, user, fetchResources, fetchUsers]);
+        if (authLoading || !canView) return;
+        const controller = new AbortController();
+        void loadDashboard(loadKey, controller.signal);
+        return () => controller.abort();
+    }, [authLoading, canView, loadKey]);
 
     useEffect(() => {
         if (!user) return;
@@ -129,7 +147,7 @@ function AdminDashboard() {
         );
     }
 
-    if (!user || (user.role !== "ADMIN" && user.role !== "TEACHER")) {
+    if (!canView) {
         return null;
     }
 
@@ -182,6 +200,17 @@ function AdminDashboard() {
                     >
                         Overview of your BVOC SD platform.
                     </motion.p>
+                    {(!currentLoad || currentLoad.status === "loading") && (
+                        <p role="status" className="load-elapsed mt-3">Loading dashboard data…</p>
+                    )}
+                    {currentLoad?.status === "error" && (
+                        <div className="mt-3 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                            <p role="alert">Dashboard data could not be loaded.</p>
+                            <button type="button" className="department-text-link text-sm" onClick={() => setAttempt((current) => current + 1)}>
+                                Retry loading dashboard
+                            </button>
+                        </div>
+                    )}
                 </motion.div>
 
                 {/* Main Statistics */}

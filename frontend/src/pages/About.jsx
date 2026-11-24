@@ -2,9 +2,8 @@ import { CodeXml, Database, GraduationCap, Layers3, Network } from "lucide-react
 import { Link } from "react-router-dom";
 import { DepartmentHeading } from "../components/DepartmentPage";
 import ScrollReveal from "../components/ScrollReveal";
+import CampusPhoto from "../components/CampusPhoto";
 import { admissionsUrl, semesterCount } from "../content/softwareDevelopment";
-import campus from "../assets/campus.jpg";
-import campusMobile from "../assets/campus-mobile.jpg";
 
 const areas = [
     { icon: CodeXml, title: "Programming", description: "Write, test and debug programs through practical exercises in languages such as Java and Python." },
@@ -25,7 +24,7 @@ export default function About() {
                     <Link to="/resources" className="department-button">Browse academic resources</Link>
                 </ScrollReveal>
                 <ScrollReveal as="figure" className="department-campus department-article-image" delay={0.06}>
-                    <img src={campus} srcSet={`${campusMobile} 720w, ${campus} 1680w`} sizes="(max-width: 760px) calc(100vw - 2rem), 50vw" alt="Main building at Farook College" width="1680" height="1260" />
+                    <CampusPhoto alt="Main building at Farook College" desktopWidth={50} />
                     <figcaption>Farook College (Autonomous)</figcaption>
                 </ScrollReveal>
             </section>

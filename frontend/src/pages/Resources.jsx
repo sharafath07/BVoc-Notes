@@ -9,6 +9,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { Context } from "../Context/Context";
 import { getResourceAvailability, getResourceCards } from "../Context/Resource";
 import { DepartmentHeading } from "../components/DepartmentPage";
+import { logLoadTime } from "../utils/logLoadTime";
 
 import ProgramBox from "../components/Resources/ProgramBox";
 import SemesterBox from "../components/Resources/SemesterBox";
@@ -19,8 +20,7 @@ import ResourceCard from "../components/Resources/ResourceCard";
 function Resource() {
     const { isDark, backendUrl } = useContext(Context);
 
-    const [availability, setAvailability] = useState(null);
-    const [availabilityError, setAvailabilityError] = useState("");
+    const [availabilityResult, setAvailabilityResult] = useState(null);
     const [availabilityAttempt, setAvailabilityAttempt] = useState(0);
     const [selectedProgram, setSelectedProgram] = useState(null);
     const [selectedSemester, setSelectedSemester] = useState(null);
@@ -29,30 +29,46 @@ function Resource() {
     const [result, setResult] = useState(null);
     const [attempt, setAttempt] = useState(0);
     const subjectId = selectedSubject?.id;
-    const requestKey = `${subjectId}:${selectedType}:${attempt}`;
+    const optionsKey = JSON.stringify([backendUrl, availabilityAttempt]);
+    const requestKey = JSON.stringify([backendUrl, subjectId, selectedType, attempt]);
+    const activeAvailability = availabilityResult?.key === optionsKey ? availabilityResult : null;
+    const availability = activeAvailability?.rows ?? null;
+    const availabilityError = activeAvailability?.error;
     const activeResult = result?.key === requestKey ? result : null;
 
     useEffect(() => {
         const controller = new AbortController();
+        const startedAt = performance.now();
+        setAvailabilityResult({ key: optionsKey });
         getResourceAvailability(backendUrl, controller.signal)
             .then((rows) => {
-                if (!controller.signal.aborted) setAvailability(rows);
+                if (controller.signal.aborted) return;
+                logLoadTime("Resource options", startedAt);
+                setAvailabilityResult({ key: optionsKey, rows });
             })
             .catch(() => {
-                if (!controller.signal.aborted) setAvailabilityError("Resource options could not be loaded.");
+                if (!controller.signal.aborted) {
+                    logLoadTime("Resource options", startedAt, true);
+                    setAvailabilityResult({ key: optionsKey, error: "Resource options could not be loaded." });
+                }
             });
         return () => controller.abort();
-    }, [backendUrl, availabilityAttempt]);
+    }, [backendUrl, optionsKey]);
 
     useEffect(() => {
         if (!subjectId || !selectedType) return;
         const controller = new AbortController();
+        const startedAt = performance.now();
+        setResult({ key: requestKey });
         getResourceCards(backendUrl, subjectId, selectedType, controller.signal)
             .then((resources) => {
-                if (!controller.signal.aborted) setResult({ key: requestKey, resources });
+                if (controller.signal.aborted) return;
+                logLoadTime("Resources", startedAt);
+                setResult({ key: requestKey, resources });
             })
             .catch((error) => {
                 if (!controller.signal.aborted) {
+                    logLoadTime("Resources", startedAt, true);
                     setResult({
                         key: requestKey,
                         error: error.response?.data?.message || "Resources could not be loaded.",
@@ -225,6 +241,9 @@ function Resource() {
                     </motion.div>
                 </AnimatePresence>
 
+                {!selectedProgram && !availability && !availabilityError && (
+                    <p role="status" className="load-elapsed py-8 text-center">Loading resource options…</p>
+                )}
 
                 {/* Resource Navigation Steps */}
                 <div className="relative">
@@ -255,20 +274,15 @@ function Resource() {
                                 {availabilityError ? (
                                     <div role="alert" className="py-8 text-center">
                                         <p>{availabilityError}</p>
-                                        <button type="button" className="mt-3 font-semibold underline" onClick={() => {
-                                            setAvailabilityError("");
-                                            setAvailabilityAttempt((current) => current + 1);
-                                        }}>
+                                        <button type="button" className="mt-3 font-semibold underline" onClick={() => setAvailabilityAttempt((current) => current + 1)}>
                                             Try again
                                         </button>
                                     </div>
-                                ) : !availability || !programs.length ? (
-                                    <p role="status" className="py-8 text-center">
-                                        {availability ? "No resources have been published yet." : "Loading resource options…"}
-                                    </p>
-                                ) : (
+                                ) : availability && (programs.length ? (
                                     <ProgramBox programs={programs} isDark={isDark} onSelect={handleProgramSelect} />
-                                )}
+                                ) : (
+                                    <p className="py-8 text-center">No resources have been published yet.</p>
+                                ))}
                             </motion.div>
                         )}
 
@@ -396,7 +410,7 @@ function Resource() {
                                     semester={selectedSemester}
                                     isDark={isDark}
                                     onBack={resetType}
-                                    resourcesLoading={!activeResult}
+                                    resourcesLoading={!activeResult?.resources && !activeResult?.error}
                                     resourcesError={activeResult?.error}
                                     onRetry={() => setAttempt((current) => current + 1)}
                                 />
